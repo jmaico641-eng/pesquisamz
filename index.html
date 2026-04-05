@@ -2,52 +2,13 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PesquisaMZ — Repositório Académico de Moçambique</title>
-
-<!-- SEO -->
-<meta name="description" content="Pesquisa e descarrega teses, monografias e dissertações de todas as universidades de Moçambique. UEM, UDM, ISRI, UNILÚRIO e mais.">
-<meta name="keywords" content="pesquisa académica, moçambique, UEM, UDM, ISRI, tese, monografia, dissertação, trabalhos académicos, universidades moçambique">
-<meta name="author" content="Junir Maico Jorge">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://pesquisamz.co.mz">
-
-<!-- Open Graph (Facebook, WhatsApp preview) -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="PesquisaMZ — Repositório Académico de Moçambique">
-<meta property="og:description" content="Acede a teses, monografias e dissertações de todas as universidades de Moçambique. Documento disponível logo após o pagamento.">
-<meta property="og:url" content="https://pesquisamz.co.mz">
-<meta property="og:locale" content="pt_MZ">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="PesquisaMZ — Repositório Académico">
-<meta name="twitter:description" content="Pesquisa e descarrega trabalhos académicos de todas as universidades de Moçambique.">
-
-<!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
-
-<!-- Theme Color -->
-<meta name="theme-color" content="#04342C">
-
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <!-- Firebase SDK v10 compat -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
-
-<!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-XXXXXXXXXX');
-</script>
-
-<!-- Vercel Analytics -->
-<script async src="https://va.vercel-scripts.com/v1/script.debug.js" data-website-id="pesquisamz"></script>
 <style>
 :root{
   --g9:#03231A;--g8:#04342C;--g7:#085041;--g6:#0F6E56;--g5:#1D9E75;--g4:#3BBEA0;
@@ -64,9 +25,9 @@ gtag('config','G-XXXXXXXXXX');
 body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100vh;overflow-x:hidden}
 .nav{position:sticky;top:0;z-index:90;background:var(--g8);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
 .logo{font-family:var(--fd);font-size:22px;color:var(--white)}.logo em{color:var(--gold);font-style:normal}
-.logo-wrap{display:flex;flex-direction:column;gap:2px}
-.logo-by{font-size:11px;color:var(--gold);letter-spacing:1.5px;font-weight:700;text-transform:uppercase;text-shadow:0 0 8px rgba(232,168,56,.4);background:rgba(232,168,56,.1);padding:3px 10px;border-radius:4px;display:inline-block}
-.logo-by b{color:var(--gold);font-weight:800}
+.logo-wrap{display:flex;flex-direction:column;gap:1px}
+.logo-by{font-size:10px;color:var(--g4);letter-spacing:1.2px;font-weight:500;text-transform:uppercase}
+.logo-by b{color:var(--gold)}
 .nav-links{display:flex;gap:6px;align-items:center}
 .nav-a{color:var(--g2);font-size:13px;padding:6px 14px;border-radius:var(--rsm);cursor:pointer;border:none;background:none;text-decoration:none;transition:all .15s}
 .nav-a:hover{background:rgba(255,255,255,.1);color:white}
@@ -302,9 +263,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 @media(max-width:600px){
   .nav{height:52px;padding:0 12px}
   .logo{font-size:18px}
-  .logo-wrap{display:flex;flex-direction:column;gap:1px}
-  .logo-by{font-size:9px!important;color:var(--gold)!important;letter-spacing:1.2px!important;font-weight:700!important;text-transform:uppercase!important;display:inline-block!important;background:rgba(232,168,56,.15)!important;padding:2px 8px!important;border-radius:3px!important;text-shadow:0 0 6px rgba(232,168,56,.3)!important}
-  .logo-by b{color:var(--gold)!important;font-weight:800!important}
+  .logo-by{font-size:9px}
   .nav-links{top:52px;width:100%;height:calc(100vh - 52px)}
   .hero{padding:28px 12px 40px}
   .hero h1{font-size:clamp(22px,7vw,32px)}
@@ -398,9 +357,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 @media(max-width:380px){
   .nav{height:48px;padding:0 10px}
   .logo{font-size:16px}
-  .logo-wrap{display:flex;flex-direction:column;gap:1px}
-  .logo-by{font-size:8px!important;color:var(--gold)!important;letter-spacing:1px!important;font-weight:700!important;text-transform:uppercase!important;display:inline-block!important;background:rgba(232,168,56,.12)!important;padding:2px 6px!important;border-radius:2px!important;text-shadow:0 0 4px rgba(232,168,56,.2)!important}
-  .logo-by b{color:var(--gold)!important;font-weight:800!important}
+  .logo-by{font-size:8px}
   .nav-links{top:48px;height:calc(100vh - 48px);padding:16px 12px}
   .hero{padding:24px 10px 32px}
   .hero h1{font-size:clamp(20px,8vw,28px)}
@@ -465,7 +422,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <nav class="nav">
   <div class="logo-wrap">
     <div class="logo">Pesquisa<em>MZ</em></div>
-    <div class="logo-by">Desenvolvido por <b>Junir Maico Jorge</b></div>
+    <div class="logo-by">Desenvolvido pela <b>Nexus AI</b></div>
   </div>
   <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
   <div class="nav-links" id="navLinks">
@@ -473,50 +430,13 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <a class="nav-a" href="#" onclick="closeMenu();showWallet();return false;">Minha carteira</a>
     <a class="nav-a" href="#" onclick="closeMenu();openCourses();return false;">📚 Cursos</a>
     <a class="nav-a" href="#" onclick="closeMenu();openAI();return false;">🤖 IA</a>
-    <a class="nav-a" href="#" onclick="closeMenu();openAdmin();return false;" style="color:var(--gold)">⚙️ Admin</a>
-    <span id="authNavSection"></span>
-    <button class="btn-sub" id="authBtn" onclick="handleAuthClick()">👤 Entrar</button>
-    <button class="btn-sub" onclick="closeMenu();openUpload()" style="display:none" id="uploadBtn">+ Submeter trabalho</button>
+    <button class="btn-sub" onclick="closeMenu();openUpload()">+ Submeter trabalho</button>
   </div>
 </nav>
 
-<!-- MODAL DE LOGIN/REGISTRO -->
-<div class="ovl" id="authModal">
-  <div class="modal" style="max-width:420px;max-height:90vh;overflow-y:auto">
-    <div class="mtop"><h2 id="authModalTitle">Entrar na tua conta</h2><div class="msub">Acede a teus documentos e carteira</div></div>
-    <div class="mbody">
-      <div id="authLoginForm">
-        <label class="admin-label">Número de telefone</label>
-        <input class="admin-input" id="authPhone" type="tel" placeholder="84/85/86/87 XXX XXXX">
-        <label class="admin-label">Palavra-passe</label>
-        <input class="admin-input" id="authPassword" type="password" placeholder="••••••••">
-        <button class="bpag" onclick="doLogin()" id="authActionBtn">Entrar</button>
-        <div style="text-align:center;margin-top:12px;font-size:13px;color:var(--gr6)">
-          Não tens conta? <a href="#" onclick="showRegister();return false;" style="color:var(--g6);font-weight:600">Registar</a>
-        </div>
-      </div>
-      <div id="authRegisterForm" style="display:none">
-        <label class="admin-label">Nome completo</label>
-        <input class="admin-input" id="regName" type="text" placeholder="Teu nome">
-        <label class="admin-label">Número de telefone</label>
-        <input class="admin-input" id="regPhone" type="tel" placeholder="84/85/86/87 XXX XXXX">
-        <label class="admin-label">Palavra-passe</label>
-        <input class="admin-input" id="regPassword" type="password" placeholder="Mínimo 6 caracteres">
-        <label class="admin-label">Confirmar palavra-passe</label>
-        <input class="admin-input" id="regPassword2" type="password" placeholder="Repetir palavra-passe">
-        <button class="bpag" onclick="doRegister()" id="regActionBtn">Criar Conta</button>
-        <div style="text-align:center;margin-top:12px;font-size:13px;color:var(--gr6)">
-          Já tens conta? <a href="#" onclick="showLogin();return false;" style="color:var(--g6);font-weight:600">Entrar</a>
-        </div>
-      </div>
-      <button class="bcan" onclick="closeAuthModal()" style="margin-top:8px">Cancelar</button>
-    </div>
-  </div>
-</div>
-
 <div class="hero">
   <div class="eyebrow">Repositório Académico Nacional</div>
-  <h1>Pesquisa académica<br><em>ao teu alcance</em></h1>
+  <h1>Pesquisa académica<br><em>feita em Moçambique</em></h1>
   <p class="hero-sub">Acede a teses, monografias e dissertações de todas as universidades e faculdades do país. Documento disponível logo após o pagamento.</p>
   <div class="sw">
     <input type="text" id="searchInput" placeholder="Pesquisar por título, autor, palavra-chave..." onkeydown="if(event.key==='Enter')doSearch()">
@@ -704,15 +624,12 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <!-- AI GENERATOR MODAL -->
 <div class="ovl" id="aiModal">
   <div class="modal" style="max-width:640px;max-height:92vh;display:flex;flex-direction:column">
-    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Anthropic Claude</b> (Sonnet 4)</div></div>
+    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Groq AI</b> (Llama 3.3 70B)</div></div>
     <div class="ubody" style="overflow-y:auto;flex:1">
       <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
-        <div class="flabel" style="color:#8B6914;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between">
-          <span>🔑 Chave Anthropic API</span>
-          <span id="keyStatus" style="font-size:11px;color:var(--g5);font-weight:500;display:none">✓ Guardada</span>
-        </div>
-        <input class="finp" id="aiKey" type="password" placeholder="sk-ant-..." oninput="checkKey()">
-        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--g6)">console.anthropic.com</a></div>
+        <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
+        <input class="finp" id="aiKey" type="password" placeholder="gsk_...">
+        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Trabalho Académico</div>
@@ -768,70 +685,11 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     </div>
   </div>
 </div>
-
-<!-- ADMIN PANEL MODAL -->
-<div class="ovl" id="adminModal">
-  <div class="modal" style="max-width:960px;max-height:95vh;display:flex;flex-direction:column">
-    <div class="pvhead"><h3>⚙️ Painel do Administrador</h3><button class="pvclose" onclick="closeAdmin()">✕</button></div>
-    <div style="display:flex;border-bottom:2px solid var(--gr1);flex-shrink:0">
-      <button class="admin-tab active" onclick="switchAdminTab('dashboard',this)">📊 Dashboard</button>
-      <button class="admin-tab" onclick="switchAdminTab('pedidos',this)">🛒 Pedidos <span id="pedidosBadge" class="admin-badge yellow" style="display:none">0</span></button>
-      <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Configurações</button>
-      <button class="admin-tab" onclick="switchAdminTab('docs',this)">📄 Documentos</button>
-      <button class="admin-tab" onclick="switchAdminTab('users',this)">👤 Utilizadores</button>
-      <button class="admin-tab" onclick="switchAdminTab('courses',this)">🎓 Cursos</button>
-      <button class="admin-tab" onclick="switchAdminTab('ai',this)">🤖 IA Config</button>
-    </div>
-    <div style="padding:20px 24px;overflow-y:auto;flex:1;max-height:calc(95vh - 160px)" id="adminContent">
-      <!-- Conteúdo dinâmico -->
-    </div>
-  </div>
-</div>
-
-<style>
-.admin-tab{flex:1;padding:10px 8px;border:none;background:none;font-size:12px;font-weight:600;color:var(--gr4);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;font-family:var(--fb)}
-.admin-tab:hover{color:var(--g6);background:var(--gr0)}
-.admin-tab.active{color:var(--g6);border-bottom-color:var(--g6);background:var(--g0)}
-.admin-section{display:none}
-.admin-section.active{display:block}
-.admin-card{background:white;border:1px solid var(--gr1);border-radius:var(--rmd);padding:16px;margin-bottom:12px}
-.admin-card h4{font-size:14px;font-weight:600;color:var(--gr9);margin-bottom:8px}
-.admin-card p{font-size:13px;color:var(--gr6);margin-bottom:6px}
-.admin-stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
-.admin-stat-item{background:white;border:1px solid var(--gr1);border-radius:var(--rmd);padding:16px;text-align:center}
-.admin-stat-item .num{font-family:var(--fd);font-size:28px;color:var(--g6);display:block}
-.admin-stat-item .lbl{font-size:11px;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
-.admin-table{width:100%;border-collapse:collapse;font-size:13px}
-.admin-table th{background:var(--gr0);padding:10px 12px;text-align:left;font-weight:600;color:var(--gr6);font-size:11px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--gr1)}
-.admin-table td{padding:10px 12px;border-bottom:1px solid var(--gr1);vertical-align:middle}
-.admin-table tr:hover td{background:var(--g0)}
-.admin-btn{padding:6px 12px;border-radius:var(--rsm);border:1px solid var(--gr2);background:white;font-size:12px;cursor:pointer;font-family:var(--fb);transition:all .15s;margin-right:4px}
-.admin-btn:hover{border-color:var(--g4);color:var(--g6)}
-.admin-btn.danger{color:#dc2626;border-color:#fecaca}
-.admin-btn.danger:hover{background:#fef2f2}
-.admin-btn.success{color:var(--g6);border-color:var(--g2)}
-.admin-btn.success:hover{background:var(--g0)}
-.admin-input{width:100%;padding:9px 12px;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-family:var(--fb);font-size:13px;color:var(--gr9);outline:none;margin-bottom:8px}
-.admin-input:focus{border-color:var(--g5)}
-.admin-label{font-size:13px;font-weight:500;color:var(--gr8);margin-bottom:4px;display:block}
-.admin-toggle{position:relative;width:44px;height:24px;background:var(--gr2);border-radius:12px;cursor:pointer;transition:background .2s}
-.admin-toggle.on{background:var(--g5)}
-.admin-toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:white;border-radius:50%;transition:transform .2s}
-.admin-toggle.on::after{transform:translateX(20px)}
-.admin-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.admin-badge.green{background:#dcfce7;color:#166534}
-.admin-badge.red{background:#fef2f2;color:#dc2626}
-.admin-badge.blue{background:#eff6ff;color:#1d4ed8}
-.admin-badge.yellow{background:#fefce8;color:#854d0e}
-.admin-empty{text-align:center;padding:40px 20px;color:var(--gr4)}
-.admin-empty .icon{font-size:40px;margin-bottom:12px;opacity:.4}
-</style>
-
 <div class="toast" id="toast"></div>
 
 <script>
 // ═══════════════════════════════════════════
-// FIREBASE CONFIG — Backend principal
+// FIREBASE CONFIG — substitui com os teus valores
 // ═══════════════════════════════════════════
 const FB_CONFIG={
   apiKey:"SUA_API_KEY",
@@ -857,24 +715,15 @@ try{
 }catch(e){console.warn('Firebase não configurado:',e.message);}
 
 // ═══════════════════════════════════════════
-// ANTHROPIC CLAUDE — chave inserida pelo utilizador
+// GROQ AI — chave inserida pelo utilizador
 // ═══════════════════════════════════════════
-const ANTHROPIC_URL='https://api.anthropic.com/v1/messages';
-const ANTHROPIC_MODEL='claude-sonnet-4-20250514';
-
-// Carregar chave guardada do localStorage
-function getAnthropicKey(){
-  try{return localStorage.getItem('pmz_anthropic_key')||''}catch(e){return '';}
-}
-function saveAnthropicKey(key){
-  try{localStorage.setItem('pmz_anthropic_key',key);return true}catch(e){return false;}
-}
-
-async function callClaude(prompt,key){
-  const r=await fetch(ANTHROPIC_URL,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:4096,messages:[{role:'user',content:prompt}]})});
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Anthropic');}
+const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL='llama-3.3-70b-versatile';
+async function callGroq(prompt,key){
+  const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:2048})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Groq');}
   const d=await r.json();
-  return d.content?.[0]?.text||'Sem resposta.';
+  return d.choices?.[0]?.message?.content||'Sem resposta.';
 }
 const UNIS=[
   {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
@@ -906,37 +755,26 @@ const UNIS=[
 ];
 
 // ═══════════════════════════════════════════
-// STORAGE — Firebase + IndexedDB
+// STORAGE — Firestore + localStorage fallback
 // ═══════════════════════════════════════════
 async function loadDocsFromCloud(){
-  if(FB_OK){
-    try{
-      const snap=await db.collection('documents').orderBy('ano','desc').limit(500).get();
-      const remote=snap.docs.map(d=>({id:d.id,...d.data()}));
-      localStorage.setItem('pmz_docs',JSON.stringify(remote));
-      DOCS=remote;
-      render();
-      return;
-    }catch(e){console.warn('Firebase load error:',e);}
-  }
-  // Fallback IndexedDB local
-  const localDocs=await dbGetAll('documents').catch(()=>[]);
-  if(localDocs.length){DOCS=localDocs;render();}
+  if(!FB_OK)return;
+  try{
+    const snap=await db.collection('documents').orderBy('ano','desc').limit(200).get();
+    const remote=snap.docs.map(d=>({id:d.id,...d.data()}));
+    localStorage.setItem('pmz_docs',JSON.stringify(remote));
+    DOCS=remote;
+    render();
+  }catch(e){console.warn('Firestore load error:',e);}
 }
-
-async function saveDocToCloud(doc){
-  if(FB_OK){
-    try{
-      await db.collection('documents').doc(doc.id).set({...doc,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    }catch(e){console.warn('Firebase save error:',e);}
-  }
-  try{await dbAdd('documents',doc);}catch(e){}
-}
-
 function ldocs(){try{return JSON.parse(localStorage.getItem('pmz_docs')||'[]')}catch(e){return[]}}
 function sdocs(d){
   try{localStorage.setItem('pmz_docs',JSON.stringify(d));}catch(e){showToast('⚠️ Armazenamento cheio!');}
-  if(d.length>0)saveDocToCloud(d[0]);
+  if(FB_OK&&d.length){
+    // sync new doc to Firestore (only first item = latest upload)
+    const nd=d[0];
+    db.collection('documents').doc(nd.id).set({title:nd.title,autor:nd.autor,ano:nd.ano,nivel:nd.nivel,area:nd.area,uni:nd.uni,fac:nd.fac,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.warn('Firestore write:',e));
+  }
 }
 function lfile(id){try{return localStorage.getItem('pmz_f_'+id)}catch(e){return null}}
 function sfile(id,data){try{localStorage.setItem('pmz_f_'+id,data);return true}catch(e){showToast('⚠️ Ficheiro muito grande.');return false;}}
@@ -1091,52 +929,13 @@ function selPay(el){document.querySelectorAll('.popt').forEach(o=>o.classList.re
 function confirmPay(){
   if(curDoc===null)return;
   const d=DOCS[curDoc];
-  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532';
-  const userName=prompt('Teu nome completo:')||'Anônimo';
-  const userPhone=prompt('Teu número WhatsApp:')||'';
-
-  // Criar pedido pendente
-  const order={
-    docId:d.id,
-    docTitle:d.title,
-    docUni:d.uni,
-    docAno:d.ano,
-    userName:userName,
-    userPhone:userPhone.startsWith('258')?userPhone:'258'+userPhone,
-    status:'pending',
-    price:50,
-    createdAt:new Date().toISOString()
-  };
-  dbAdd('orders',order).then(id=>{
-    order.id=id;
-    showToast('🛒 Pedido criado! Aguarda aprovação do admin após pagamento.');
-  }).catch(()=>showToast('⚠️ Erro ao criar pedido.'));
-
-  // Mensagem WhatsApp para admin
-  const msg=encodeURIComponent(`Olá! Quero comprar o documento "${d.title}" (${d.uni}, ${d.ano}) — 50 MZN.\n\nNome: ${userName}\nTel: ${userPhone}\n\nJá fiz o pagamento via M-Pesa/e-Mola.`);
-  const whatsappUrl=`https://wa.me/${adminPhone}?text=${msg}`;
-
-  // Mostrar tela de sucesso com botão WhatsApp
+  const b=lbought();if(!b.includes(d.id))b.push(d.id);sbought(b);
+  // Credit author wallet (30 MZN)
+  const w=lwallet()+30;swallet(w);
+  const fd=lfile(d.id);
+  if(fd){const a=document.getElementById('dlLink');a.href=fd;a.download=d.title+'.pdf';}
   document.getElementById('payScr').style.display='none';
   document.getElementById('okScr').style.display='';
-  const okScr=document.getElementById('okScr');
-
-  // Remover botão WhatsApp antigo se existir
-  const oldWa=document.getElementById('whatsappBtn');if(oldWa)oldWa.remove();
-
-  const waBtn=document.createElement('a');
-  waBtn.id='whatsappBtn';
-  waBtn.href=whatsappUrl;
-  waBtn.target='_blank';
-  waBtn.className='bdl';
-  waBtn.style.cssText='background:#25D366;margin-top:12px;display:inline-flex;align-items:center;gap:8px;text-decoration:none';
-  waBtn.innerHTML='💬 Enviar comprovativo via WhatsApp';
-
-  // Atualizar texto de sucesso
-  okScr.querySelector('h2').textContent='Pedido enviado!';
-  okScr.querySelector('p').innerHTML=`Aguardas aprovação após confirmação do pagamento.<br>Clica abaixo para enviar comprovativo ao admin.`;
-
-  okScr.querySelector('.scr').insertBefore(waBtn,okScr.querySelector('.bcan'));
 }
 
 // PREVIEW
@@ -1265,41 +1064,7 @@ document.addEventListener('keydown',function(e){
 });
 
 buildAcc();render();
-loadDocsFromCloud();
-
-// Popular com documentos de exemplo se vazio
-setTimeout(async()=>{
-  if(DOCS.length===0){
-    const exemplos=[
-      {title:'Análise do impacto das microfinanças no desenvolvimento rural da província de Gaza',autor:'Ana Maria Sitoe',ano:2023,nivel:'Mestrado',area:'Economia',uni:'UEM',fac:'Faculdade de Economia'},
-      {title:'Direito à saúde em Moçambique: desafios e perspectivas no pós-independência',autor:'João Carlos Tembe',ano:2022,nivel:'Licenciatura',area:'Direito',uni:'UEM',fac:'Faculdade de Direito'},
-      {title:'A influência das redes sociais na comunicação política: estudo de caso das eleições municipais',autor:'Fernanda Alfredo Macamo',ano:2024,nivel:'Licenciatura',area:'Comunicação',uni:'ISRI',fac:'Departamento de Ciências da Comunicação'},
-      {title:'Gestão de recursos hídricos na bacia do rio Limpopo: sustentabilidade e governação',autor:'Ricardo Manuel Nhaca',ano:2023,nivel:'Doutoramento',area:'Engenharia',uni:'UEM',fac:'Faculdade de Engenharia'},
-      {title:'Estratégias de ensino-aprendizagem da língua portuguesa nas escolas primárias de Maputo',autor:'Teresa Augusto Chilisse',ano:2022,nivel:'Licenciatura',area:'Educação',uni:'UP',fac:'Faculdade de Educação'},
-      {title:'O papel do empreendedorismo feminino no combate à pobreza urbana na cidade da Beira',autor:'Sofia Manuel Cossa',ano:2024,nivel:'Mestrado',area:'Negócios',uni:'UCM',fac:'Faculdade de Ciências Sociais e Políticas'},
-      {title:'Implementação do sistema de informação hospitalar no Hospital Central de Nampula',autor:'Paulo José Macamo',ano:2023,nivel:'Licenciatura',area:'Tecnologia',uni:'UNILÚRIO',fac:'Faculdade de Ciências de Saúde'},
-      {title:'Políticas públicas de saúde maternal em Moçambique: avanços e desafios (2010-2023)',autor:'Marta Francisco Mabunda',ano:2024,nivel:'Doutoramento',area:'Saúde',uni:'UEM',fac:'Faculdade de Ciências de Saúde'},
-      {title:'Análise da qualidade de crédito nas instituições de microfinanças em Moçambique',autor:'David Ernesto Mondlane',ano:2022,nivel:'Licenciatura',area:'Finanças',uni:'ISCTEM',fac:'Faculdade de Gestão e Administração'},
-      {title:'Tecnologias de informação e comunicação na educação superior: o caso da UDM',autor:'Carla Sérgio Nhangave',ano:2023,nivel:'Monografia',area:'Educação',uni:'UDM',fac:'Faculdade de Ciências Económicas'},
-      {title:'Impacto das alterações climáticas na produção agrícola em Tete',autor:'António José Mahumane',ano:2024,nivel:'Mestrado',area:'Agronomia',uni:'UniZambeze',fac:'Faculdade de Ciências Agrárias'},
-      {title:'A evolução do direito do trabalho em Moçambique: uma análise crítico-histórica',autor:'Beatriz Inocêncio Simango',ano:2022,nivel:'Licenciatura',area:'Direito',uni:'USTM',fac:'Faculdade de Ciências Jurídicas'},
-      {title:'Turismo como motor de desenvolvimento local: o caso do arquipélago de Quirimbas',autor:'Nelson Pedro Lucas',ano:2023,nivel:'Licenciatura',area:'Turismo',uni:'UNILÚRIO',fac:'Faculdade de Ciências Naturais'},
-      {title:'Financiamento da educação básica em Moçambique: fontes, mecanismos e desafios',autor:'Olinda José Cumbana',ano:2024,nivel:'Mestrado',area:'Educação',uni:'UP',fac:'Faculdade de Psicologia e Ciências de Educação'},
-      {title:'Governança corporativa e desempenho financeiro nas empresas do setor extractivo',autor:'Victor Miguel Langa',ano:2023,nivel:'Doutoramento',area:'Gestão',uni:'UEM',fac:'Faculdade de Economia'},
-      {title:'Representação social da mulher nos media moçambicanos: estudo comparativo',autor:'Patrícia Alfredo Nhabanga',ano:2022,nivel:'Licenciatura',area:'Comunicação',uni:'ISRI',fac:'Departamento de Relações Internacionais'},
-    ];
-    const ids=[];
-    for(const ex of exemplos){
-      const id='d'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-      const doc={id,title:ex.title,autor:ex.autor,ano:ex.ano,nivel:ex.nivel,area:ex.area,uni:ex.uni,fac:ex.fac};
-      try{await dbAdd('documents',doc);ids.push(id);}catch(e){}
-    }
-    // Recarregar
-    DOCS=await dbGetAll('documents').catch(()=>[]);
-    render();
-    showToast(`📚 ${exemplos.length} documentos de exemplo adicionados!`);
-  }
-},500);
+if(FB_OK)loadDocsFromCloud();
 
 // ═══════════════════════════════════════════
 // MOBILE MENU TOGGLE
@@ -1330,21 +1095,7 @@ function openAI(){
   if(!document.getElementById('aiUni2').options.length){
     document.getElementById('aiUni2').innerHTML=UNIS.map(u=>`<option value="${u.a}">${u.a} — ${u.n.slice(0,28)}</option>`).join('');
   }
-  // Carregar chave guardada se existir
-  const savedKey=getAnthropicKey();
-  if(savedKey){
-    document.getElementById('aiKey').value=savedKey;
-    document.getElementById('keyStatus').style.display='block';
-  }else{
-    document.getElementById('keyStatus').style.display='none';
-  }
   document.getElementById('aiModal').classList.add('open');
-}
-function checkKey(){
-  const key=document.getElementById('aiKey').value.trim();
-  const status=document.getElementById('keyStatus');
-  if(key.length>10){status.style.display='block';status.textContent='✓ Pronta';status.style.color='var(--g5)';}
-  else{status.style.display='none';}
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
@@ -1354,16 +1105,14 @@ async function runAI(){
   const pag=document.getElementById('aiPag').value||60;
   const area=document.getElementById('aiArea').value.trim()||'Geral';
   const uni=document.getElementById('aiUni2').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Anthropic API.');return;}
+  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
-  // Guardar chave para uso futuro
-  saveAnthropicKey(key);
   const btn=document.getElementById('aiBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar...';
   btn.disabled=true;
   try{
     const prompt=`Actua como orientador académico moçambicano. Cria uma estrutura completa para um trabalho de ${nivel} sobre "${tema}" na área de ${area} para a ${uni}. O trabalho deve ter aproximadamente ${pag} páginas.\n\nInclui:\n1. TÍTULO OFICIAL\n2. RESUMO (150 palavras)\n3. PALAVRAS-CHAVE (5-7)\n4. ÍNDICE COMPLETO com capítulos e subcapítulos numerados\n5. INTRODUÇÃO (esboço)\n6. METODOLOGIA sugerida\n7. BIBLIOGRAFIA base (5 referências)\n\nEscreve em Português de Moçambique. Sê específico e académico.`;
-    const txt=await callClaude(prompt,key);
+    const txt=await callGroq(prompt,key);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
     showToast('✅ Estrutura gerada com sucesso!');
@@ -1379,16 +1128,14 @@ async function runCursoAI(){
   const tema=document.getElementById('aiCursoTema').value.trim();
   const dur=document.getElementById('aiCursoDur').value;
   const niv=document.getElementById('aiCursoNiv').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Anthropic API.');return;}
+  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do curso.');return;}
-  // Guardar chave para uso futuro
-  saveAnthropicKey(key);
   const btn=document.getElementById('aiCursoBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar...';
   btn.disabled=true;
   try{
     const prompt=`Cria um plano de curso online completo em Português sobre "${tema}" com duração de ${dur} para nível ${niv}. Contexto: Moçambique.\n\nInclui:\n1. NOME DO CURSO\n2. DESCRIÇÃO (2 parágrafos)\n3. OBJECTIVOS DE APRENDIZAGEM (5-8 pontos)\n4. PRÉ-REQUISITOS\n5. MÓDULOS DETALHADOS (cada módulo com: nome, duração, tópicos, actividade prática)\n6. AVALIAÇÃO (como será avaliado o aluno)\n7. MATERIAL NECESSÁRIO\n8. CERTIFICAÇÃO\n\nSe específico e prático para o contexto moçambicano.`;
-    const txt=await callClaude(prompt,key);
+    const txt=await callGroq(prompt,key);
     document.getElementById('aiCursoText').textContent=txt;
     document.getElementById('aiCursoOut').style.display='';
     showToast('✅ Plano de curso gerado!');
@@ -1451,643 +1198,18 @@ function enrollCourse(id,title,preco){
   showToast(`✅ Inscrito em "${title}"! Receberás o acesso via M-Pesa após o pagamento de ${preco} MZN.`);
 }
 
-// ═══════════════════════════════════════════
-// BASE DE DADOS INDEXEDDB
-// ═══════════════════════════════════════════
-let appDB=null;
-const DB_NAME='PesquisaMZDB';
-const DB_VERSION=1;
-
-function initDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(DB_NAME,DB_VERSION);
-    req.onerror=()=>reject(req.error);
-    req.onupgradeneeded=(e)=>{
-      const db=e.target.result;
-      if(!db.objectStoreNames.contains('documents')){
-        const ds=db.createObjectStore('documents',{keyPath:'id',autoIncrement:true});
-        ds.createIndex('title','title',{unique:false});
-        ds.createIndex('autor','autor',{unique:false});
-        ds.createIndex('nivel','nivel',{unique:false});
-        ds.createIndex('uni','uni',{unique:false});
-        ds.createIndex('createdAt','createdAt',{unique:false});
-      }
-      if(!db.objectStoreNames.contains('settings')){
-        db.createObjectStore('settings',{keyPath:'key'});
-      }
-      if(!db.objectStoreNames.contains('users')){
-        const us=db.createObjectStore('users',{keyPath:'id',autoIncrement:true});
-        us.createIndex('name','name',{unique:false});
-        us.createIndex('role','role',{unique:false});
-      }
-      if(!db.objectStoreNames.contains('courses')){
-        db.createObjectStore('courses',{keyPath:'id',autoIncrement:true});
-      }
-      if(!db.objectStoreNames.contains('purchases')){
-        const ps=db.createObjectStore('purchases',{keyPath:'id',autoIncrement:true});
-        ps.createIndex('userId','userId',{unique:false});
-        ps.createIndex('docId','docId',{unique:false});
-      }
-    };
-    req.onsuccess=(e)=>{appDB=e.target.result;resolve(appDB);};
-  });
-}
-
-function dbAdd(store,data){
-  return new Promise((resolve,reject)=>{
-    const tx=appDB.transaction(store,'readwrite');
-    const s=tx.objectStore(store);
-    const req=s.add(data);
-    req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function dbGetAll(store){
-  return new Promise((resolve,reject)=>{
-    const tx=appDB.transaction(store,'readonly');
-    const req=tx.objectStore(store).getAll();
-    req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function dbGet(store,id){
-  return new Promise((resolve,reject)=>{
-    const tx=appDB.transaction(store,'readonly');
-    const req=tx.objectStore(store).get(id);
-    req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function dbPut(store,data){
-  return new Promise((resolve,reject)=>{
-    const tx=appDB.transaction(store,'readwrite');
-    const req=tx.objectStore(store).put(data);
-    req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function dbDelete(store,id){
-  return new Promise((resolve,reject)=>{
-    const tx=appDB.transaction(store,'readwrite');
-    const req=tx.objectStore(store).delete(id);
-    req.onsuccess=()=>resolve();
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-function dbClear(store){
-  return new Promise((resolve,reject)=>{
-    const tx=appDB.transaction(store,'readwrite');
-    const req=tx.objectStore(store).clear();
-    req.onsuccess=()=>resolve();
-    req.onerror=()=>reject(req.error);
-  });
-}
-
-// ═══════════════════════════════════════════
-// PAINEL DO ADMINISTRADOR
-// ═══════════════════════════════════════════
-let adminLoggedIn=false;
-const ADMIN_PASSWORD='admin2024'; // Alterar para password segura
-
-function openAdmin(){
-  if(!adminLoggedIn){
-    const pwd=prompt('🔐 Palavra-passe do administrador:');
-    if(pwd!==ADMIN_PASSWORD){if(pwd!==null)showToast('❌ Palavra-passe incorreta');return;}
-    adminLoggedIn=true;
-  }
-  document.getElementById('adminModal').classList.add('open');
-  renderAdminDashboard();
-}
-
-function closeAdmin(){document.getElementById('adminModal').classList.remove('open');}
-
-function switchAdminTab(tab,btn){
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  switch(tab){
-    case 'dashboard':renderAdminDashboard();break;
-    case 'pedidos':renderAdminPedidos();break;
-    case 'config':renderAdminConfig();break;
-    case 'docs':renderAdminDocs();break;
-    case 'users':renderAdminUsers();break;
-    case 'courses':renderAdminCourses();break;
-    case 'ai':renderAdminAI();break;
-  }
-}
-
-async function renderAdminDashboard(){
-  const docs=await dbGetAll('documents').catch(()=>[]);
-  const users=await dbGetAll('users').catch(()=>[]);
-  const courses=await dbGetAll('courses').catch(()=>[]);
-  const orders=await dbGetAll('orders').catch(()=>[]);
-  const purchases=orders.filter(o=>o.status==='approved');
-  const pending=orders.filter(o=>o.status==='pending');
-  const totalRevenue=purchases.length*50;
-  const totalPaidAuthors=purchases.length*30;
-
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-stat">
-      <div class="admin-stat-item"><span class="num">${docs.length}</span><span class="lbl">Documentos</span></div>
-      <div class="admin-stat-item"><span class="num">${users.length}</span><span class="lbl">Utilizadores</span></div>
-      <div class="admin-stat-item"><span class="num" style="color:#f59e0b">${pending.length}</span><span class="lbl">Pedidos Pendentes</span></div>
-      <div class="admin-stat-item"><span class="num">${purchases.length}</span><span class="lbl">Aprovados</span></div>
-      <div class="admin-stat-item"><span class="num">${totalRevenue}</span><span class="lbl">Receita (MZN)</span></div>
-      <div class="admin-stat-item"><span class="num">${totalPaidAuthors}</span><span class="lbl">Pago a Autores</span></div>
-    </div>
-    ${pending.length?`<div class="admin-card" style="border-left:4px solid #f59e0b"><h4>⏳ Pedidos Pendentes — Requer Ação!</h4><p>Tens <b style="color:#f59e0b">${pending.length} pedido(s)</b> aguardando confirmação de pagamento.</p><button class="admin-btn success" onclick="switchAdminTab('pedidos',document.querySelectorAll('.admin-tab')[1])" style="margin-top:8px">🛒 Ver Pedidos</button></div>`:''}
-    <div class="admin-card"><h4>📈 Actividade Recente</h4>${purchases.length===0?'<p style="color:var(--gr4)">Sem actividade ainda.</p>:`<table class="admin-table"><thead><tr><th>ID</th><th>Tipo</th><th>Detalhes</th><th>Data</th></tr></thead><tbody>${purchases.slice(-10).reverse().map(p=>`<tr><td>#${p.id}</td><td><span class="admin-badge green">Aprovado</span></td><td>50 MZN</td><td>${p.approvedAt?new Date(p.approvedAt).toLocaleDateString('pt-MZ'):''}</td></tr>`).join('')}</tbody></table>`}</div>
-  `;
-}
-
-async function renderAdminPedidos(){
-  const orders=await dbGetAll('orders').catch(()=>[]);
-  const pending=orders.filter(o=>o.status==='pending');
-  const approved=orders.filter(o=>o.status==='approved');
-  const rejected=orders.filter(o=>o.status==='rejected');
-  const badge=document.getElementById('pedidosBadge');
-  if(badge){if(pending.length>0){badge.style.display='inline-block';badge.textContent=pending.length;}else{badge.style.display='none';}}
-  if(!orders.length){document.getElementById('adminContent').innerHTML=`<div class="admin-empty"><div class="icon">🛒</div><p>Sem pedidos de compra ainda.</p></div>`;return;}
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-stat">
-      <div class="admin-stat-item"><span class="num" style="color:#f59e0b">${pending.length}</span><span class="lbl">Pendentes</span></div>
-      <div class="admin-stat-item"><span class="num" style="color:#10b981">${approved.length}</span><span class="lbl">Aprovados</span></div>
-      <div class="admin-stat-item"><span class="num" style="color:#ef4444">${rejected.length}</span><span class="lbl">Rejeitados</span></div>
-    </div>
-    ${pending.length?`<div class="admin-card"><h4>⏳ Pedidos Pendentes (${pending.length})</h4><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>ID</th><th>Utilizador</th><th>Telefone</th><th>Documento</th><th>Preço</th><th>Data</th><th>Acções</th></tr></thead><tbody>${pending.map(o=>`<tr><td>#${o.id}</td><td>${o.userName||'—'}</td><td><a href="https://wa.me/${o.userPhone}" target="_blank" style="color:#25D366">${o.userPhone||'—'}</a></td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(o.docTitle)}">${escHtml(o.docTitle)}</td><td><b>50 MZN</b></td><td>${o.createdAt?new Date(o.createdAt).toLocaleString('pt-MZ'):''}</td><td><button class="admin-btn success" onclick="approveOrder(${o.id})">✅</button><button class="admin-btn danger" onclick="rejectOrder(${o.id})">❌</button></td></tr>`).join('')}</tbody></table></div></div>`:''}
-    ${approved.length?`<div class="admin-card"><h4>✅ Pedidos Aprovados (${approved.length})</h4><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>ID</th><th>Utilizador</th><th>Documento</th><th>Data</th></tr></thead><tbody>${approved.slice(-20).reverse().map(o=>`<tr><td>#${o.id}</td><td>${o.userName||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(o.docTitle)}</td><td>${o.approvedAt?new Date(o.approvedAt).toLocaleString('pt-MZ'):''}</td></tr>`).join('')}</tbody></table></div></div>`:''}
-    ${rejected.length?`<div class="admin-card"><h4>❌ Pedidos Rejeitados (${rejected.length})</h4><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>ID</th><th>Utilizador</th><th>Documento</th><th>Motivo</th></tr></thead><tbody>${rejected.slice(-10).reverse().map(o=>`<tr><td>#${o.id}</td><td>${o.userName||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(o.docTitle)}</td><td>${o.reason||'—'}</td></tr>`).join('')}</tbody></table></div></div>`:''}
-  `;
-}
-
-async function approveOrder(id){
-  const orders=await dbGetAll('orders').catch(()=>[]);
-  const order=orders.find(o=>o.id===id);if(!order)return;
-  order.status='approved';order.approvedAt=new Date().toISOString();
-  await dbPut('orders',order);
-  const bought=lbought();if(!bought.includes(order.docId))bought.push(order.docId);sbought(bought);
-  const w=lwallet()+30;swallet(w);
-  showToast('✅ Pedido aprovado! Usuário já pode descarregar.');
-  renderAdminPedidos();
-}
-
-async function rejectOrder(id){
-  const reason=prompt('Motivo da rejeição (opcional):')||'Pagamento não confirmado';
-  const orders=await dbGetAll('orders').catch(()=>[]);
-  const order=orders.find(o=>o.id===id);if(!order)return;
-  order.status='rejected';order.reason=reason;order.rejectedAt=new Date().toISOString();
-  await dbPut('orders',order);
-  showToast('❌ Pedido rejeitado.');
-  renderAdminPedidos();
-}
-
-function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-
-async function renderAdminConfig(){
-  const settings=await dbGetAll('settings').catch(()=>[]);
-  const s={};settings.forEach(i=>s[i.key]=i.value);
-  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532';
-
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-card">
-      <h4>🌐 Configurações Gerais</h4>
-      <label class="admin-label">Nome da Plataforma</label>
-      <input class="admin-input" id="cfgName" value="${s.siteName||'PesquisaMZ'}">
-      <label class="admin-label">Descrição</label>
-      <input class="admin-input" id="cfgDesc" value="${s.siteDesc||'Repositório Académico Nacional'}">
-      <label class="admin-label">Preço por Documento (MZN)</label>
-      <input class="admin-input" id="cfgPrice" type="number" value="${s.docPrice||50}">
-      <label class="admin-label">Comissão do Autor (MZN/download)</label>
-      <input class="admin-input" id="cfgAuthorCut" type="number" value="${s.authorCut||30}">
-      <button class="admin-btn success" onclick="saveGeneralConfig()">💾 Guardar Configurações</button>
-    </div>
-    <div class="admin-card">
-      <h4>💬 Pagamento via WhatsApp</h4>
-      <label class="admin-label">Teu número WhatsApp (com código do país)</label>
-      <input class="admin-input" id="cfgWhatsApp" type="tel" value="${adminPhone}" placeholder="25884XXXXXXX">
-      <div style="font-size:11px;color:var(--gr4);margin-bottom:8px">Formato: 258 + número. Exemplo: 258856810532</div>
-      <button class="admin-btn success" onclick="saveWhatsAppConfig()">💾 Guardar Número</button>
-    </div>
-    <div class="admin-card">
-      <h4>🗄️ Base de Dados</h4>
-      <p>Motor: <b>IndexedDB</b> — ${DB_NAME} v${DB_VERSION}</p>
-      <p>Firebase: ${FB_OK?'<span class="admin-badge green">Conectado</span>':'<span class="admin-badge yellow">Não configurado</span>'}</p>
-      <div style="margin-top:10px">
-        <button class="admin-btn" onclick="exportDB()">📥 Exportar Dados</button>
-        <button class="admin-btn" onclick="document.getElementById('importFile').click()">📤 Importar Dados</button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importDB(event)">
-        <button class="admin-btn danger" onclick="clearAllData()">🗑️ Limpar Tudo</button>
-      </div>
-    </div>
-    <div class="admin-card">
-      <h4>🔐 Segurança</h4>
-      <label class="admin-label">Nova Palavra-passe Admin</label>
-      <input class="admin-input" id="cfgNewPwd" type="password" placeholder="Deixa vazio para manter a actual">
-      <button class="admin-btn" onclick="changeAdminPwd()">Alterar Palavra-passe</button>
-    </div>
-  `;
-}
-
-function saveWhatsAppConfig(){
-  const phone=document.getElementById('cfgWhatsApp').value.trim();
-  if(!phone||phone.length<9){showToast('⚠️ Número inválido.');return;}
-  localStorage.setItem('pmz_admin_phone',phone);
-  showToast('✅ Número WhatsApp guardado!');
-}
-
-async function saveGeneralConfig(){
-  const configs=[
-    {key:'siteName',value:document.getElementById('cfgName').value},
-    {key:'siteDesc',value:document.getElementById('cfgDesc').value},
-    {key:'docPrice',value:parseInt(document.getElementById('cfgPrice').value)},
-    {key:'authorCut',value:parseInt(document.getElementById('cfgAuthorCut').value)}
-  ];
-  for(const c of configs)await dbPut('settings',c);
-  showToast('✅ Configurações guardadas!');
-}
-
-async function renderAdminDocs(){
-  const docs=await dbGetAll('documents').catch(()=>[]);
-  if(!docs.length){
-    document.getElementById('adminContent').innerHTML=`<div class="admin-empty"><div class="icon">📄</div><p>Sem documentos na base de dados</p></div>`;
-    return;
-  }
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-card">
-      <h4>📄 Documentos (${docs.length})</h4>
-      <div style="overflow-x:auto"><table class="admin-table">
-        <thead><tr><th>ID</th><th>Título</th><th>Autor</th><th>Nível</th><th>Universidade</th><th>Ano</th><th>Acções</th></tr></thead>
-        <tbody>${docs.map(d=>`<tr>
-          <td>#${d.id}</td>
-          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(d.title||'').slice(0,40)}</td>
-          <td>${d.autor||'—'}</td>
-          <td><span class="admin-badge blue">${d.nivel||'—'}</span></td>
-          <td>${d.uni||'—'}</td>
-          <td>${d.ano||'—'}</td>
-          <td>
-            <button class="admin-btn danger" onclick="deleteDoc(${d.id})">🗑️</button>
-          </td>
-        </tr>`).join('')}</tbody>
-      </table></div>
-    </div>
-  `;
-}
-
-async function deleteDoc(id){
-  if(!confirm('Eliminar este documento?'))return;
-  await dbDelete('documents',id);
-  showToast('✅ Documento eliminado!');
-  renderAdminDocs();
-}
-
-async function renderAdminUsers(){
-  const users=await dbGetAll('users').catch(()=>[]);
-  if(!users.length){
-    document.getElementById('adminContent').innerHTML=`<div class="admin-empty"><div class="icon">👤</div><p>Sem utilizadores registados</p></div>`;
-    return;
-  }
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-card">
-      <h4>👤 Utilizadores (${users.length})</h4>
-      <div style="overflow-x:auto"><table class="admin-table">
-        <thead><tr><th>ID</th><th>Nome</th><th>Telefone</th><th>Role</th><th>Saldo</th><th>Acções</th></tr></thead>
-        <tbody>${users.map(u=>`<tr>
-          <td>#${u.id}</td>
-          <td>${u.name||'—'}</td>
-          <td>${u.phone||'—'}</td>
-          <td><span class="admin-badge ${u.role==='admin'?'red':'green'}">${u.role||'user'}</span></td>
-          <td>${u.balance||0} MZN</td>
-          <td>
-            <button class="admin-btn" onclick="editUser(${u.id})">✏️</button>
-            <button class="admin-btn danger" onclick="deleteUser(${u.id})">🗑️</button>
-          </td>
-        </tr>`).join('')}</tbody>
-      </table></div>
-    </div>
-  `;
-}
-
-async function editUser(id){
-  const user=await dbGet('users',id);
-  if(!user)return;
-  const newBalance=prompt(`Novo saldo para ${user.name} (actual: ${user.balance||0} MZN):`,user.balance||0);
-  if(newBalance!==null){
-    user.balance=parseFloat(newBalance)||0;
-    await dbPut('users',user);
-    showToast('✅ Saldo actualizado!');
-    renderAdminUsers();
-  }
-}
-
-async function deleteUser(id){
-  if(!confirm('Eliminar este utilizador?'))return;
-  await dbDelete('users',id);
-  showToast('✅ Utilizador eliminado!');
-  renderAdminUsers();
-}
-
-async function renderAdminCourses(){
-  const courses=await dbGetAll('courses').catch(()=>[]);
-  if(!courses.length){
-    document.getElementById('adminContent').innerHTML=`<div class="admin-empty"><div class="icon">🎓</div><p>Sem cursos personalizados</p><p style="font-size:12px">Os cursos padrão estão no código.</p></div>`;
-    return;
-  }
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-card">
-      <h4>🎓 Cursos Personalizados (${courses.length})</h4>
-      <div style="overflow-x:auto"><table class="admin-table">
-        <thead><tr><th>ID</th><th>Título</th><th>Área</th><th>Nível</th><th>Preço</th><th>Acções</th></tr></thead>
-        <tbody>${courses.map(c=>`<tr>
-          <td>#${c.id}</td>
-          <td>${c.title||'—'}</td>
-          <td><span class="admin-badge blue">${c.area||'—'}</span></td>
-          <td>${c.level||'—'}</td>
-          <td>${c.price||0} MZN</td>
-          <td><button class="admin-btn danger" onclick="deleteCourse(${c.id})">🗑️</button></td>
-        </tr>`).join('')}</tbody>
-      </table></div>
-      <div style="margin-top:12px">
-        <button class="admin-btn success" onclick="addNewCourse()">+ Adicionar Curso</button>
-      </div>
-    </div>
-  `;
-}
-
-async function addNewCourse(){
-  const title=prompt('Título do curso:');
-  if(!title)return;
-  const area=prompt('Área (Economia, Direito, etc.):')||'Geral';
-  const level=prompt('Nível (Iniciante, Intermédio, Avançado):')||'Iniciante';
-  const price=parseInt(prompt('Preço (MZN):')||'0');
-  await dbAdd('courses',{title,area,level,price,createdAt:new Date().toISOString()});
-  showToast('✅ Curso adicionado!');
-  renderAdminCourses();
-}
-
-async function deleteCourse(id){
-  if(!confirm('Eliminar este curso?'))return;
-  await dbDelete('courses',id);
-  showToast('✅ Curso eliminado!');
-  renderAdminCourses();
-}
-
-function renderAdminAI(){
-  const savedKey=getAnthropicKey();
-  document.getElementById('adminContent').innerHTML=`
-    <div class="admin-card">
-      <h4>🤖 Configuração da IA (Anthropic Claude)</h4>
-      <label class="admin-label">Modelo</label>
-      <input class="admin-input" value="claude-sonnet-4-20250514" disabled style="background:var(--gr0)">
-      <label class="admin-label">Chave API Anthropic</label>
-      <input class="admin-input" id="adminAIKey" type="password" value="${savedKey}" placeholder="sk-ant-...">
-      <div style="font-size:11px;color:var(--gr4);margin-bottom:10px">Obtém em <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--g5)">console.anthropic.com/settings/keys</a></div>
-      <button class="admin-btn success" onclick="saveAIKey()">💾 Guardar Chave API</button>
-    </div>
-    <div class="admin-card">
-      <h4>📊 Estado da IA</h4>
-      <p>Estado: ${savedKey?'<span class="admin-badge green">Configurada ✓</span>':'<span class="admin-badge yellow">Não configurada</span>'}</p>
-      <p>URL: <code style="font-size:11px">https://api.anthropic.com/v1/messages</code></p>
-      <p>Max Tokens: <b>4096</b></p>
-    </div>
-  `;
-}
-
-function saveAIKey(){
-  const key=document.getElementById('adminAIKey').value.trim();
-  if(!key){showToast('⚠️ Introduz a chave API.');return;}
-  saveAnthropicKey(key);
-  showToast('✅ Chave API guardada!');
-  renderAdminAI();
-}
-
-async function exportDB(){
-  const data={
-    documents:await dbGetAll('documents').catch(()=>[]),
-    settings:await dbGetAll('settings').catch(()=>[]),
-    users:await dbGetAll('users').catch(()=>[]),
-    courses:await dbGetAll('courses').catch(()=>[]),
-    purchases:await dbGetAll('purchases').catch(()=>[]),
-    exportedAt:new Date().toISOString()
-  };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`pesquisamz_backup_${Date.now()}.json`;a.click();
-  URL.revokeObjectURL(url);
-  showToast('✅ Dados exportados!');
-}
-
-async function importDB(event){
-  const file=event.target.files[0];
-  if(!file)return;
-  if(!confirm('Isto vai substituir os dados actuais. Continuar?'))return;
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      await dbClear('documents');
-      await dbClear('settings');
-      await dbClear('users');
-      await dbClear('courses');
-      await dbClear('purchases');
-      if(data.documents)for(const d of data.documents)await dbAdd('documents',d);
-      if(data.settings)for(const s of data.settings)await dbPut('settings',s);
-      if(data.users)for(const u of data.users)await dbAdd('users',u);
-      if(data.courses)for(const c of data.courses)await dbAdd('courses',c);
-      if(data.purchases)for(const p of data.purchases)await dbAdd('purchases',p);
-      showToast('✅ Dados importados com sucesso!');
-      renderAdminDashboard();
-    }catch(err){showToast('❌ Erro ao importar: '+err.message);}
-  };
-  reader.readAsText(file);
-}
-
-async function clearAllData(){
-  if(!confirm('⚠️ Tens a certeza? Isto vai apagar TODOS os dados!'))return;
-  if(!confirm('Última chance! Confirmar eliminação total?'))return;
-  await dbClear('documents');
-  await dbClear('settings');
-  await dbClear('users');
-  await dbClear('courses');
-  await dbClear('purchases');
-  showToast('✅ Todos os dados foram eliminados!');
-  renderAdminDashboard();
-}
-
-async function changeAdminPwd(){
-  const newPwd=document.getElementById('cfgNewPwd').value;
-  if(!newPwd||newPwd.length<4){showToast('⚠️ A palavra-passe deve ter pelo menos 4 caracteres.');return;}
-  // In production, hash this!
-  window.ADMIN_PASSWORD=newPwd;
-  showToast('✅ Palavra-passe alterada!');
-  document.getElementById('cfgNewPwd').value='';
-}
-
 // Backdrop close for new modals
-['aiModal','coursesModal','adminModal'].forEach(id=>{
+['aiModal','coursesModal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){
-    if(e.target===this){if(id==='aiModal')closeAI();else if(id==='adminModal')closeAdmin();else closeCourses();}
+    if(e.target===this){if(id==='aiModal')closeAI();else closeCourses();}
   });
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     if(document.getElementById('aiModal').classList.contains('open'))closeAI();
     else if(document.getElementById('coursesModal').classList.contains('open'))closeCourses();
-    else if(document.getElementById('adminModal').classList.contains('open'))closeAdmin();
   }
 },true);
-
-// ═══════════════════════════════════════════
-// SISTEMA DE AUTENTICAÇÃO — IndexedDB
-// ═══════════════════════════════════════════
-let currentUser=null;
-
-async function checkAuthSession(){
-  const uid=localStorage.getItem('pmz_user_id');
-  if(!uid){updateAuthUI(null);return;}
-  try{
-    const user=await dbGet('users',parseInt(uid));
-    if(user){
-      currentUser=user;
-      updateAuthUI(user);
-    }else{
-      currentUser=null;
-      localStorage.removeItem('pmz_user_id');
-      updateAuthUI(null);
-    }
-  }catch(e){updateAuthUI(null);}
-}
-
-function handleAuthClick(){
-  if(currentUser){doLogout();}
-  else{showLogin();document.getElementById('authModal').classList.add('open');}
-}
-
-function showLogin(){
-  document.getElementById('authLoginForm').style.display='block';
-  document.getElementById('authRegisterForm').style.display='none';
-  document.getElementById('authModalTitle').textContent='Entrar na tua conta';
-  document.getElementById('authActionBtn').textContent='Entrar';
-}
-
-function showRegister(){
-  document.getElementById('authLoginForm').style.display='none';
-  document.getElementById('authRegisterForm').style.display='block';
-  document.getElementById('authModalTitle').textContent='Criar conta';
-  document.getElementById('regActionBtn').textContent='Criar Conta';
-}
-
-function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
-
-async function doLogin(){
-  const phone=document.getElementById('authPhone').value.trim();
-  const pwd=document.getElementById('authPassword').value;
-  if(!phone){showToast('⚠️ Introduz teu número.');return;}
-  if(!pwd){showToast('⚠️ Introduz tua palavra-passe.');return;}
-
-  const btn=document.getElementById('authActionBtn');
-  btn.textContent='A entrar...';btn.disabled=true;
-
-  const users=await dbGetAll('users').catch(()=>[]);
-  const fullPhone=phone.startsWith('258')?phone:'258'+phone;
-  const user=users.find(u=>u.phone===fullPhone&&u.password===pwd);
-
-  if(user){
-    currentUser=user;
-    localStorage.setItem('pmz_user_id',user.id);
-    updateAuthUI(user);
-    closeAuthModal();
-    showToast('✅ Bem-vindo(a), '+user.name+'!');
-  }else{
-    showToast('❌ Número ou palavra-passe incorretos.');
-  }
-  btn.textContent='Entrar';btn.disabled=false;
-}
-
-async function doRegister(){
-  const name=document.getElementById('regName').value.trim();
-  const phone=document.getElementById('regPhone').value.trim();
-  const pwd=document.getElementById('regPassword').value;
-  const pwd2=document.getElementById('regPassword2').value;
-
-  if(!name){showToast('⚠️ Introduz teu nome.');return;}
-  if(!phone||phone.length<9){showToast('⚠️ Número inválido.');return;}
-  if(!pwd||pwd.length<6){showToast('⚠️ Mínimo 6 caracteres.');return;}
-  if(pwd!==pwd2){showToast('❌ Palavras-passe não coincidem.');return;}
-
-  const btn=document.getElementById('regActionBtn');
-  btn.textContent='A criar...';btn.disabled=true;
-
-  const fullPhone=phone.startsWith('258')?phone:'258'+phone;
-  const users=await dbGetAll('users').catch(()=>[]);
-
-  if(users.find(u=>u.phone===fullPhone)){
-    showToast('❌ Número já registado.');
-    btn.textContent='Criar Conta';btn.disabled=false;
-    return;
-  }
-
-  const newUser={
-    name:name,
-    phone:fullPhone,
-    password:pwd,
-    role:'user',
-    balance:0,
-    createdAt:new Date().toISOString()
-  };
-
-  try{
-    const id=await dbAdd('users',newUser);
-    newUser.id=id;
-    currentUser=newUser;
-    localStorage.setItem('pmz_user_id',id);
-    updateAuthUI(newUser);
-    closeAuthModal();
-    showToast('✅ Conta criada! Bem-vindo(a), '+name+'!');
-  }catch(e){
-    showToast('❌ Erro ao criar conta.');
-  }
-  btn.textContent='Criar Conta';btn.disabled=false;
-}
-
-function doLogout(){
-  currentUser=null;
-  localStorage.removeItem('pmz_user_id');
-  updateAuthUI(null);
-  showToast('👋 Sessão terminada.');
-}
-
-function updateAuthUI(user){
-  const authBtn=document.getElementById('authBtn');
-  const uploadBtn=document.getElementById('uploadBtn');
-  if(user){
-    authBtn.textContent='👋 Olá, '+user.name.split(' ')[0];
-    authBtn.style.background='var(--g6)';
-    authBtn.style.color='white';
-    uploadBtn.style.display='inline-block';
-  }else{
-    authBtn.textContent='👤 Entrar / Registar';
-    authBtn.style.background='var(--gold)';
-    authBtn.style.color='var(--g9)';
-    uploadBtn.style.display='none';
-  }
-}
-
-document.getElementById('authModal').addEventListener('click',function(e){
-  if(e.target===this)closeAuthModal();
-});
-
-// ═══════════════════════════════════════════
-// INICIALIZAÇÃO
-// ═══════════════════════════════════════════
-initDB().then(()=>{
-  console.log('✅ IndexedDB inicializada');
-  checkAuthSession();
-}).catch(e=>console.warn('DB init error:',e));
 </script>
 </body>
 </html>
