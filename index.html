@@ -207,16 +207,213 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 /* Firebase badge */
 .fb-badge{position:fixed;bottom:16px;right:16px;background:var(--g8);color:var(--g2);font-size:11px;padding:6px 12px;border-radius:20px;box-shadow:var(--sm);z-index:80;display:flex;align-items:center;gap:6px;opacity:.85}
 .fb-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:fbp 2s infinite}@keyframes fbp{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVIDADE COMPLETA — TODOS DISPOSITIVOS
+   ═══════════════════════════════════════════ */
+
+/* Menu hamburger para mobile */
+.menu-toggle{display:none;background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:8px}
+
+/* ===== TABLET — max 1024px ===== */
+@media(max-width:1024px){
+  .main{grid-template-columns:260px 1fr;gap:20px;max-width:100%;padding:24px 20px}
+  .hero{padding:48px 24px 56px}
+  .sw{max-width:560px}
+  .nav{padding:0 24px}
+}
+
+/* ===== TABLET PEQUENO / LARGE MOBILE — max 820px ===== */
 @media(max-width:820px){
   .main{grid-template-columns:1fr;padding:16px}
-  .sidebar{position:static;max-height:none}
-  .nav{padding:0 16px}.hero{padding:36px 16px 48px}
-  .stats{flex-wrap:wrap}.si{max-width:none;flex:1 1 45%}
-  .cbtns{flex-direction:column}.nav-a{display:none}
+  .sidebar{position:static;max-height:none;margin-bottom:16px}
+  .nav{padding:0 16px;height:56px}
+  .nav-links{position:fixed;top:56px;right:0;background:var(--g8);flex-direction:column;width:260px;height:calc(100vh - 56px);padding:20px 16px;gap:8px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-4px 0 16px rgba(0,0,0,.3);z-index:95;align-items:stretch}
+  .nav-links.open{transform:translateX(0)}
+  .nav-a{display:block!important;padding:12px 16px;font-size:14px;text-align:left;border-radius:var(--rmd)}
+  .nav-a:hover{background:rgba(255,255,255,.1)}
+  .btn-sub{width:100%;text-align:center;padding:12px 16px;font-size:14px}
+  .menu-toggle{display:block}
+  .hero{padding:36px 16px 48px}
+  .hero h1{font-size:clamp(24px,6vw,36px)}
+  .hero-sub{font-size:14px;max-width:100%}
+  .sw{max-width:100%;flex-direction:column;gap:8px;padding:8px}
+  .sw input{padding:12px 14px;font-size:14px}
+  .sw button{width:100%;padding:12px}
+  .stats{flex-wrap:wrap;padding:0}
+  .si{max-width:none;flex:1 1 45%;padding:14px 10px}
+  .sn{font-size:22px}
+  .dcard{flex-direction:column;gap:14px;padding:16px}
+  .dico{width:40px;height:46px}
+  .dright{flex-direction:row;align-items:center;justify-content:flex-start;width:100%;gap:8px}
+  .cbtns{flex-direction:row;flex-wrap:wrap;justify-content:flex-start}
+  .price{font-size:18px}
   .about-steps{grid-template-columns:1fr}
   .wallet-bar{flex-direction:column;gap:12px;text-align:center}
   .wallet-info{flex-direction:column}
-  .course-grid{grid-template-columns:1fr 1fr}
+  .course-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .modal{max-width:95%!important}
+  .pvhead{padding:14px 18px}
+  .pvhead h3{font-size:14px;max-width:80%}
+  .pvbody{min-height:320px}
+  .pvbody iframe{min-height:320px}
+}
+
+/* ===== MOBILE — max 600px ===== */
+@media(max-width:600px){
+  .nav{height:52px;padding:0 12px}
+  .logo{font-size:18px}
+  .logo-by{font-size:9px}
+  .nav-links{top:52px;width:100%;height:calc(100vh - 52px)}
+  .hero{padding:28px 12px 40px}
+  .hero h1{font-size:clamp(22px,7vw,32px)}
+  .hero-sub{font-size:13px;margin-bottom:24px}
+  .eyebrow{font-size:10px;letter-spacing:2px}
+  .sw{padding:6px}
+  .sw input{padding:10px 12px;font-size:13px}
+  .sw button{padding:10px 16px;font-size:13px}
+  .stats{flex-direction:column;gap:0}
+  .si{flex:1 1 100%;border-right:none;border-bottom:1px solid rgba(255,255,255,.07);padding:12px 16px}
+  .si:last-child{border-bottom:none}
+  .sn{font-size:20px}
+  .sl2{font-size:10px}
+  .main{padding:12px;gap:12px}
+  .toolbar{flex-direction:column;gap:8px;align-items:stretch}
+  .sortsel{width:100%}
+  .dcard{padding:14px;gap:12px}
+  .dico{width:36px;height:42px;font-size:9px}
+  .dtitle{font-size:14px}
+  .dmeta{gap:6px}
+  .tag{font-size:11px!important;padding:3px 6px!important}
+  .dautor{font-size:11px}
+  .price{font-size:16px}
+  .cbtns{gap:4px}
+  .bprev,.bbuy{padding:6px 10px;font-size:11px}
+  .pgb{width:32px;height:32px;font-size:12px}
+  .empty{padding:40px 16px}
+  .eico{font-size:32px}
+  .etitle{font-size:14px}
+  .esub{font-size:12px}
+  .modal{max-width:100%!important;border-radius:var(--rlg)!important}
+  .mtop{padding:18px 20px}
+  .mtop h2{font-size:18px}
+  .msub{font-size:12px}
+  .mbody{padding:18px 20px}
+  .ubody{padding:16px 20px}
+  .frow{grid-template-columns:1fr!important}
+  .srow{flex-direction:column!important;gap:8px!important}
+  .srow .bpag,.srow .bcan{width:100%!important;margin-bottom:0!important}
+  .flabel{font-size:12px}
+  .finp{padding:9px 12px;font-size:13px}
+  .dz{padding:20px 16px}
+  .dzico{font-size:24px;margin-bottom:6px}
+  .dztxt{font-size:12px}
+  .prow{padding:12px 14px}
+  .pval{font-size:24px}
+  .popt{padding:12px 14px;gap:12px}
+  .plogo{width:36px;height:36px;font-size:12px}
+  .pname{font-size:13px}
+  .psub{font-size:11px}
+  .bpag{padding:12px;font-size:14px}
+  .bcan{padding:10px;font-size:13px}
+  .schk{width:56px;height:56px;font-size:24px;margin-bottom:14px}
+  .scr{padding:32px 20px}
+  .scr h2{font-size:20px}
+  .scr p{font-size:13px;margin-bottom:20px}
+  .bdl{padding:12px 24px;font-size:14px}
+  .pvhead{padding:12px 16px}
+  .pvhead h3{font-size:13px;max-width:75%}
+  .pvclose{width:28px;height:28px;font-size:16px}
+  .pvfoot{padding:12px 16px;flex-direction:column;gap:8px}
+  .pvnote{font-size:11px;text-align:center}
+  .bbn{width:100%;justify-content:center;padding:12px;font-size:13px}
+  .tabs{gap:4px;flex-wrap:wrap}
+  .tab{padding:6px 12px;font-size:12px}
+  .course-grid{grid-template-columns:1fr;gap:10px}
+  .course-thumb{height:72px;font-size:32px}
+  .course-title{font-size:12px}
+  .course-tag{font-size:10px;padding:2px 6px}
+  .course-price{font-size:16px}
+  .course-enroll{padding:8px;font-size:12px}
+  .ai-output{padding:12px 14px;font-size:12px;max-height:240px}
+  .flabel{font-size:12px}
+  .enote{padding:10px 14px;font-size:12px}
+  .about-body{padding:20px}
+  .about-body h3{font-size:16px;margin:14px 0 6px}
+  .about-body p{font-size:13px;margin-bottom:10px}
+  .about-step{padding:12px}
+  .about-step .num{font-size:18px}
+  .about-step .txt{font-size:11px}
+  .wallet-bar{padding:14px 18px;border-radius:var(--rmd)}
+  .wallet-icon{width:40px;height:40px;font-size:18px}
+  .wallet-amount{font-size:20px}
+  .wallet-btn{width:100%;padding:12px}
+  .toast{left:12px;right:12px;width:auto;transform:translateX(0) translateY(80px);font-size:13px;padding:10px 16px;white-space:normal;text-align:center}
+  .toast.show{transform:translateX(0) translateY(0)}
+  .fb-badge{bottom:12px;right:12px;font-size:10px;padding:5px 10px}
+}
+
+/* ===== MOBILE PEQUENO — max 380px ===== */
+@media(max-width:380px){
+  .nav{height:48px;padding:0 10px}
+  .logo{font-size:16px}
+  .logo-by{font-size:8px}
+  .nav-links{top:48px;height:calc(100vh - 48px);padding:16px 12px}
+  .hero{padding:24px 10px 32px}
+  .hero h1{font-size:clamp(20px,8vw,28px)}
+  .hero-sub{font-size:12px;margin-bottom:20px}
+  .sw input{padding:9px 10px;font-size:12px}
+  .sw button{padding:9px 14px;font-size:12px}
+  .stats{padding:0}
+  .si{padding:10px 12px}
+  .sn{font-size:18px}
+  .main{padding:10px;gap:10px}
+  .dcard{padding:12px;gap:10px}
+  .dtitle{font-size:13px}
+  .tag{font-size:10px!important;padding:2px 5px!important}
+  .dautor{font-size:10px}
+  .price{font-size:14px}
+  .bprev,.bbuy{padding:5px 8px;font-size:10px}
+  .pgb{width:28px;height:28px;font-size:11px}
+  .mtop{padding:16px}
+  .mtop h2{font-size:16px}
+  .mbody{padding:14px 16px}
+  .ubody{padding:14px 16px}
+  .course-grid{gap:8px}
+  .tab{padding:5px 10px;font-size:11px}
+}
+
+/* ===== LANDSCAPE MOBILE ===== */
+@media(max-height:500px) and (orientation:landscape){
+  .hero{padding:20px 16px 28px}
+  .stats{flex-wrap:wrap}
+  .si{flex:1 1 25%;padding:8px}
+  .sn{font-size:18px}
+  .modal{max-height:95vh!important}
+  .mbody,.ubody{max-height:70vh}
+  .pvbody{min-height:200px!important}
+  .pvbody iframe{min-height:200px!important}
+}
+
+/* ===== DESKTOP GRANDE — min 1400px ===== */
+@media(min-width:1400px){
+  .main{max-width:1400px;padding:32px 40px}
+  .sidebar{max-width:340px}
+  .hero{padding:64px 40px 72px}
+  .hero h1{font-size:clamp(36px,4vw,52px)}
+  .hero-sub{font-size:16px;max-width:600px}
+  .sw{max-width:720px}
+  .stats{max-width:1400px;margin:0 auto}
+  .si{max-width:200px;padding:20px 16px}
+  .sn{font-size:30px}
+  .dgrid{display:grid;grid-template-columns:repeat(2,1fr)}
+}
+
+/* ===== TOUCH TARGETS para mobile (acessibilidade) ===== */
+@media(hover:none) and (pointer:coarse){
+  .nav-a,.btn-sub,.bprev,.bbuy,.bpag,.bcan,.tab,.lchip,.fitem,.uhead,.course-enroll{min-height:44px}
+  .pgb{min-width:44px;min-height:44px}
+  .tabs{gap:8px}
 }
 </style>
 </head>
@@ -227,12 +424,13 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <div class="logo">Pesquisa<em>MZ</em></div>
     <div class="logo-by">Desenvolvido pela <b>Nexus AI</b></div>
   </div>
-  <div class="nav-links">
-    <a class="nav-a" href="#" onclick="showAbout();return false;">Como funciona</a>
-    <a class="nav-a" href="#" onclick="showWallet();return false;">Minha carteira</a>
-    <a class="nav-a" href="#" onclick="openCourses();return false;">📚 Cursos</a>
-    <a class="nav-a" href="#" onclick="openAI();return false;">🤖 IA</a>
-    <button class="btn-sub" onclick="openUpload()">+ Submeter trabalho</button>
+  <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a class="nav-a" href="#" onclick="closeMenu();showAbout();return false;">Como funciona</a>
+    <a class="nav-a" href="#" onclick="closeMenu();showWallet();return false;">Minha carteira</a>
+    <a class="nav-a" href="#" onclick="closeMenu();openCourses();return false;">📚 Cursos</a>
+    <a class="nav-a" href="#" onclick="closeMenu();openAI();return false;">🤖 IA</a>
+    <button class="btn-sub" onclick="closeMenu();openUpload()">+ Submeter trabalho</button>
   </div>
 </nav>
 
@@ -867,6 +1065,28 @@ document.addEventListener('keydown',function(e){
 
 buildAcc();render();
 if(FB_OK)loadDocsFromCloud();
+
+// ═══════════════════════════════════════════
+// MOBILE MENU TOGGLE
+// ═══════════════════════════════════════════
+function toggleMenu(){
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('navLinks').classList.remove('open');
+}
+// Fechar menu ao clicar fora
+document.addEventListener('click',function(e){
+  const nav=document.querySelector('.nav-links');
+  const btn=document.querySelector('.menu-toggle');
+  if(nav&&btn&&nav.classList.contains('open')&&!nav.contains(e.target)&&e.target!==btn){
+    closeMenu();
+  }
+});
+// Fechar menu ao redimensionar para desktop
+window.addEventListener('resize',function(){
+  if(window.innerWidth>820)closeMenu();
+});
 
 // ═══════════════════════════════════════════
 // AI GENERATOR
