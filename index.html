@@ -32,10 +32,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Firebase SDK v10 compat (fallback) -->
+<!-- Firebase SDK v10 compat -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
@@ -830,20 +827,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 
 <script>
 // ═══════════════════════════════════════════
-// SUPABASE CONFIG — Backend principal
-// ═══════════════════════════════════════════
-const SUPABASE_URL='https://SEU_PROJECTO.supabase.co';
-const SUPABASE_KEY='SUA_ANON_KEY';
-let supabase=null,SUPABASE_OK=false;
-try{
-  if(SUPABASE_URL!=='https://SEU_PROJECTO.supabase.co'){
-    supabase=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-    SUPABASE_OK=true;
-  }
-}catch(e){console.warn('Supabase init error:',e);}
-
-// ═══════════════════════════════════════════
-// FIREBASE CONFIG — Fallback (opcional)
+// FIREBASE CONFIG — Backend principal
 // ═══════════════════════════════════════════
 const FB_CONFIG={
   apiKey:"SUA_API_KEY",
@@ -853,24 +837,20 @@ const FB_CONFIG={
   messagingSenderId:"SEU_SENDER_ID",
   appId:"SEU_APP_ID"
 };
-let fbDb=null,fbStorage=null,FB_OK=false;
+let db=null,fbStorage=null,FB_OK=false;
 try{
   if(FB_CONFIG.apiKey&&FB_CONFIG.apiKey!=='SUA_API_KEY'){
     firebase.initializeApp(FB_CONFIG);
-    fbDb=firebase.firestore();
+    db=firebase.firestore();
     fbStorage=firebase.storage();
     FB_OK=true;
+    document.addEventListener('DOMContentLoaded',()=>{
+      const b=document.createElement('div');b.className='fb-badge';
+      b.innerHTML='<div class="fb-dot"></div>Firebase Online';
+      document.body.appendChild(b);
+    });
   }
 }catch(e){console.warn('Firebase não configurado:',e.message);}
-
-// Indicador de conexão
-document.addEventListener('DOMContentLoaded',()=>{
-  const b=document.createElement('div');b.className='fb-badge';
-  if(SUPABASE_OK){b.innerHTML='<div class="fb-dot"></div>Online — Supabase';}
-  else if(FB_OK){b.innerHTML='<div class="fb-dot"></div>Online — Firebase';}
-  else{b.innerHTML='📦 Modo Local (IndexedDB)';}
-  document.body.appendChild(b);
-});
 
 // ═══════════════════════════════════════════
 // ANTHROPIC CLAUDE — chave inserida pelo utilizador
@@ -922,30 +902,12 @@ const UNIS=[
 ];
 
 // ═══════════════════════════════════════════
-// STORAGE — Supabase + IndexedDB + localStorage
+// STORAGE — Firebase + IndexedDB
 // ═══════════════════════════════════════════
-
-// Carregar documentos do Supabase
 async function loadDocsFromCloud(){
-  // Tentar Supabase primeiro
-  if(SUPABASE_OK){
-    try{
-      const {data,error}=await supabase.from('documents').select('*').order('createdAt',{ascending:false}).limit(500);
-      if(!error&&data){
-        const docs=data.map(d=>({id:d.id.toString(),title:d.title,autor:d.autor,ano:d.ano,nivel:d.nivel,area:d.area,uni:d.uni,fac:d.fac,createdAt:d.createdAt}));
-        // Sync para IndexedDB
-        await dbClear('documents');
-        for(const d of docs)await dbAdd('documents',d);
-        DOCS=docs;
-        render();
-        return;
-      }
-    }catch(e){console.warn('Supabase load error:',e);}
-  }
-  // Fallback Firebase
   if(FB_OK){
     try{
-      const snap=await fbDb.collection('documents').orderBy('ano','desc').limit(200).get();
+      const snap=await db.collection('documents').orderBy('ano','desc').limit(500).get();
       const remote=snap.docs.map(d=>({id:d.id,...d.data()}));
       localStorage.setItem('pmz_docs',JSON.stringify(remote));
       DOCS=remote;
@@ -958,21 +920,12 @@ async function loadDocsFromCloud(){
   if(localDocs.length){DOCS=localDocs;render();}
 }
 
-// Guardar documento no cloud
 async function saveDocToCloud(doc){
-  // Supabase
-  if(SUPABASE_OK){
-    try{
-      await supabase.from('documents').insert({title:doc.title,autor:doc.autor,ano:doc.ano,nivel:doc.nivel,area:doc.area,uni:doc.uni,fac:doc.fac});
-    }catch(e){console.warn('Supabase save error:',e);}
-  }
-  // Firebase fallback
   if(FB_OK){
     try{
-      await fbDb.collection('documents').doc(doc.id).set({...doc,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      await db.collection('documents').doc(doc.id).set({...doc,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
     }catch(e){console.warn('Firebase save error:',e);}
   }
-  // IndexedDB local (sempre)
   try{await dbAdd('documents',doc);}catch(e){}
 }
 
@@ -1660,7 +1613,6 @@ async function renderAdminConfig(){
     <div class="admin-card">
       <h4>🗄️ Base de Dados</h4>
       <p>Motor: <b>IndexedDB</b> — ${DB_NAME} v${DB_VERSION}</p>
-      <p>Supabase: ${SUPABASE_OK?'<span class="admin-badge green">Conectado</span>':'<span class="admin-badge yellow">Não configurado</span>'}</p>
       <p>Firebase: ${FB_OK?'<span class="admin-badge green">Conectado</span>':'<span class="admin-badge yellow">Não configurado</span>'}</p>
       <div style="margin-top:10px">
         <button class="admin-btn" onclick="exportDB()">📥 Exportar Dados</button>
@@ -1928,40 +1880,29 @@ document.addEventListener('keydown',function(e){
 },true);
 
 // ═══════════════════════════════════════════
-// SISTEMA DE AUTENTICAÇÃO — SUPABASE
+// SISTEMA DE AUTENTICAÇÃO — IndexedDB
 // ═══════════════════════════════════════════
 let currentUser=null;
 
-// Verificar sessão ao carregar
 async function checkAuthSession(){
-  if(!SUPABASE_OK){
-    // Modo local sem cloud — mostrar botão login mas sem funcionalidade cloud
-    updateAuthUI(null);
-    return;
-  }
+  const uid=localStorage.getItem('pmz_user_id');
+  if(!uid){updateAuthUI(null);return;}
   try{
-    const {data:{session}}=await supabase.auth.getSession();
-    if(session){
-      const {data:user}=await supabase.from('users').select('*').eq('id',session.user.id).single();
+    const user=await dbGet('users',parseInt(uid));
+    if(user){
       currentUser=user;
-      localStorage.setItem('pmz_user_id',user.id);
+      updateAuthUI(user);
     }else{
       currentUser=null;
       localStorage.removeItem('pmz_user_id');
+      updateAuthUI(null);
     }
-  }catch(e){console.warn('Auth session check:',e);}
-  updateAuthUI(currentUser);
+  }catch(e){updateAuthUI(null);}
 }
 
 function handleAuthClick(){
-  if(currentUser){
-    // Já logado — fazer logout
-    doLogout();
-  }else{
-    // Não logado — abrir modal login
-    showLogin();
-    document.getElementById('authModal').classList.add('open');
-  }
+  if(currentUser){doLogout();}
+  else{showLogin();document.getElementById('authModal').classList.add('open');}
 }
 
 function showLogin(){
@@ -1989,37 +1930,18 @@ async function doLogin(){
   const btn=document.getElementById('authActionBtn');
   btn.textContent='A entrar...';btn.disabled=true;
 
-  if(SUPABASE_OK){
-    // Login via Supabase Auth
-    try{
-      const {data,error}=await supabase.auth.signInWithPassword({
-        phone:'+'+phone.startsWith('258')?phone:'258'+phone,
-        password:pwd
-      });
-      if(error)throw error;
-      // Buscar dados do user
-      const {data:userData}=await supabase.from('users').select('*').eq('id',data.user.id).single();
-      currentUser=userData;
-      localStorage.setItem('pmz_user_id',userData.id);
-      updateAuthUI(currentUser);
-      closeAuthModal();
-      showToast('✅ Bem-vindo(a), '+userData.name+'!');
-    }catch(e){
-      showToast('❌ '+e.message);
-    }
+  const users=await dbGetAll('users').catch(()=>[]);
+  const fullPhone=phone.startsWith('258')?phone:'258'+phone;
+  const user=users.find(u=>u.phone===fullPhone&&u.password===pwd);
+
+  if(user){
+    currentUser=user;
+    localStorage.setItem('pmz_user_id',user.id);
+    updateAuthUI(user);
+    closeAuthModal();
+    showToast('✅ Bem-vindo(a), '+user.name+'!');
   }else{
-    // Login local (IndexedDB)
-    const users=await dbGetAll('users').catch(()=>[]);
-    const user=users.find(u=>u.phone===phone&&u.password===pwd);
-    if(user){
-      currentUser=user;
-      localStorage.setItem('pmz_user_id',user.id);
-      updateAuthUI(user);
-      closeAuthModal();
-      showToast('✅ Bem-vindo(a), '+user.name+'!');
-    }else{
-      showToast('❌ Número ou palavra-passe incorretos.');
-    }
+    showToast('❌ Número ou palavra-passe incorretos.');
   }
   btn.textContent='Entrar';btn.disabled=false;
 }
@@ -2039,46 +1961,24 @@ async function doRegister(){
   btn.textContent='A criar...';btn.disabled=true;
 
   const fullPhone=phone.startsWith('258')?phone:'258'+phone;
+  const users=await dbGetAll('users').catch(()=>[]);
 
-  if(SUPABASE_OK){
-    // Registro via Supabase Auth
-    try{
-      const {data,error}=await supabase.auth.signUp({
-        phone:'+'+fullPhone,
-        password:pwd,
-        options:{data:{name:name,phone:fullPhone}}
-      });
-      if(error)throw error;
-      // Criar registro na tabela users
-      const newUser={
-        id:data.user.id,
-        name:name,
-        phone:fullPhone,
-        role:'user',
-        balance:0,
-        createdAt:new Date().toISOString()
-      };
-      await supabase.from('users').insert(newUser);
-      currentUser=newUser;
-      localStorage.setItem('pmz_user_id',newUser.id);
-      updateAuthUI(newUser);
-      closeAuthModal();
-      showToast('✅ Conta criada! Bem-vindo(a), '+name+'!');
-    }catch(e){
-      showToast('❌ '+e.message);
-    }
-  }else{
-    // Registro local (IndexedDB)
-    const users=await dbGetAll('users').catch(()=>[]);
-    if(users.find(u=>u.phone===fullPhone)){showToast('❌ Número já registado.');return;}
-    const newUser={
-      name:name,
-      phone:fullPhone,
-      password:pwd, // Em produção: hash com bcrypt!
-      role:'user',
-      balance:0,
-      createdAt:new Date().toISOString()
-    };
+  if(users.find(u=>u.phone===fullPhone)){
+    showToast('❌ Número já registado.');
+    btn.textContent='Criar Conta';btn.disabled=false;
+    return;
+  }
+
+  const newUser={
+    name:name,
+    phone:fullPhone,
+    password:pwd,
+    role:'user',
+    balance:0,
+    createdAt:new Date().toISOString()
+  };
+
+  try{
     const id=await dbAdd('users',newUser);
     newUser.id=id;
     currentUser=newUser;
@@ -2086,14 +1986,13 @@ async function doRegister(){
     updateAuthUI(newUser);
     closeAuthModal();
     showToast('✅ Conta criada! Bem-vindo(a), '+name+'!');
+  }catch(e){
+    showToast('❌ Erro ao criar conta.');
   }
   btn.textContent='Criar Conta';btn.disabled=false;
 }
 
-async function doLogout(){
-  if(SUPABASE_OK){
-    await supabase.auth.signOut();
-  }
+function doLogout(){
   currentUser=null;
   localStorage.removeItem('pmz_user_id');
   updateAuthUI(null);
@@ -2116,7 +2015,6 @@ function updateAuthUI(user){
   }
 }
 
-// Backdrop close para auth modal
 document.getElementById('authModal').addEventListener('click',function(e){
   if(e.target===this)closeAuthModal();
 });
