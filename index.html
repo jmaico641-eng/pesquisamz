@@ -263,7 +263,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 @media(max-width:600px){
   .nav{height:52px;padding:0 12px}
   .logo{font-size:18px}
-  .logo-by{font-size:9px}
+  .logo-wrap{display:flex;flex-direction:column;gap:0}
+  .logo-by{font-size:8px!important;color:var(--g4)!important;letter-spacing:1px!important;font-weight:500!important;text-transform:uppercase!important;display:block!important;visibility:visible!important;opacity:1!important}
+  .logo-by b{color:var(--gold)!important}
   .nav-links{top:52px;width:100%;height:calc(100vh - 52px)}
   .hero{padding:28px 12px 40px}
   .hero h1{font-size:clamp(22px,7vw,32px)}
@@ -357,6 +359,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 @media(max-width:380px){
   .nav{height:48px;padding:0 10px}
   .logo{font-size:16px}
+  .logo-wrap{display:flex;flex-direction:column;gap:0}
+  .logo-by{font-size:7px!important;color:var(--g4)!important;letter-spacing:.8px!important;font-weight:500!important;text-transform:uppercase!important;display:block!important;visibility:visible!important;opacity:1!important}
+  .logo-by b{color:var(--gold)!important}
   .logo-by{font-size:8px}
   .nav-links{top:48px;height:calc(100vh - 48px);padding:16px 12px}
   .hero{padding:24px 10px 32px}
@@ -422,7 +427,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <nav class="nav">
   <div class="logo-wrap">
     <div class="logo">Pesquisa<em>MZ</em></div>
-    <div class="logo-by">Desenvolvido pela <b>Nexus AI</b></div>
+    <div class="logo-by">Desenvolvido por <b>Junir Maico Jorge</b></div>
   </div>
   <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
   <div class="nav-links" id="navLinks">
@@ -624,12 +629,15 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <!-- AI GENERATOR MODAL -->
 <div class="ovl" id="aiModal">
   <div class="modal" style="max-width:640px;max-height:92vh;display:flex;flex-direction:column">
-    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Groq AI</b> (Llama 3.3 70B)</div></div>
+    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Anthropic Claude</b> (Sonnet 4)</div></div>
     <div class="ubody" style="overflow-y:auto;flex:1">
       <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
-        <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
-        <input class="finp" id="aiKey" type="password" placeholder="gsk_...">
-        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
+        <div class="flabel" style="color:#8B6914;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between">
+          <span>🔑 Chave Anthropic API</span>
+          <span id="keyStatus" style="font-size:11px;color:var(--g5);font-weight:500;display:none">✓ Guardada</span>
+        </div>
+        <input class="finp" id="aiKey" type="password" placeholder="sk-ant-..." oninput="checkKey()">
+        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--g6)">console.anthropic.com</a></div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Trabalho Académico</div>
@@ -715,15 +723,24 @@ try{
 }catch(e){console.warn('Firebase não configurado:',e.message);}
 
 // ═══════════════════════════════════════════
-// GROQ AI — chave inserida pelo utilizador
+// ANTHROPIC CLAUDE — chave inserida pelo utilizador
 // ═══════════════════════════════════════════
-const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL='llama-3.3-70b-versatile';
-async function callGroq(prompt,key){
-  const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:2048})});
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Groq');}
+const ANTHROPIC_URL='https://api.anthropic.com/v1/messages';
+const ANTHROPIC_MODEL='claude-sonnet-4-20250514';
+
+// Carregar chave guardada do localStorage
+function getAnthropicKey(){
+  try{return localStorage.getItem('pmz_anthropic_key')||''}catch(e){return '';}
+}
+function saveAnthropicKey(key){
+  try{localStorage.setItem('pmz_anthropic_key',key);return true}catch(e){return false;}
+}
+
+async function callClaude(prompt,key){
+  const r=await fetch(ANTHROPIC_URL,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:ANTHROPIC_MODEL,max_tokens:4096,messages:[{role:'user',content:prompt}]})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Anthropic');}
   const d=await r.json();
-  return d.choices?.[0]?.message?.content||'Sem resposta.';
+  return d.content?.[0]?.text||'Sem resposta.';
 }
 const UNIS=[
   {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
@@ -1095,7 +1112,21 @@ function openAI(){
   if(!document.getElementById('aiUni2').options.length){
     document.getElementById('aiUni2').innerHTML=UNIS.map(u=>`<option value="${u.a}">${u.a} — ${u.n.slice(0,28)}</option>`).join('');
   }
+  // Carregar chave guardada se existir
+  const savedKey=getAnthropicKey();
+  if(savedKey){
+    document.getElementById('aiKey').value=savedKey;
+    document.getElementById('keyStatus').style.display='block';
+  }else{
+    document.getElementById('keyStatus').style.display='none';
+  }
   document.getElementById('aiModal').classList.add('open');
+}
+function checkKey(){
+  const key=document.getElementById('aiKey').value.trim();
+  const status=document.getElementById('keyStatus');
+  if(key.length>10){status.style.display='block';status.textContent='✓ Pronta';status.style.color='var(--g5)';}
+  else{status.style.display='none';}
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
@@ -1105,14 +1136,16 @@ async function runAI(){
   const pag=document.getElementById('aiPag').value||60;
   const area=document.getElementById('aiArea').value.trim()||'Geral';
   const uni=document.getElementById('aiUni2').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
+  if(!key){showToast('⚠️ Introduz a tua chave Anthropic API.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
+  // Guardar chave para uso futuro
+  saveAnthropicKey(key);
   const btn=document.getElementById('aiBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar...';
   btn.disabled=true;
   try{
     const prompt=`Actua como orientador académico moçambicano. Cria uma estrutura completa para um trabalho de ${nivel} sobre "${tema}" na área de ${area} para a ${uni}. O trabalho deve ter aproximadamente ${pag} páginas.\n\nInclui:\n1. TÍTULO OFICIAL\n2. RESUMO (150 palavras)\n3. PALAVRAS-CHAVE (5-7)\n4. ÍNDICE COMPLETO com capítulos e subcapítulos numerados\n5. INTRODUÇÃO (esboço)\n6. METODOLOGIA sugerida\n7. BIBLIOGRAFIA base (5 referências)\n\nEscreve em Português de Moçambique. Sê específico e académico.`;
-    const txt=await callGroq(prompt,key);
+    const txt=await callClaude(prompt,key);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
     showToast('✅ Estrutura gerada com sucesso!');
@@ -1128,14 +1161,16 @@ async function runCursoAI(){
   const tema=document.getElementById('aiCursoTema').value.trim();
   const dur=document.getElementById('aiCursoDur').value;
   const niv=document.getElementById('aiCursoNiv').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
+  if(!key){showToast('⚠️ Introduz a tua chave Anthropic API.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do curso.');return;}
+  // Guardar chave para uso futuro
+  saveAnthropicKey(key);
   const btn=document.getElementById('aiCursoBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar...';
   btn.disabled=true;
   try{
     const prompt=`Cria um plano de curso online completo em Português sobre "${tema}" com duração de ${dur} para nível ${niv}. Contexto: Moçambique.\n\nInclui:\n1. NOME DO CURSO\n2. DESCRIÇÃO (2 parágrafos)\n3. OBJECTIVOS DE APRENDIZAGEM (5-8 pontos)\n4. PRÉ-REQUISITOS\n5. MÓDULOS DETALHADOS (cada módulo com: nome, duração, tópicos, actividade prática)\n6. AVALIAÇÃO (como será avaliado o aluno)\n7. MATERIAL NECESSÁRIO\n8. CERTIFICAÇÃO\n\nSe específico e prático para o contexto moçambicano.`;
-    const txt=await callGroq(prompt,key);
+    const txt=await callClaude(prompt,key);
     document.getElementById('aiCursoText').textContent=txt;
     document.getElementById('aiCursoOut').style.display='';
     showToast('✅ Plano de curso gerado!');
