@@ -1,0 +1,14 @@
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# PDFs de teste (não commitar ficheiros grandes)
+*.pdf

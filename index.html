@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PesquisaMZ — Repositório Académico de Moçambique</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g9:#03231A;--g8:#04342C;--g7:#085041;--g6:#0F6E56;--g5:#1D9E75;--g4:#3BBEA0;
+  --g2:#9FE1CB;--g1:#C8F0E3;--g0:#E1F5EE;
+  --gold:#E8A838;--white:#FDFCFA;
+  --gr0:#F5F4F0;--gr1:#ECEAE3;--gr2:#D5D3C9;--gr4:#9B9890;--gr6:#5A5852;--gr8:#2A2825;--gr9:#1A1917;
+  --fd:'DM Serif Display',Georgia,serif;--fb:'DM Sans',system-ui,sans-serif;
+  --rsm:6px;--rmd:10px;--rlg:16px;--rxl:24px;
+  --ss:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --sm:0 4px 16px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.06);
+  --sl:0 12px 40px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100vh;overflow-x:hidden}
+.nav{position:sticky;top:0;z-index:90;background:var(--g8);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.logo{font-family:var(--fd);font-size:22px;color:var(--white)}.logo em{color:var(--gold);font-style:normal}
+.logo-wrap{display:flex;flex-direction:column;gap:1px}
+.logo-by{font-size:10px;color:var(--g4);letter-spacing:1.2px;font-weight:500;text-transform:uppercase}
+.logo-by b{color:var(--gold)}
+.nav-links{display:flex;gap:6px;align-items:center}
+.nav-a{color:var(--g2);font-size:13px;padding:6px 14px;border-radius:var(--rsm);cursor:pointer;border:none;background:none;text-decoration:none;transition:all .15s}
+.nav-a:hover{background:rgba(255,255,255,.1);color:white}
+.btn-sub{background:var(--gold);color:var(--g9);padding:8px 18px;border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--fb);transition:all .15s}
+.btn-sub:hover{background:#F5BE60;transform:translateY(-1px)}
+.hero{background:var(--g8);background-image:radial-gradient(ellipse 80% 60% at 70% 40%,rgba(29,158,117,.25),transparent 70%),radial-gradient(ellipse 40% 40% at 10% 80%,rgba(232,168,56,.12),transparent 60%);padding:56px 32px 64px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.025) 39px,rgba(255,255,255,.025) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.025) 39px,rgba(255,255,255,.025) 40px)}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;position:relative}
+.hero h1{font-family:var(--fd);font-size:clamp(28px,5vw,46px);color:var(--white);line-height:1.15;margin-bottom:14px;position:relative}
+.hero h1 em{color:var(--g2);font-style:italic}
+.hero-sub{font-size:15px;color:var(--g2);max-width:520px;margin:0 auto 32px;line-height:1.7;position:relative}
+.sw{max-width:660px;margin:0 auto;background:white;border-radius:var(--rlg);padding:6px;display:flex;gap:6px;box-shadow:var(--sl);position:relative}
+.sw input{flex:1;border:none;outline:none;font-family:var(--fb);font-size:14px;padding:10px 14px;color:var(--gr9)}
+.sw input::placeholder{color:var(--gr4)}
+.sw button{background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--fb);transition:all .15s}
+.sw button:hover{background:var(--g5)}
+.stats{display:flex;justify-content:center;background:var(--g9)}
+.si{flex:1;max-width:180px;text-align:center;padding:16px 12px;border-right:1px solid rgba(255,255,255,.07)}
+.si:last-child{border-right:none}
+.sn{font-family:var(--fd);font-size:26px;color:var(--g4);display:block;line-height:1}
+.sl2{font-size:11px;color:var(--g2);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.main{display:grid;grid-template-columns:300px 1fr;gap:24px;max-width:1280px;margin:0 auto;padding:28px 24px}
+.sidebar{position:sticky;top:80px;align-self:start;max-height:calc(100vh - 100px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--gr2);border-radius:4px}
+.scard{background:white;border-radius:var(--rlg);border:1px solid var(--gr1);overflow:hidden;box-shadow:var(--ss)}
+.shead{padding:16px 18px 12px;border-bottom:1px solid var(--gr1);display:flex;align-items:center;justify-content:space-between}
+.stitle{font-size:13px;font-weight:600;color:var(--gr6);text-transform:uppercase;letter-spacing:1px}
+.clr{font-size:12px;color:var(--g5);cursor:pointer;border:none;background:none;font-family:var(--fb)}
+.lchip{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--rsm);cursor:pointer;transition:all .15s;border:1px solid transparent}
+.lchip:hover{background:var(--gr0)}.lchip.active{background:var(--g0);border-color:var(--g2)}
+.lchip input{accent-color:var(--g6);width:14px;height:14px}.lchip span{font-size:13px;color:#3d3d3d}
+.uitem{border-bottom:1px solid var(--gr1)}.uitem:last-child{border-bottom:none}
+.uhead{padding:12px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s;user-select:none}
+.uhead:hover{background:var(--gr0)}
+.uchk{accent-color:var(--g6);width:14px;height:14px;flex-shrink:0}
+.uabb{font-size:11px;font-weight:600;background:var(--g1);color:var(--g8);padding:2px 7px;border-radius:4px;flex-shrink:0}
+.uname{font-size:13px;font-weight:500;color:var(--gr8);flex:1;line-height:1.3}
+.utog{font-size:16px;color:var(--gr4);transition:transform .2s;flex-shrink:0}.utog.open{transform:rotate(90deg)}
+.facs{display:none;padding:0 18px 10px 42px;flex-direction:column;gap:4px}.facs.open{display:flex}
+.fgrp{margin-bottom:6px}
+.flbl{font-size:11px;font-weight:600;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;padding:4px 0}
+.fitem{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--rsm);cursor:pointer;transition:all .1s}
+.fitem:hover{background:var(--g0)}.fitem input{accent-color:var(--g6);width:13px;height:13px;flex-shrink:0}
+.fitem span{font-size:12px;color:var(--gr6);line-height:1.4}
+.content{min-width:0}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.rcount{font-size:13px;color:var(--gr6)}.rcount strong{color:var(--gr9)}
+.sortsel{font-family:var(--fb);font-size:13px;border:1px solid var(--gr2);border-radius:var(--rsm);padding:7px 12px;background:white;color:#3d3d3d;cursor:pointer;outline:none}
+.aftags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.ftag{display:flex;align-items:center;gap:6px;background:var(--g0);border:1px solid var(--g2);color:var(--g8);font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px}
+.ftag button{background:none;border:none;cursor:pointer;color:var(--g6);font-size:14px;line-height:1;padding:0}
+.dgrid{display:flex;flex-direction:column;gap:12px}
+.dcard{background:white;border-radius:var(--rlg);border:1px solid var(--gr1);padding:20px 22px;transition:all .18s;box-shadow:var(--ss);display:flex;gap:18px;align-items:flex-start}
+.dcard:hover{border-color:#5DCAA5;box-shadow:var(--sm);transform:translateY(-1px)}
+.dico{width:44px;height:52px;border-radius:var(--rsm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:.5px;position:relative;overflow:hidden;background:linear-gradient(135deg,#FF6B6B,#EE3030);color:white}
+.dico::before{content:'';position:absolute;top:0;right:0;border-left:12px solid rgba(255,255,255,.2);border-bottom:12px solid transparent}
+.dbody{flex:1;min-width:0}
+.dtitle{font-size:15px;font-weight:500;color:var(--gr9);line-height:1.45;margin-bottom:8px}
+.dmeta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.tn-mestrado{background:#EEEDFE;color:#3C3489}
+.tn-licenciatura{background:#E6F1FB;color:#0C447C}
+.tn-doutoramento{background:#FAEEDA;color:#633806}
+.tn-monografia{background:#FCEBEB;color:#A32D2D}
+.ta{background:var(--gr1);color:var(--gr6)}
+.tu{background:var(--g0);color:var(--g7)}
+.dautor{font-size:12px;color:var(--gr4)}
+.dright{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+.price{font-family:var(--fd);font-size:20px;color:var(--g7)}
+.price span{font-size:12px;color:var(--gr4);font-family:var(--fb)}
+.cbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.bprev{background:white;color:var(--g6);border:1px solid #5DCAA5;border-radius:var(--rsm);padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.bprev:hover{background:var(--g0)}
+.bbuy{background:var(--g6);color:white;border:none;border-radius:var(--rsm);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.bbuy:hover{background:var(--g5)}
+.empty{text-align:center;padding:60px 20px;background:white;border-radius:var(--rlg);border:1px solid var(--gr1)}
+.eico{font-size:40px;margin-bottom:14px;opacity:.4}
+.etitle{font-size:16px;font-weight:500;color:var(--gr6);margin-bottom:6px}
+.esub{font-size:13px;color:var(--gr4)}
+.pgn{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:28px}
+.pgb{width:36px;height:36px;border-radius:var(--rsm);border:1px solid var(--gr2);background:white;color:#3d3d3d;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:var(--fb)}
+.pgb:hover{border-color:var(--g4);color:var(--g6)}.pgb.act{background:var(--g6);color:white;border-color:var(--g6)}
+.ovl{display:none;position:fixed;inset:0;background:rgba(4,52,44,.65);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.ovl.open{display:flex}
+.modal{background:white;border-radius:var(--rxl);box-shadow:var(--sl);overflow:hidden;animation:sup .25s ease;width:100%}
+@keyframes sup{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mtop{background:var(--g8);background-image:radial-gradient(ellipse at 80% 20%,rgba(29,158,117,.4),transparent 70%);padding:24px 26px}
+.mtop h2{font-family:var(--fd);font-size:20px;color:white;margin-bottom:6px}
+.msub{font-size:13px;color:var(--g2);line-height:1.5}
+.mbody{padding:24px 26px}
+.prow{display:flex;align-items:center;justify-content:space-between;background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:14px 18px;margin-bottom:20px}
+.plbl{font-size:13px;color:var(--gr6)}
+.pval{font-family:var(--fd);font-size:28px;color:var(--g7)}
+.pmths{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.popt{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--rmd);border:1.5px solid var(--gr2);cursor:pointer;transition:all .15s}
+.popt:hover{border-color:#5DCAA5;background:var(--g0)}.popt.sel{border-color:var(--g5);background:var(--g0)}
+.plogo{width:40px;height:40px;border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.pm{background:#E00B0B}.pe{background:#F7A800}.pk{background:#004A99}
+.pname{font-size:14px;font-weight:600;color:var(--gr9)}.psub{font-size:12px;color:var(--gr4)}
+.prad{width:18px;height:18px;border-radius:50%;border:2px solid var(--gr2);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.popt.sel .prad{border-color:var(--g5);background:var(--g5)}
+.popt.sel .prad::after{content:'';width:8px;height:8px;border-radius:50%;background:white;display:block}
+.bpag{width:100%;padding:14px;background:var(--g6);color:white;border:none;border-radius:var(--rmd);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;margin-bottom:10px}
+.bpag:hover{background:var(--g5)}
+.bcan{width:100%;padding:12px;background:none;color:#888;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-size:14px;cursor:pointer;font-family:var(--fb)}
+.scr{padding:40px 26px;text-align:center}
+.schk{width:64px;height:64px;border-radius:50%;background:var(--g5);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;color:white}
+.scr h2{font-family:var(--fd);font-size:22px;color:var(--gr9);margin-bottom:8px}
+.scr p{font-size:14px;color:#888;line-height:1.6;margin-bottom:24px}
+.bdl{display:inline-flex;align-items:center;gap:10px;background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:13px 28px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-bottom:12px;transition:all .15s;text-decoration:none}
+.bdl:hover{background:var(--g5);transform:translateY(-1px)}
+/* PREVIEW */
+#pvModal .modal{max-width:860px;max-height:90vh;display:flex;flex-direction:column;border-radius:var(--rlg)}
+.pvhead{background:var(--g8);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pvhead h3{font-family:var(--fd);font-size:16px;color:white;max-width:620px;line-height:1.3}
+.pvclose{background:rgba(255,255,255,.15);border:none;color:white;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pvclose:hover{background:rgba(255,255,255,.25)}
+.pvbody{flex:1;overflow:hidden;min-height:480px}
+.pvbody iframe{width:100%;height:100%;border:none;min-height:480px}
+.pvfoot{padding:14px 22px;border-top:1px solid var(--gr1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:white}
+.pvnote{font-size:12px;color:var(--gr4)}
+.bbn{background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.bbn:hover{background:var(--g5)}
+/* UPLOAD */
+#upModal .modal{max-width:540px}
+.ubody{padding:22px 26px;display:flex;flex-direction:column;gap:14px;max-height:75vh;overflow-y:auto}
+.flabel{font-size:13px;font-weight:500;color:#3d3d3d;margin-bottom:5px}
+.finp{width:100%;padding:10px 14px;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-family:var(--fb);font-size:14px;color:var(--gr9);outline:none;transition:border-color .15s}
+.finp:focus{border-color:var(--g5)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dz{border:2px dashed var(--gr2);border-radius:var(--rmd);padding:28px 20px;text-align:center;cursor:pointer;transition:all .15s}
+.dz:hover,.dz.dg{border-color:var(--g4);background:var(--g0)}
+.dz.hf{border-color:var(--g5);background:var(--g0);border-style:solid}
+.dzico{font-size:28px;margin-bottom:8px}.dztxt{font-size:13px;color:#888}.dztxt strong{color:var(--g6)}
+.enote{background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px 16px;font-size:13px;color:var(--g8);line-height:1.6}
+.enote strong{color:var(--g6)}
+.pbwrap{background:var(--gr1);border-radius:20px;height:6px;overflow:hidden;margin-top:4px;display:none}
+.pbbar{height:100%;background:var(--g5);border-radius:20px;width:0;transition:width .3s}
+.srow{display:flex;gap:10px}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--g8);color:white;padding:12px 24px;border-radius:var(--rmd);font-size:14px;font-weight:500;z-index:999;transition:transform .3s;white-space:nowrap;box-shadow:var(--sl)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* WALLET */
+.wallet-bar{background:linear-gradient(135deg,var(--g8),var(--g9));padding:16px 22px;border-radius:var(--rlg);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sm)}
+.wallet-info{display:flex;align-items:center;gap:14px}
+.wallet-icon{width:44px;height:44px;border-radius:var(--rmd);background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--g9)}
+.wallet-label{font-size:12px;color:var(--g2);text-transform:uppercase;letter-spacing:1px}
+.wallet-amount{font-family:var(--fd);font-size:24px;color:var(--white)}
+.wallet-btn{background:var(--gold);color:var(--g9);border:none;border-radius:var(--rsm);padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.wallet-btn:hover{background:#F5BE60}
+/* ABOUT MODAL */
+#aboutModal .modal{max-width:600px}
+.about-body{padding:26px;line-height:1.7;font-size:14px;color:var(--gr6)}
+.about-body h3{font-family:var(--fd);color:var(--gr9);margin:18px 0 8px;font-size:17px}
+.about-body p{margin-bottom:12px}
+.about-body ul{padding-left:20px;margin-bottom:12px}
+.about-body li{margin-bottom:4px}
+.about-steps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.about-step{background:var(--gr0);border-radius:var(--rmd);padding:14px;text-align:center}
+.about-step .num{font-family:var(--fd);font-size:22px;color:var(--g6);display:block;margin-bottom:4px}
+.about-step .txt{font-size:12px;color:var(--gr6)}
+@media(max-width:820px){
+  .main{grid-template-columns:1fr;padding:16px}
+  .sidebar{position:static;max-height:none}
+  .nav{padding:0 16px}.hero{padding:36px 16px 48px}
+  .stats{flex-wrap:wrap}.si{max-width:none;flex:1 1 45%}
+  .cbtns{flex-direction:column}.nav-a{display:none}
+  .about-steps{grid-template-columns:1fr}
+  .wallet-bar{flex-direction:column;gap:12px;text-align:center}
+  .wallet-info{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo-wrap">
+    <div class="logo">Pesquisa<em>MZ</em></div>
+    <div class="logo-by">Desenvolvido pela <b>Nexus AI</b></div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-a" href="#" onclick="showAbout();return false;">Como funciona</a>
+    <a class="nav-a" href="#" onclick="showWallet();return false;">Minha carteira</a>
+    <button class="btn-sub" onclick="openUpload()">+ Submeter trabalho</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Repositório Académico Nacional</div>
+  <h1>Pesquisa académica<br><em>feita em Moçambique</em></h1>
+  <p class="hero-sub">Acede a teses, monografias e dissertações de todas as universidades e faculdades do país. Documento disponível logo após o pagamento.</p>
+  <div class="sw">
+    <input type="text" id="searchInput" placeholder="Pesquisar por título, autor, palavra-chave..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">Pesquisar</button>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="si"><span class="sn" id="statDocs">0</span><div class="sl2">Documentos</div></div>
+  <div class="si"><span class="sn">9</span><div class="sl2">Universidades</div></div>
+  <div class="si"><span class="sn">60+</span><div class="sl2">Faculdades</div></div>
+  <div class="si"><span class="sn">50 MZN</span><div class="sl2">Por documento</div></div>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="scard">
+      <div class="shead">
+        <span class="stitle">Filtros</span>
+        <button class="clr" onclick="clearAll()">Limpar tudo</button>
+      </div>
+      <div style="padding:14px 18px 4px;border-bottom:1px solid var(--gr1)">
+        <div style="font-size:11px;font-weight:600;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Nível académico</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label class="lchip"><input type="checkbox" class="nchk" value="Mestrado" onchange="applyFilters()"><span>Mestrado</span></label>
+          <label class="lchip"><input type="checkbox" class="nchk" value="Doutoramento" onchange="applyFilters()"><span>Doutoramento</span></label>
+          <label class="lchip"><input type="checkbox" class="nchk" value="Licenciatura" onchange="applyFilters()"><span>Licenciatura</span></label>
+          <label class="lchip"><input type="checkbox" class="nchk" value="Monografia" onchange="applyFilters()"><span>Monografia</span></label>
+        </div>
+      </div>
+      <div style="padding:14px 18px 4px">
+        <div style="font-size:11px;font-weight:600;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Universidades & Faculdades</div>
+      </div>
+      <div id="uniAcc"></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="toolbar">
+      <div class="rcount" id="rcount">0 documentos</div>
+      <select class="sortsel" onchange="applyFilters()">
+        <option value="rec">Mais recente</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+      </select>
+    </div>
+    <div class="aftags" id="aftags"></div>
+    <div class="dgrid" id="dgrid"></div>
+    <div class="pgn" id="pgn"></div>
+  </main>
+</div>
+
+<!-- PAY MODAL -->
+<div class="ovl" id="payOvl">
+  <div class="modal" style="max-width:460px">
+    <div id="payScr">
+      <div class="mtop"><h2>Comprar documento</h2><div class="msub" id="payDocTitle">—</div></div>
+      <div class="mbody">
+        <div class="prow"><div class="plbl">Valor a pagar</div><div class="pval">50 <span style="font-size:16px;color:var(--gr4);font-family:var(--fb)">MZN</span></div></div>
+        <div style="font-size:13px;font-weight:600;color:var(--gr6);margin-bottom:10px">Escolhe o método de pagamento</div>
+        <div class="pmths">
+          <div class="popt sel" onclick="selPay(this)"><div class="plogo pm">M</div><div><div class="pname">M-Pesa</div><div class="psub">Vodacom Moçambique</div></div><div class="prad"></div></div>
+          <div class="popt" onclick="selPay(this)"><div class="plogo pe">e</div><div><div class="pname">e-Mola</div><div class="psub">Movitel</div></div><div class="prad"></div></div>
+          <div class="popt" onclick="selPay(this)"><div class="plogo pk">mk</div><div><div class="pname">mKesh</div><div class="psub">BIM / Millennium Bim</div></div><div class="prad"></div></div>
+        </div>
+        <button class="bpag" onclick="confirmPay()">Pagar 50 MZN e descarregar agora</button>
+        <button class="bcan" onclick="closePayOvl()">Cancelar</button>
+      </div>
+    </div>
+    <div id="okScr" style="display:none">
+      <div class="scr">
+        <div class="schk">✓</div>
+        <h2>Pagamento confirmado!</h2>
+        <p>O teu documento foi desbloqueado.<br>Clica abaixo para descarregar o PDF.</p>
+        <a class="bdl" id="dlLink" href="#" download>⬇ Descarregar documento PDF</a><br>
+        <button class="bcan" style="max-width:200px;margin:0 auto" onclick="closePayOvl()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="ovl" id="pvModal">
+  <div class="modal" style="max-width:860px;max-height:90vh;display:flex;flex-direction:column;border-radius:var(--rlg)">
+    <div class="pvhead">
+      <h3 id="pvTitle">—</h3>
+      <button class="pvclose" onclick="closePv()">✕</button>
+    </div>
+    <div class="pvbody"><iframe id="pvFrame" src="about:blank"></iframe></div>
+    <div class="pvfoot" id="pvFoot">
+      <span class="pvnote">👁 Pré-visualização do documento</span>
+      <button class="bbn" id="pvBtn">Comprar acesso completo — 50 MZN</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="ovl" id="upModal">
+  <div class="modal" style="max-width:540px">
+    <div class="mtop"><h2>Submeter trabalho académico</h2><div class="msub">Publicado imediatamente após submissão</div></div>
+    <div class="ubody">
+      <div><div class="flabel">Título do trabalho *</div><input class="finp" id="upT" type="text" placeholder="Ex: Análise do impacto das microfinanças em Gaza"></div>
+      <div class="frow">
+        <div><div class="flabel">Autor *</div><input class="finp" id="upA" type="text" placeholder="Nome completo"></div>
+        <div><div class="flabel">Ano *</div><input class="finp" id="upY" type="number" placeholder="2024" min="2000" max="2030"></div>
+      </div>
+      <div class="frow">
+        <div><div class="flabel">Nível *</div><select class="finp" id="upN"><option>Licenciatura</option><option>Mestrado</option><option>Doutoramento</option><option>Monografia</option></select></div>
+        <div><div class="flabel">Área *</div><input class="finp" id="upAr" type="text" placeholder="Ex: Economia, Saúde..."></div>
+      </div>
+      <div class="frow">
+        <div><div class="flabel">Universidade *</div><select class="finp" id="upU" onchange="updFac()"></select></div>
+        <div><div class="flabel">Faculdade / Extensão *</div><select class="finp" id="upF"></select></div>
+      </div>
+      <div>
+        <div class="flabel">Ficheiro PDF *</div>
+        <div class="dz" id="dz" onclick="document.getElementById('fi').click()" ondragover="dov(event)" ondragleave="dlv(event)" ondrop="ddr(event)">
+          <input type="file" id="fi" style="display:none" accept=".pdf" onchange="fsel(this)">
+          <div class="dzico" id="dzico">📄</div>
+          <div class="dztxt" id="dztxt"><strong>Clica para seleccionar</strong> ou arrasta aqui</div>
+          <div class="dztxt" style="margin-top:4px;font-size:11px">Apenas PDF · Máximo 50MB</div>
+        </div>
+        <div class="pbwrap" id="pbw"><div class="pbbar" id="pbb"></div></div>
+      </div>
+      <div class="enote">💰 Cada download gera <strong>30 MZN</strong> para a tua carteira M-Pesa, e-Mola ou mKesh.</div>
+      <div class="srow">
+        <button class="bpag" style="margin-bottom:0" onclick="submitWork()">Publicar trabalho na plataforma</button>
+        <button class="bcan" style="width:auto;padding:12px 18px" onclick="closeUp()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div class="ovl" id="walletModal">
+  <div class="modal" style="max-width:460px">
+    <div class="mtop"><h2>Minha carteira</h2><div class="msub">Saldo acumulado por downloads dos teus trabalhos</div></div>
+    <div class="mbody">
+      <div class="prow"><div class="plbl">Saldo disponível</div><div class="pval" id="walletBal">0 <span style="font-size:16px;color:var(--gr4);font-family:var(--fb)">MZN</span></div></div>
+      <div style="font-size:13px;font-weight:600;color:var(--gr6);margin-bottom:10px">Método de levantamento</div>
+      <div class="pmths">
+        <div class="popt sel" onclick="selPay(this)"><div class="plogo pm">M</div><div><div class="pname">M-Pesa</div><div class="psub">Vodacom Moçambique</div></div><div class="prad"></div></div>
+        <div class="popt" onclick="selPay(this)"><div class="plogo pe">e</div><div><div class="pname">e-Mola</div><div class="psub">Movitel</div></div><div class="prad"></div></div>
+        <div class="popt" onclick="selPay(this)"><div class="plogo pk">mk</div><div><div class="pname">mKesh</div><div class="psub">BIM / Millennium Bim</div></div><div class="prad"></div></div>
+      </div>
+      <div style="margin-bottom:16px"><div class="flabel">Número de telefone</div><input class="finp" id="walletPhone" type="tel" placeholder="84/85/86/87 XXX XXXX"></div>
+      <button class="bpag" onclick="withdrawWallet()">Solicitar levantamento</button>
+      <button class="bcan" onclick="closeWallet()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="ovl" id="aboutModal">
+  <div class="modal" style="max-width:600px">
+    <div class="mtop"><h2>Como funciona</h2><div class="msub">PesquisaMZ — Repositório Académico Nacional</div></div>
+    <div class="about-body">
+      <h3>📚 O que é?</h3>
+      <p>Uma plataforma para pesquisar, comprar e submeter trabalhos académicos de todas as universidades de Moçambique.</p>
+      
+      <h3>🔍 Pesquisar documentos</h3>
+      <p>Usa a barra de pesquisa ou os filtros laterais para encontrar teses, monografias e dissertações por universidade, faculdade ou nível académico.</p>
+      
+      <h3>💰 Comprar e descarregar</h3>
+      <p>Cada documento custa <strong>50 MZN</strong>. Paga via M-Pesa, e-Mola ou mKesh e descarrega imediatamente o PDF.</p>
+      
+      <h3>📤 Submeter trabalhos</h3>
+      <p>Publica os teus trabalhos e <strong>ganha 30 MZN</strong> por cada download que alguém fizer.</p>
+      
+      <div class="about-steps">
+        <div class="about-step"><span class="num">1</span><span class="txt">Pesquisa por tema ou universidade</span></div>
+        <div class="about-step"><span class="num">2</span><span class="txt">Pré-visualiza o documento</span></div>
+        <div class="about-step"><span class="num">3</span><span class="txt">Paga 50 MZN via telemóvel</span></div>
+        <div class="about-step"><span class="num">4</span><span class="txt">Descarrega o PDF completo</span></div>
+      </div>
+      
+      <h3>🏫 Universidades incluídas</h3>
+      <p>UEM, UCM, ISRI, UniZambeze, UDM, UNILÚRIO, USTM, ISCTEM, Universidade Pedagógica e mais.</p>
+      
+      <button class="bcan" onclick="closeAbout()" style="max-width:160px;margin-top:12px">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const UNIS=[
+  {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Agronomia e Engenharia Florestal","Faculdade de Arquitectura e Planeamento Físico","Faculdade de Ciências","Faculdade de Ciências de Saúde","Faculdade de Direito","Faculdade de Economia","Faculdade de Educação","Faculdade de Engenharia","Faculdade de Letras e Ciências Sociais","Faculdade de Medicina","Faculdade de Veterinária","Instituto de Ciências da Comunicação","Instituto Superior de Relações Internacionais"]},
+    {l:"Extensões",i:["Extensão de Nampula","Extensão de Quelimane","Extensão de Tete","Extensão de Chimoio","Extensão de Inhambane","Extensão de Xai-Xai"]}]},
+  {a:"UCM",n:"Universidade Católica de Moçambique",f:[
+    {l:"Faculdades — Beira",i:["Faculdade de Ciências de Saúde","Faculdade de Educação","Faculdade de Ciências Sociais e Políticas","Instituto de Administração e Gestão de Empresas","Faculdade de Engenharia e Ciências"]},
+    {l:"Extensões",i:["Extensão de Nampula","Extensão de Pemba","Extensão de Lichinga","Extensão de Chimoio","Extensão de Tete","Extensão de Maputo"]}]},
+  {a:"ISRI",n:"Instituto Superior de Relações Internacionais",f:[
+    {l:"Departamentos — Maputo",i:["Departamento de Relações Internacionais","Departamento de Diplomacia","Departamento de Direito Internacional","Departamento de Ciências Políticas"]},
+    {l:"Extensões",i:["Extensão de Beira","Extensão de Nampula"]}]},
+  {a:"UniZambeze",n:"Universidade Zambeze",f:[
+    {l:"Faculdades — Beira",i:["Faculdade de Ciências da Saúde","Faculdade de Ciências Agrárias","Faculdade de Engenharia","Faculdade de Ciências Naturais e Matemática","Faculdade de Educação","Instituto de Gestão e Negócios"]},
+    {l:"Extensões",i:["Extensão de Quelimane","Extensão de Tete","Extensão de Chimoio"]}]},
+  {a:"UDM",n:"Universidade Daomés de Moçambique",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Ciências Económicas","Faculdade de Direito","Faculdade de Engenharia Informática","Faculdade de Ciências da Saúde"]},
+    {l:"Extensões",i:["Extensão de Matola","Extensão de Beira"]}]},
+  {a:"UNILÚRIO",n:"Universidade Lúrio",f:[
+    {l:"Faculdades — Nampula",i:["Faculdade de Ciências de Saúde","Faculdade de Engenharia","Faculdade de Ciências Agrárias","Faculdade de Ciências Naturais","Faculdade de Arquitectura e Urbanismo"]},
+    {l:"Extensões",i:["Extensão de Pemba","Extensão de Lichinga","Extensão de Ilha de Moçambique"]}]},
+  {a:"USTM",n:"Universidade São Tomás de Moçambique",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Ciências Jurídicas","Faculdade de Economia e Gestão","Faculdade de Ciências da Computação","Faculdade de Ciências de Educação"]},
+    {l:"Extensões",i:["Extensão de Inhambane","Extensão de Xai-Xai","Extensão de Maxixe"]}]},
+  {a:"ISCTEM",n:"Instituto Superior de Ciências e Tecnologia de Moçambique",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Gestão e Administração","Faculdade de Tecnologias de Informação","Faculdade de Direito","Faculdade de Ciências de Comunicação"]}]},
+  {a:"UP",n:"Universidade Pedagógica",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Ciências Naturais e Matemática","Faculdade de Ciências Sociais e Filosofia","Faculdade de Educação Física e Desporto","Faculdade de Línguas e Comunicação","Faculdade de Psicologia e Ciências de Educação"]},
+    {l:"Extensões",i:["Extensão de Nampula","Extensão de Beira","Extensão de Quelimane","Extensão de Inhambane","Extensão de Tete","Extensão de Lichinga","Extensão de Pemba","Extensão de Xai-Xai"]}]}
+];
+
+// Storage helpers
+function ldocs(){try{return JSON.parse(localStorage.getItem('pmz_docs')||'[]')}catch(e){return[]}}
+function sdocs(d){try{localStorage.setItem('pmz_docs',JSON.stringify(d))}catch(e){showToast('⚠️ Armazenamento cheio! Remove documentos antigos.');}}
+function lfile(id){try{return localStorage.getItem('pmz_f_'+id)}catch(e){return null}}
+function sfile(id,data){try{localStorage.setItem('pmz_f_'+id,data);return true}catch(e){showToast('⚠️ Ficheiro demasiado grande para guardar localmente.');return false;}}
+function lbought(){try{return JSON.parse(localStorage.getItem('pmz_bought')||'[]')}catch(e){return[]}}
+function sbought(a){try{localStorage.setItem('pmz_bought',JSON.stringify(a))}catch(e){}}
+function lwallet(){try{return parseFloat(localStorage.getItem('pmz_wallet')||'0')}catch(e){return 0}}
+function swallet(v){try{localStorage.setItem('pmz_wallet',v.toString())}catch(e){}}
+
+let DOCS=ldocs(), curDoc=null;
+let selUnis=new Set(), selFacs=new Set(), selNiveis=new Set();
+let curPage=1; const PP=8;
+
+// ACCORDION
+function buildAcc(){
+  const c=document.getElementById('uniAcc');c.innerHTML='';
+  UNIS.forEach((u,i)=>{
+    const el=document.createElement('div');el.className='uitem';
+    el.innerHTML=`<div class="uhead" onclick="togU(${i})">
+      <input type="checkbox" class="uchk" id="uc${i}" onclick="event.stopPropagation();togUC(${i},this)">
+      <span class="uabb">${u.a}</span><span class="uname">${u.n}</span>
+      <span class="utog" id="ut${i}">›</span></div>
+    <div class="facs" id="fc${i}">${u.f.map(g=>`<div class="fgrp"><div class="flbl">${g.l}</div>${g.i.map(f=>`<label class="fitem"><input type="checkbox" class="fchk" value="${f}" data-u="${u.a}" onchange="togF(this)"><span>${f}</span></label>`).join('')}</div>`).join('')}</div>`;
+    c.appendChild(el);
+  });
+}
+function togU(i){document.getElementById('fc'+i).classList.toggle('open');document.getElementById('ut'+i).classList.toggle('open');}
+function togUC(i,cb){
+  const u=UNIS[i];
+  if(cb.checked){selUnis.add(u.a);document.getElementById('fc'+i).classList.add('open');document.getElementById('ut'+i).classList.add('open');}
+  else{selUnis.delete(u.a);u.f.flatMap(g=>g.i).forEach(f=>selFacs.delete(f));document.querySelectorAll(`.fchk[data-u="${u.a}"]`).forEach(c=>c.checked=false);}
+  applyFilters();
+}
+function togF(cb){
+  if(cb.checked){selFacs.add(cb.value);selUnis.add(cb.dataset.u);const i=UNIS.findIndex(u=>u.a===cb.dataset.u);document.getElementById('uc'+i).checked=true;}
+  else selFacs.delete(cb.value);
+  applyFilters();
+}
+document.querySelectorAll('.nchk').forEach(cb=>cb.addEventListener('change',function(){if(this.checked)selNiveis.add(this.value);else selNiveis.delete(this.value);applyFilters();}));
+
+// FILTER
+function getFiltered(){
+  const q=document.getElementById('searchInput').value.toLowerCase().trim();
+  const s=document.querySelector('.sortsel').value;
+  let arr=DOCS.filter(d=>{
+    if(q&&!d.title.toLowerCase().includes(q)&&!d.autor.toLowerCase().includes(q)&&!(d.area&&d.area.toLowerCase().includes(q))&&!(d.fac&&d.fac.toLowerCase().includes(q)))return false;
+    if(selNiveis.size>0&&!selNiveis.has(d.nivel))return false;
+    if(selFacs.size>0){if(!selFacs.has(d.fac))return false;}
+    else if(selUnis.size>0){if(!selUnis.has(d.uni))return false;}
+    return true;
+  });
+  if(s==='az')arr.sort((a,b)=>a.title.localeCompare(b.title));
+  else if(s==='za')arr.sort((a,b)=>b.title.localeCompare(a.title));
+  else arr.sort((a,b)=>b.ano-a.ano);
+  return arr;
+}
+function applyFilters(){curPage=1;render();renderTags();}
+function doSearch(){applyFilters();}
+
+function render(){
+  DOCS=ldocs();
+  document.getElementById('statDocs').textContent=DOCS.length;
+  const fil=getFiltered(), total=fil.length;
+  document.getElementById('rcount').innerHTML=`Mostrando <strong>${Math.min(PP,total)}</strong> de <strong>${total}</strong> documentos`;
+  const start=(curPage-1)*PP, page=fil.slice(start,start+PP);
+  const g=document.getElementById('dgrid');
+  if(!page.length){
+    g.innerHTML=`<div class="empty"><div class="eico">📚</div><div class="etitle">${DOCS.length===0?'Ainda não há documentos publicados':'Nenhum documento encontrado com estes filtros'}</div><div class="esub">${DOCS.length===0?'Sê o primeiro a submeter o teu trabalho académico!':'Tenta ajustar os filtros ou limpar tudo'}</div></div>`;
+  } else {
+    const bought=lbought();
+    g.innerHTML=page.map(d=>{
+      const ri=DOCS.findIndex(x=>x.id===d.id);
+      const own=bought.includes(d.id);
+      const hf=!!lfile(d.id);
+      const fu=hf?lfile(d.id):'#';
+      return `<div class="dcard">
+        <div class="dico">PDF</div>
+        <div class="dbody">
+          <div class="dtitle">${escHtml(d.title)}</div>
+          <div class="dmeta">
+            <span class="tag tn-${d.nivel.toLowerCase()}">${d.nivel}</span>
+            <span class="tag tu">${escHtml(d.uni)}</span>
+            <span class="tag ta">${escHtml(d.area)}</span>
+          </div>
+          <div class="dautor">${escHtml(d.fac)} &nbsp;·&nbsp; ${escHtml(d.autor)} &nbsp;·&nbsp; ${d.ano}</div>
+        </div>
+        <div class="dright">
+          ${own&&hf
+            ?`<div class="price" style="font-size:14px;color:var(--g6)">✓ Comprado</div>
+              <div class="cbtns">
+                <button class="bprev" onclick="openPv(${ri})">👁 Ver</button>
+                <a class="bbuy" href="${fu}" download="${escAttr(d.title)}.pdf">⬇ Download</a>
+              </div>`
+            :`<div class="price">50 <span>MZN</span></div>
+              <div class="cbtns">
+                ${hf?`<button class="bprev" onclick="openPv(${ri})">👁 Ver</button>`:''}
+                <button class="bbuy" onclick="openPay(${ri})">Comprar</button>
+              </div>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+  }
+  renderPgn(total);
+}
+
+function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function escAttr(s){return(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function renderPgn(total){
+  const pages=Math.ceil(total/PP), p=document.getElementById('pgn');
+  if(pages<=1){p.innerHTML='';return;}
+  let h='';
+  if(curPage>1)h+=`<button class="pgb" onclick="goP(${curPage-1})">‹</button>`;
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-curPage)<=1)h+=`<button class="pgb ${i===curPage?'act':''}" onclick="goP(${i})">${i}</button>`;
+    else if(Math.abs(i-curPage)===2)h+=`<span style="color:var(--gr4);padding:0 4px">…</span>`;
+  }
+  if(curPage<pages)h+=`<button class="pgb" onclick="goP(${curPage+1})">›</button>`;
+  p.innerHTML=h;
+}
+function goP(p){curPage=p;render();window.scrollTo({top:0,behavior:'smooth'});}
+
+function renderTags(){
+  const af=document.getElementById('aftags');let h='';
+  selUnis.forEach(u=>h+=`<div class="ftag">${u} <button onclick="rmU('${u.replace(/'/g,"\\'")}')">×</button></div>`);
+  selFacs.forEach(f=>h+=`<div class="ftag">${f.length>28?f.slice(0,28)+'…':f} <button onclick="rmF('${f.replace(/'/g,"\\'")}')">×</button></div>`);
+  selNiveis.forEach(n=>h+=`<div class="ftag">${n} <button onclick="rmN('${n}')">×</button></div>`);
+  af.innerHTML=h;
+}
+function rmU(u){selUnis.delete(u);const i=UNIS.findIndex(x=>x.a===u);if(i>=0)document.getElementById('uc'+i).checked=false;applyFilters();}
+function rmF(f){selFacs.delete(f);document.querySelectorAll('.fchk').forEach(c=>{if(c.value===f)c.checked=false;});applyFilters();}
+function rmN(n){selNiveis.delete(n);document.querySelectorAll('.nchk').forEach(c=>{if(c.value===n)c.checked=false;});applyFilters();}
+function clearAll(){selUnis.clear();selFacs.clear();selNiveis.clear();document.querySelectorAll('.nchk,.uchk,.fchk').forEach(c=>c.checked=false);applyFilters();}
+
+// PAY
+function openPay(i){
+  curDoc=i;const d=DOCS[i];
+  document.getElementById('payDocTitle').textContent=d.title.length>80?d.title.slice(0,80)+'…':d.title;
+  document.getElementById('payScr').style.display='';
+  document.getElementById('okScr').style.display='none';
+  document.getElementById('payOvl').classList.add('open');
+}
+function closePayOvl(){document.getElementById('payOvl').classList.remove('open');render();}
+function selPay(el){document.querySelectorAll('.popt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function confirmPay(){
+  if(curDoc===null)return;
+  const d=DOCS[curDoc];
+  const b=lbought();if(!b.includes(d.id))b.push(d.id);sbought(b);
+  // Credit author wallet (30 MZN)
+  const w=lwallet()+30;swallet(w);
+  const fd=lfile(d.id);
+  if(fd){const a=document.getElementById('dlLink');a.href=fd;a.download=d.title+'.pdf';}
+  document.getElementById('payScr').style.display='none';
+  document.getElementById('okScr').style.display='';
+}
+
+// PREVIEW
+function openPv(i){
+  const d=DOCS[i]; curDoc=i;
+  document.getElementById('pvTitle').textContent=d.title;
+  const fd=lfile(d.id);
+  document.getElementById('pvFrame').src=fd||'about:blank';
+  const bought=lbought(), own=bought.includes(d.id);
+  const foot=document.getElementById('pvFoot');
+  if(own&&fd){
+    foot.innerHTML=`<span class="pvnote">✓ Documento desbloqueado — acesso completo</span><a class="bbn" href="${fd}" download="${escAttr(d.title)}.pdf">⬇ Descarregar PDF</a>`;
+  } else {
+    foot.innerHTML=`<span class="pvnote">👁 Pré-visualização do documento</span><button class="bbn" onclick="closePv();openPay(${i})">Comprar acesso completo — 50 MZN</button>`;
+  }
+  document.getElementById('pvModal').classList.add('open');
+}
+function closePv(){document.getElementById('pvModal').classList.remove('open');document.getElementById('pvFrame').src='about:blank';}
+
+// UPLOAD
+let selFile=null;
+function openUpload(){
+  const s=document.getElementById('upU');
+  s.innerHTML=UNIS.map(u=>`<option value="${u.a}">${u.a} — ${u.n.slice(0,30)}</option>`).join('');
+  updFac();selFile=null;resetDz();
+  ['upT','upA','upAr'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('upY').value=new Date().getFullYear();
+  document.getElementById('upModal').classList.add('open');
+}
+function closeUp(){document.getElementById('upModal').classList.remove('open');}
+function updFac(){
+  const a=document.getElementById('upU').value, u=UNIS.find(x=>x.a===a);
+  if(!u)return;
+  document.getElementById('upF').innerHTML=u.f.flatMap(g=>g.i.map(f=>`<option>${f}</option>`)).join('');
+}
+function resetDz(){document.getElementById('dzico').textContent='📄';document.getElementById('dztxt').innerHTML='<strong>Clica para seleccionar</strong> ou arrasta aqui';document.getElementById('dz').className='dz';document.getElementById('pbw').style.display='none';document.getElementById('pbb').style.width='0';document.getElementById('fi').value='';}
+function dov(e){e.preventDefault();document.getElementById('dz').classList.add('dg');}
+function dlv(e){e.preventDefault();document.getElementById('dz').classList.remove('dg');}
+function ddr(e){e.preventDefault();document.getElementById('dz').classList.remove('dg');const f=e.dataTransfer.files[0];if(f)hfile(f);}
+function fsel(inp){if(inp.files[0])hfile(inp.files[0]);}
+function hfile(f){
+  if(f.type!=='application/pdf'){showToast('Por favor selecciona um ficheiro PDF.');return;}
+  if(f.size>50*1024*1024){showToast('Ficheiro demasiado grande. Máximo 50MB.');return;}
+  selFile=f;
+  document.getElementById('dzico').textContent='✅';
+  document.getElementById('dztxt').innerHTML=`<strong>${escHtml(f.name)}</strong><br><span style="font-size:11px">${(f.size/1024/1024).toFixed(2)} MB</span>`;
+  document.getElementById('dz').classList.add('hf');
+}
+function submitWork(){
+  const title=document.getElementById('upT').value.trim();
+  const autor=document.getElementById('upA').value.trim();
+  const ano=parseInt(document.getElementById('upY').value)||new Date().getFullYear();
+  const nivel=document.getElementById('upN').value;
+  const area=document.getElementById('upAr').value.trim();
+  const uni=document.getElementById('upU').value;
+  const fac=document.getElementById('upF').value;
+  if(!title){showToast('Por favor preenche o título.');return;}
+  if(!autor){showToast('Por favor preenche o nome do autor.');return;}
+  if(!area){showToast('Por favor preenche a área.');return;}
+  if(!selFile){showToast('Por favor selecciona o ficheiro PDF.');return;}
+  const pw=document.getElementById('pbw'), pb=document.getElementById('pbb');
+  pw.style.display='block';
+  const reader=new FileReader();
+  reader.onprogress=e=>{if(e.lengthComputable)pb.style.width=Math.round(e.loaded/e.total*80)+'%';};
+  reader.onload=e=>{
+    pb.style.width='90%';
+    const fd=e.target.result;
+    const id='d'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+    const ok=sfile(id,fd);
+    if(!ok){pw.style.display='none';return;}
+    const docs=ldocs();
+    docs.unshift({id,title,autor,ano,nivel,area,uni,fac});
+    sdocs(docs);DOCS=ldocs();
+    pb.style.width='100%';
+    setTimeout(()=>{closeUp();render();showToast('✅ Trabalho publicado com sucesso!');},400);
+  };
+  reader.onerror=()=>{showToast('Erro ao ler o ficheiro. Tenta novamente.');pw.style.display='none';};
+  reader.readAsDataURL(selFile);
+}
+
+// WALLET
+function showWallet(){
+  document.getElementById('walletBal').innerHTML=`${lwallet()} <span style="font-size:16px;color:var(--gr4);font-family:var(--fb)">MZN</span>`;
+  document.getElementById('walletModal').classList.add('open');
+}
+function closeWallet(){document.getElementById('walletModal').classList.remove('open');}
+function withdrawWallet(){
+  const phone=document.getElementById('walletPhone').value.trim();
+  if(!phone||phone.length<9){showToast('Introduz um número de telefone válido.');return;}
+  const bal=lwallet();
+  if(bal<100){showToast('Mínimo para levantamento: 100 MZN');return;}
+  swallet(0);
+  closeWallet();
+  showToast(`✅ Pedido de ${bal} MZN enviado para ${phone}. Receberás em até 24h.`);
+}
+
+// ABOUT
+function showAbout(){document.getElementById('aboutModal').classList.add('open');}
+function closeAbout(){document.getElementById('aboutModal').classList.remove('open');}
+
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// Backdrop close
+['payOvl','upModal','pvModal','walletModal','aboutModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this){
+      if(id==='pvModal')closePv();
+      else if(id==='payOvl')closePayOvl();
+      else if(id==='walletModal')closeWallet();
+      else if(id==='aboutModal')closeAbout();
+      else closeUp();
+    }
+  });
+});
+
+// ESC key to close modals
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(document.getElementById('pvModal').classList.contains('open'))closePv();
+    else if(document.getElementById('payOvl').classList.contains('open'))closePayOvl();
+    else if(document.getElementById('upModal').classList.contains('open'))closeUp();
+    else if(document.getElementById('walletModal').classList.contains('open'))closeWallet();
+    else if(document.getElementById('aboutModal').classList.contains('open'))closeAbout();
+  }
+});
+
+buildAcc();render();
+</script>
+</body>
+</html>
