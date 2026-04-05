@@ -775,6 +775,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <div class="pvhead"><h3>⚙️ Painel do Administrador</h3><button class="pvclose" onclick="closeAdmin()">✕</button></div>
     <div style="display:flex;border-bottom:2px solid var(--gr1);flex-shrink:0">
       <button class="admin-tab active" onclick="switchAdminTab('dashboard',this)">📊 Dashboard</button>
+      <button class="admin-tab" onclick="switchAdminTab('pedidos',this)">🛒 Pedidos <span id="pedidosBadge" class="admin-badge yellow" style="display:none">0</span></button>
       <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Configurações</button>
       <button class="admin-tab" onclick="switchAdminTab('docs',this)">📄 Documentos</button>
       <button class="admin-tab" onclick="switchAdminTab('users',this)">👤 Utilizadores</button>
@@ -1090,35 +1091,52 @@ function selPay(el){document.querySelectorAll('.popt').forEach(o=>o.classList.re
 function confirmPay(){
   if(curDoc===null)return;
   const d=DOCS[curDoc];
-  // Obter número WhatsApp do admin (das configurações ou padrão)
-  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532'; // ALTERAR PARA TEU NÚMERO
-  const msg=encodeURIComponent(`Olá! Quero comprar o documento "${d.title}" (${d.uni}, ${d.ano}) — 50 MZN. Meu nome: ___`);
+  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532';
+  const userName=prompt('Teu nome completo:')||'Anônimo';
+  const userPhone=prompt('Teu número WhatsApp:')||'';
+
+  // Criar pedido pendente
+  const order={
+    docId:d.id,
+    docTitle:d.title,
+    docUni:d.uni,
+    docAno:d.ano,
+    userName:userName,
+    userPhone:userPhone.startsWith('258')?userPhone:'258'+userPhone,
+    status:'pending',
+    price:50,
+    createdAt:new Date().toISOString()
+  };
+  dbAdd('orders',order).then(id=>{
+    order.id=id;
+    showToast('🛒 Pedido criado! Aguarda aprovação do admin após pagamento.');
+  }).catch(()=>showToast('⚠️ Erro ao criar pedido.'));
+
+  // Mensagem WhatsApp para admin
+  const msg=encodeURIComponent(`Olá! Quero comprar o documento "${d.title}" (${d.uni}, ${d.ano}) — 50 MZN.\n\nNome: ${userName}\nTel: ${userPhone}\n\nJá fiz o pagamento via M-Pesa/e-Mola.`);
   const whatsappUrl=`https://wa.me/${adminPhone}?text=${msg}`;
-  
-  // Guardar como comprado
-  const b=lbought();if(!b.includes(d.id))b.push(d.id);sbought(b);
-  // Credit author wallet (30 MZN)
-  const w=lwallet()+30;swallet(w);
-  
-  const fd=lfile(d.id);
-  if(fd){const a=document.getElementById('dlLink');a.href=fd;a.download=d.title+'.pdf';}
-  
-  // Mostrar instruções de pagamento
+
+  // Mostrar tela de sucesso com botão WhatsApp
   document.getElementById('payScr').style.display='none';
   document.getElementById('okScr').style.display='';
-  
-  // Adicionar botão WhatsApp na tela de sucesso
   const okScr=document.getElementById('okScr');
-  if(!document.getElementById('whatsappBtn')){
-    const waBtn=document.createElement('a');
-    waBtn.id='whatsappBtn';
-    waBtn.href=whatsappUrl;
-    waBtn.target='_blank';
-    waBtn.className='bdl';
-    waBtn.style.cssText='background:#25D366;margin-top:12px;display:inline-flex;align-items:center;gap:8px;text-decoration:none';
-    waBtn.innerHTML='💬 Pagar via WhatsApp';
-    okScr.querySelector('.scr').insertBefore(waBtn,okScr.querySelector('.bcan'));
-  }
+
+  // Remover botão WhatsApp antigo se existir
+  const oldWa=document.getElementById('whatsappBtn');if(oldWa)oldWa.remove();
+
+  const waBtn=document.createElement('a');
+  waBtn.id='whatsappBtn';
+  waBtn.href=whatsappUrl;
+  waBtn.target='_blank';
+  waBtn.className='bdl';
+  waBtn.style.cssText='background:#25D366;margin-top:12px;display:inline-flex;align-items:center;gap:8px;text-decoration:none';
+  waBtn.innerHTML='💬 Enviar comprovativo via WhatsApp';
+
+  // Atualizar texto de sucesso
+  okScr.querySelector('h2').textContent='Pedido enviado!';
+  okScr.querySelector('p').innerHTML=`Aguardas aprovação após confirmação do pagamento.<br>Clica abaixo para enviar comprovativo ao admin.`;
+
+  okScr.querySelector('.scr').insertBefore(waBtn,okScr.querySelector('.bcan'));
 }
 
 // PREVIEW
@@ -1553,6 +1571,7 @@ function switchAdminTab(tab,btn){
   btn.classList.add('active');
   switch(tab){
     case 'dashboard':renderAdminDashboard();break;
+    case 'pedidos':renderAdminPedidos();break;
     case 'config':renderAdminConfig();break;
     case 'docs':renderAdminDocs();break;
     case 'users':renderAdminUsers();break;
@@ -1565,7 +1584,9 @@ async function renderAdminDashboard(){
   const docs=await dbGetAll('documents').catch(()=>[]);
   const users=await dbGetAll('users').catch(()=>[]);
   const courses=await dbGetAll('courses').catch(()=>[]);
-  const purchases=await dbGetAll('purchases').catch(()=>[]);
+  const orders=await dbGetAll('orders').catch(()=>[]);
+  const purchases=orders.filter(o=>o.status==='approved');
+  const pending=orders.filter(o=>o.status==='pending');
   const totalRevenue=purchases.length*50;
   const totalPaidAuthors=purchases.length*30;
 
@@ -1573,20 +1594,58 @@ async function renderAdminDashboard(){
     <div class="admin-stat">
       <div class="admin-stat-item"><span class="num">${docs.length}</span><span class="lbl">Documentos</span></div>
       <div class="admin-stat-item"><span class="num">${users.length}</span><span class="lbl">Utilizadores</span></div>
-      <div class="admin-stat-item"><span class="num">${courses.length}</span><span class="lbl">Cursos</span></div>
-      <div class="admin-stat-item"><span class="num">${purchases.length}</span><span class="lbl">Compras</span></div>
+      <div class="admin-stat-item"><span class="num" style="color:#f59e0b">${pending.length}</span><span class="lbl">Pedidos Pendentes</span></div>
+      <div class="admin-stat-item"><span class="num">${purchases.length}</span><span class="lbl">Aprovados</span></div>
       <div class="admin-stat-item"><span class="num">${totalRevenue}</span><span class="lbl">Receita (MZN)</span></div>
       <div class="admin-stat-item"><span class="num">${totalPaidAuthors}</span><span class="lbl">Pago a Autores</span></div>
     </div>
-    <div class="admin-card">
-      <h4>📈 Actividade Recente</h4>
-      ${purchases.length===0?'<p style="color:var(--gr4)">Sem actividade ainda.</p>':
-      `<table class="admin-table"><thead><tr><th>ID</th><th>Tipo</th><th>Detalhes</th><th>Data</th></tr></thead><tbody>
-      ${purchases.slice(-10).reverse().map(p=>`<tr><td>#${p.id}</td><td><span class="admin-badge blue">Compra</span></td><td>50 MZN</td><td>${p.createdAt?new Date(p.createdAt).toLocaleDateString('pt-MZ'):''}</td></tr>`).join('')}
-      </tbody></table>`}
-    </div>
+    ${pending.length?`<div class="admin-card" style="border-left:4px solid #f59e0b"><h4>⏳ Pedidos Pendentes — Requer Ação!</h4><p>Tens <b style="color:#f59e0b">${pending.length} pedido(s)</b> aguardando confirmação de pagamento.</p><button class="admin-btn success" onclick="switchAdminTab('pedidos',document.querySelectorAll('.admin-tab')[1])" style="margin-top:8px">🛒 Ver Pedidos</button></div>`:''}
+    <div class="admin-card"><h4>📈 Actividade Recente</h4>${purchases.length===0?'<p style="color:var(--gr4)">Sem actividade ainda.</p>:`<table class="admin-table"><thead><tr><th>ID</th><th>Tipo</th><th>Detalhes</th><th>Data</th></tr></thead><tbody>${purchases.slice(-10).reverse().map(p=>`<tr><td>#${p.id}</td><td><span class="admin-badge green">Aprovado</span></td><td>50 MZN</td><td>${p.approvedAt?new Date(p.approvedAt).toLocaleDateString('pt-MZ'):''}</td></tr>`).join('')}</tbody></table>`}</div>
   `;
 }
+
+async function renderAdminPedidos(){
+  const orders=await dbGetAll('orders').catch(()=>[]);
+  const pending=orders.filter(o=>o.status==='pending');
+  const approved=orders.filter(o=>o.status==='approved');
+  const rejected=orders.filter(o=>o.status==='rejected');
+  const badge=document.getElementById('pedidosBadge');
+  if(badge){if(pending.length>0){badge.style.display='inline-block';badge.textContent=pending.length;}else{badge.style.display='none';}}
+  if(!orders.length){document.getElementById('adminContent').innerHTML=`<div class="admin-empty"><div class="icon">🛒</div><p>Sem pedidos de compra ainda.</p></div>`;return;}
+  document.getElementById('adminContent').innerHTML=`
+    <div class="admin-stat">
+      <div class="admin-stat-item"><span class="num" style="color:#f59e0b">${pending.length}</span><span class="lbl">Pendentes</span></div>
+      <div class="admin-stat-item"><span class="num" style="color:#10b981">${approved.length}</span><span class="lbl">Aprovados</span></div>
+      <div class="admin-stat-item"><span class="num" style="color:#ef4444">${rejected.length}</span><span class="lbl">Rejeitados</span></div>
+    </div>
+    ${pending.length?`<div class="admin-card"><h4>⏳ Pedidos Pendentes (${pending.length})</h4><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>ID</th><th>Utilizador</th><th>Telefone</th><th>Documento</th><th>Preço</th><th>Data</th><th>Acções</th></tr></thead><tbody>${pending.map(o=>`<tr><td>#${o.id}</td><td>${o.userName||'—'}</td><td><a href="https://wa.me/${o.userPhone}" target="_blank" style="color:#25D366">${o.userPhone||'—'}</a></td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(o.docTitle)}">${escHtml(o.docTitle)}</td><td><b>50 MZN</b></td><td>${o.createdAt?new Date(o.createdAt).toLocaleString('pt-MZ'):''}</td><td><button class="admin-btn success" onclick="approveOrder(${o.id})">✅</button><button class="admin-btn danger" onclick="rejectOrder(${o.id})">❌</button></td></tr>`).join('')}</tbody></table></div></div>`:''}
+    ${approved.length?`<div class="admin-card"><h4>✅ Pedidos Aprovados (${approved.length})</h4><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>ID</th><th>Utilizador</th><th>Documento</th><th>Data</th></tr></thead><tbody>${approved.slice(-20).reverse().map(o=>`<tr><td>#${o.id}</td><td>${o.userName||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(o.docTitle)}</td><td>${o.approvedAt?new Date(o.approvedAt).toLocaleString('pt-MZ'):''}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+    ${rejected.length?`<div class="admin-card"><h4>❌ Pedidos Rejeitados (${rejected.length})</h4><div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>ID</th><th>Utilizador</th><th>Documento</th><th>Motivo</th></tr></thead><tbody>${rejected.slice(-10).reverse().map(o=>`<tr><td>#${o.id}</td><td>${o.userName||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(o.docTitle)}</td><td>${o.reason||'—'}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+  `;
+}
+
+async function approveOrder(id){
+  const orders=await dbGetAll('orders').catch(()=>[]);
+  const order=orders.find(o=>o.id===id);if(!order)return;
+  order.status='approved';order.approvedAt=new Date().toISOString();
+  await dbPut('orders',order);
+  const bought=lbought();if(!bought.includes(order.docId))bought.push(order.docId);sbought(bought);
+  const w=lwallet()+30;swallet(w);
+  showToast('✅ Pedido aprovado! Usuário já pode descarregar.');
+  renderAdminPedidos();
+}
+
+async function rejectOrder(id){
+  const reason=prompt('Motivo da rejeição (opcional):')||'Pagamento não confirmado';
+  const orders=await dbGetAll('orders').catch(()=>[]);
+  const order=orders.find(o=>o.id===id);if(!order)return;
+  order.status='rejected';order.reason=reason;order.rejectedAt=new Date().toISOString();
+  await dbPut('orders',order);
+  showToast('❌ Pedido rejeitado.');
+  renderAdminPedidos();
+}
+
+function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 
 async function renderAdminConfig(){
   const settings=await dbGetAll('settings').catch(()=>[]);
