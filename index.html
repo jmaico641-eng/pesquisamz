@@ -64,9 +64,9 @@ gtag('config','G-XXXXXXXXXX');
 body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100vh;overflow-x:hidden}
 .nav{position:sticky;top:0;z-index:90;background:var(--g8);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
 .logo{font-family:var(--fd);font-size:22px;color:var(--white)}.logo em{color:var(--gold);font-style:normal}
-.logo-wrap{display:flex;flex-direction:column;gap:1px}
-.logo-by{font-size:10px;color:var(--g4);letter-spacing:1.2px;font-weight:500;text-transform:uppercase}
-.logo-by b{color:var(--gold)}
+.logo-wrap{display:flex;flex-direction:column;gap:2px}
+.logo-by{font-size:11px;color:var(--gold);letter-spacing:1.5px;font-weight:700;text-transform:uppercase;text-shadow:0 0 8px rgba(232,168,56,.4);background:rgba(232,168,56,.1);padding:3px 10px;border-radius:4px;display:inline-block}
+.logo-by b{color:var(--gold);font-weight:800}
 .nav-links{display:flex;gap:6px;align-items:center}
 .nav-a{color:var(--g2);font-size:13px;padding:6px 14px;border-radius:var(--rsm);cursor:pointer;border:none;background:none;text-decoration:none;transition:all .15s}
 .nav-a:hover{background:rgba(255,255,255,.1);color:white}
@@ -302,9 +302,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 @media(max-width:600px){
   .nav{height:52px;padding:0 12px}
   .logo{font-size:18px}
-  .logo-wrap{display:flex;flex-direction:column;gap:0}
-  .logo-by{font-size:8px!important;color:var(--g4)!important;letter-spacing:1px!important;font-weight:500!important;text-transform:uppercase!important;display:block!important;visibility:visible!important;opacity:1!important}
-  .logo-by b{color:var(--gold)!important}
+  .logo-wrap{display:flex;flex-direction:column;gap:1px}
+  .logo-by{font-size:9px!important;color:var(--gold)!important;letter-spacing:1.2px!important;font-weight:700!important;text-transform:uppercase!important;display:inline-block!important;background:rgba(232,168,56,.15)!important;padding:2px 8px!important;border-radius:3px!important;text-shadow:0 0 6px rgba(232,168,56,.3)!important}
+  .logo-by b{color:var(--gold)!important;font-weight:800!important}
   .nav-links{top:52px;width:100%;height:calc(100vh - 52px)}
   .hero{padding:28px 12px 40px}
   .hero h1{font-size:clamp(22px,7vw,32px)}
@@ -398,10 +398,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 @media(max-width:380px){
   .nav{height:48px;padding:0 10px}
   .logo{font-size:16px}
-  .logo-wrap{display:flex;flex-direction:column;gap:0}
-  .logo-by{font-size:7px!important;color:var(--g4)!important;letter-spacing:.8px!important;font-weight:500!important;text-transform:uppercase!important;display:block!important;visibility:visible!important;opacity:1!important}
-  .logo-by b{color:var(--gold)!important}
-  .logo-by{font-size:8px}
+  .logo-wrap{display:flex;flex-direction:column;gap:1px}
+  .logo-by{font-size:8px!important;color:var(--gold)!important;letter-spacing:1px!important;font-weight:700!important;text-transform:uppercase!important;display:inline-block!important;background:rgba(232,168,56,.12)!important;padding:2px 6px!important;border-radius:2px!important;text-shadow:0 0 4px rgba(232,168,56,.2)!important}
+  .logo-by b{color:var(--gold)!important;font-weight:800!important}
   .nav-links{top:48px;height:calc(100vh - 48px);padding:16px 12px}
   .hero{padding:24px 10px 32px}
   .hero h1{font-size:clamp(20px,8vw,28px)}
@@ -475,9 +474,45 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <a class="nav-a" href="#" onclick="closeMenu();openCourses();return false;">📚 Cursos</a>
     <a class="nav-a" href="#" onclick="closeMenu();openAI();return false;">🤖 IA</a>
     <a class="nav-a" href="#" onclick="closeMenu();openAdmin();return false;" style="color:var(--gold)">⚙️ Admin</a>
-    <button class="btn-sub" onclick="closeMenu();openUpload()">+ Submeter trabalho</button>
+    <span id="authNavSection"></span>
+    <button class="btn-sub" id="authBtn" onclick="handleAuthClick()">👤 Entrar</button>
+    <button class="btn-sub" onclick="closeMenu();openUpload()" style="display:none" id="uploadBtn">+ Submeter trabalho</button>
   </div>
 </nav>
+
+<!-- MODAL DE LOGIN/REGISTRO -->
+<div class="ovl" id="authModal">
+  <div class="modal" style="max-width:420px;max-height:90vh;overflow-y:auto">
+    <div class="mtop"><h2 id="authModalTitle">Entrar na tua conta</h2><div class="msub">Acede a teus documentos e carteira</div></div>
+    <div class="mbody">
+      <div id="authLoginForm">
+        <label class="admin-label">Número de telefone</label>
+        <input class="admin-input" id="authPhone" type="tel" placeholder="84/85/86/87 XXX XXXX">
+        <label class="admin-label">Palavra-passe</label>
+        <input class="admin-input" id="authPassword" type="password" placeholder="••••••••">
+        <button class="bpag" onclick="doLogin()" id="authActionBtn">Entrar</button>
+        <div style="text-align:center;margin-top:12px;font-size:13px;color:var(--gr6)">
+          Não tens conta? <a href="#" onclick="showRegister();return false;" style="color:var(--g6);font-weight:600">Registar</a>
+        </div>
+      </div>
+      <div id="authRegisterForm" style="display:none">
+        <label class="admin-label">Nome completo</label>
+        <input class="admin-input" id="regName" type="text" placeholder="Teu nome">
+        <label class="admin-label">Número de telefone</label>
+        <input class="admin-input" id="regPhone" type="tel" placeholder="84/85/86/87 XXX XXXX">
+        <label class="admin-label">Palavra-passe</label>
+        <input class="admin-input" id="regPassword" type="password" placeholder="Mínimo 6 caracteres">
+        <label class="admin-label">Confirmar palavra-passe</label>
+        <input class="admin-input" id="regPassword2" type="password" placeholder="Repetir palavra-passe">
+        <button class="bpag" onclick="doRegister()" id="regActionBtn">Criar Conta</button>
+        <div style="text-align:center;margin-top:12px;font-size:13px;color:var(--gr6)">
+          Já tens conta? <a href="#" onclick="showLogin();return false;" style="color:var(--g6);font-weight:600">Entrar</a>
+        </div>
+      </div>
+      <button class="bcan" onclick="closeAuthModal()" style="margin-top:8px">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 <div class="hero">
   <div class="eyebrow">Repositório Académico Nacional</div>
@@ -1893,10 +1928,205 @@ document.addEventListener('keydown',function(e){
 },true);
 
 // ═══════════════════════════════════════════
+// SISTEMA DE AUTENTICAÇÃO — SUPABASE
+// ═══════════════════════════════════════════
+let currentUser=null;
+
+// Verificar sessão ao carregar
+async function checkAuthSession(){
+  if(!SUPABASE_OK){
+    // Modo local sem cloud — mostrar botão login mas sem funcionalidade cloud
+    updateAuthUI(null);
+    return;
+  }
+  try{
+    const {data:{session}}=await supabase.auth.getSession();
+    if(session){
+      const {data:user}=await supabase.from('users').select('*').eq('id',session.user.id).single();
+      currentUser=user;
+      localStorage.setItem('pmz_user_id',user.id);
+    }else{
+      currentUser=null;
+      localStorage.removeItem('pmz_user_id');
+    }
+  }catch(e){console.warn('Auth session check:',e);}
+  updateAuthUI(currentUser);
+}
+
+function handleAuthClick(){
+  if(currentUser){
+    // Já logado — fazer logout
+    doLogout();
+  }else{
+    // Não logado — abrir modal login
+    showLogin();
+    document.getElementById('authModal').classList.add('open');
+  }
+}
+
+function showLogin(){
+  document.getElementById('authLoginForm').style.display='block';
+  document.getElementById('authRegisterForm').style.display='none';
+  document.getElementById('authModalTitle').textContent='Entrar na tua conta';
+  document.getElementById('authActionBtn').textContent='Entrar';
+}
+
+function showRegister(){
+  document.getElementById('authLoginForm').style.display='none';
+  document.getElementById('authRegisterForm').style.display='block';
+  document.getElementById('authModalTitle').textContent='Criar conta';
+  document.getElementById('regActionBtn').textContent='Criar Conta';
+}
+
+function closeAuthModal(){document.getElementById('authModal').classList.remove('open');}
+
+async function doLogin(){
+  const phone=document.getElementById('authPhone').value.trim();
+  const pwd=document.getElementById('authPassword').value;
+  if(!phone){showToast('⚠️ Introduz teu número.');return;}
+  if(!pwd){showToast('⚠️ Introduz tua palavra-passe.');return;}
+
+  const btn=document.getElementById('authActionBtn');
+  btn.textContent='A entrar...';btn.disabled=true;
+
+  if(SUPABASE_OK){
+    // Login via Supabase Auth
+    try{
+      const {data,error}=await supabase.auth.signInWithPassword({
+        phone:'+'+phone.startsWith('258')?phone:'258'+phone,
+        password:pwd
+      });
+      if(error)throw error;
+      // Buscar dados do user
+      const {data:userData}=await supabase.from('users').select('*').eq('id',data.user.id).single();
+      currentUser=userData;
+      localStorage.setItem('pmz_user_id',userData.id);
+      updateAuthUI(currentUser);
+      closeAuthModal();
+      showToast('✅ Bem-vindo(a), '+userData.name+'!');
+    }catch(e){
+      showToast('❌ '+e.message);
+    }
+  }else{
+    // Login local (IndexedDB)
+    const users=await dbGetAll('users').catch(()=>[]);
+    const user=users.find(u=>u.phone===phone&&u.password===pwd);
+    if(user){
+      currentUser=user;
+      localStorage.setItem('pmz_user_id',user.id);
+      updateAuthUI(user);
+      closeAuthModal();
+      showToast('✅ Bem-vindo(a), '+user.name+'!');
+    }else{
+      showToast('❌ Número ou palavra-passe incorretos.');
+    }
+  }
+  btn.textContent='Entrar';btn.disabled=false;
+}
+
+async function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const phone=document.getElementById('regPhone').value.trim();
+  const pwd=document.getElementById('regPassword').value;
+  const pwd2=document.getElementById('regPassword2').value;
+
+  if(!name){showToast('⚠️ Introduz teu nome.');return;}
+  if(!phone||phone.length<9){showToast('⚠️ Número inválido.');return;}
+  if(!pwd||pwd.length<6){showToast('⚠️ Mínimo 6 caracteres.');return;}
+  if(pwd!==pwd2){showToast('❌ Palavras-passe não coincidem.');return;}
+
+  const btn=document.getElementById('regActionBtn');
+  btn.textContent='A criar...';btn.disabled=true;
+
+  const fullPhone=phone.startsWith('258')?phone:'258'+phone;
+
+  if(SUPABASE_OK){
+    // Registro via Supabase Auth
+    try{
+      const {data,error}=await supabase.auth.signUp({
+        phone:'+'+fullPhone,
+        password:pwd,
+        options:{data:{name:name,phone:fullPhone}}
+      });
+      if(error)throw error;
+      // Criar registro na tabela users
+      const newUser={
+        id:data.user.id,
+        name:name,
+        phone:fullPhone,
+        role:'user',
+        balance:0,
+        createdAt:new Date().toISOString()
+      };
+      await supabase.from('users').insert(newUser);
+      currentUser=newUser;
+      localStorage.setItem('pmz_user_id',newUser.id);
+      updateAuthUI(newUser);
+      closeAuthModal();
+      showToast('✅ Conta criada! Bem-vindo(a), '+name+'!');
+    }catch(e){
+      showToast('❌ '+e.message);
+    }
+  }else{
+    // Registro local (IndexedDB)
+    const users=await dbGetAll('users').catch(()=>[]);
+    if(users.find(u=>u.phone===fullPhone)){showToast('❌ Número já registado.');return;}
+    const newUser={
+      name:name,
+      phone:fullPhone,
+      password:pwd, // Em produção: hash com bcrypt!
+      role:'user',
+      balance:0,
+      createdAt:new Date().toISOString()
+    };
+    const id=await dbAdd('users',newUser);
+    newUser.id=id;
+    currentUser=newUser;
+    localStorage.setItem('pmz_user_id',id);
+    updateAuthUI(newUser);
+    closeAuthModal();
+    showToast('✅ Conta criada! Bem-vindo(a), '+name+'!');
+  }
+  btn.textContent='Criar Conta';btn.disabled=false;
+}
+
+async function doLogout(){
+  if(SUPABASE_OK){
+    await supabase.auth.signOut();
+  }
+  currentUser=null;
+  localStorage.removeItem('pmz_user_id');
+  updateAuthUI(null);
+  showToast('👋 Sessão terminada.');
+}
+
+function updateAuthUI(user){
+  const authBtn=document.getElementById('authBtn');
+  const uploadBtn=document.getElementById('uploadBtn');
+  if(user){
+    authBtn.textContent='👋 Olá, '+user.name.split(' ')[0];
+    authBtn.style.background='var(--g6)';
+    authBtn.style.color='white';
+    uploadBtn.style.display='inline-block';
+  }else{
+    authBtn.textContent='👤 Entrar / Registar';
+    authBtn.style.background='var(--gold)';
+    authBtn.style.color='var(--g9)';
+    uploadBtn.style.display='none';
+  }
+}
+
+// Backdrop close para auth modal
+document.getElementById('authModal').addEventListener('click',function(e){
+  if(e.target===this)closeAuthModal();
+});
+
+// ═══════════════════════════════════════════
 // INICIALIZAÇÃO
 // ═══════════════════════════════════════════
 initDB().then(()=>{
   console.log('✅ IndexedDB inicializada');
+  checkAuthSession();
 }).catch(e=>console.warn('DB init error:',e));
 </script>
 </body>

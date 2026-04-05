@@ -42,6 +42,7 @@
 3. Vai a **SQL Editor** e executa:
 
 ```sql
+-- Tabela de documentos
 CREATE TABLE documents (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   title TEXT NOT NULL,
@@ -54,17 +55,36 @@ CREATE TABLE documents (
   createdAt TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Row Level Security (permitir leitura a todos)
+-- Tabela de utilizadores
+CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT UNIQUE,
+  role TEXT DEFAULT 'user',
+  balance NUMERIC DEFAULT 0,
+  createdAt TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Row Level Security
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Leitura pública" ON documents FOR SELECT USING (true);
 CREATE POLICY "Inserção pública" ON documents FOR INSERT WITH CHECK (true);
+
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leitura próprios dados" ON users FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Inserção próprios dados" ON users FOR INSERT WITH CHECK (auth.uid() = id);
 ```
 
-4. Vai a **Settings → API** e copia:
+4. **Ativar Phone Auth:**
+   - Vai a **Authentication → Providers**
+   - Ativa **Phone** 
+   - Em **Test mode** (para desenvolvimento, sem SMS real)
+
+5. Vai a **Settings → API** e copia:
    - Project URL → `https://xxxxx.supabase.co`
    - anon public key → `eyJhbG...`
 
-5. No ficheiro `index.html`, substitui:
+6. No ficheiro `index.html`, substitui:
 ```javascript
 const SUPABASE_URL='https://SEU_PROJECTO.supabase.co';  // ← Teu URL
 const SUPABASE_KEY='SUA_ANON_KEY';                      // ← Tua chave
