@@ -2,13 +2,52 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>PesquisaMZ — Repositório Académico de Moçambique</title>
+
+<!-- SEO -->
+<meta name="description" content="Pesquisa e descarrega teses, monografias e dissertações de todas as universidades de Moçambique. UEM, UDM, ISRI, UNILÚRIO e mais.">
+<meta name="keywords" content="pesquisa académica, moçambique, UEM, UDM, ISRI, tese, monografia, dissertação, trabalhos académicos, universidades moçambique">
+<meta name="author" content="Junir Maico Jorge">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://pesquisamz.co.mz">
+
+<!-- Open Graph (Facebook, WhatsApp preview) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="PesquisaMZ — Repositório Académico de Moçambique">
+<meta property="og:description" content="Acede a teses, monografias e dissertações de todas as universidades de Moçambique. Documento disponível logo após o pagamento.">
+<meta property="og:url" content="https://pesquisamz.co.mz">
+<meta property="og:locale" content="pt_MZ">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PesquisaMZ — Repositório Académico">
+<meta name="twitter:description" content="Pesquisa e descarrega trabalhos académicos de todas as universidades de Moçambique.">
+
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#04342C">
+
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<!-- Firebase SDK v10 compat -->
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Firebase SDK v10 compat (fallback) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-XXXXXXXXXX');
+</script>
 <style>
 :root{
   --g9:#03231A;--g8:#04342C;--g7:#085041;--g6:#0F6E56;--g5:#1D9E75;--g4:#3BBEA0;
@@ -756,7 +795,20 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 
 <script>
 // ═══════════════════════════════════════════
-// FIREBASE CONFIG — substitui com os teus valores
+// SUPABASE CONFIG — Backend principal
+// ═══════════════════════════════════════════
+const SUPABASE_URL='https://SEU_PROJECTO.supabase.co';
+const SUPABASE_KEY='SUA_ANON_KEY';
+let supabase=null,SUPABASE_OK=false;
+try{
+  if(SUPABASE_URL!=='https://SEU_PROJECTO.supabase.co'){
+    supabase=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    SUPABASE_OK=true;
+  }
+}catch(e){console.warn('Supabase init error:',e);}
+
+// ═══════════════════════════════════════════
+// FIREBASE CONFIG — Fallback (opcional)
 // ═══════════════════════════════════════════
 const FB_CONFIG={
   apiKey:"SUA_API_KEY",
@@ -766,20 +818,24 @@ const FB_CONFIG={
   messagingSenderId:"SEU_SENDER_ID",
   appId:"SEU_APP_ID"
 };
-let db=null,fbStorage=null,FB_OK=false;
+let fbDb=null,fbStorage=null,FB_OK=false;
 try{
   if(FB_CONFIG.apiKey&&FB_CONFIG.apiKey!=='SUA_API_KEY'){
     firebase.initializeApp(FB_CONFIG);
-    db=firebase.firestore();
+    fbDb=firebase.firestore();
     fbStorage=firebase.storage();
     FB_OK=true;
-    document.addEventListener('DOMContentLoaded',()=>{
-      const b=document.createElement('div');b.className='fb-badge';
-      b.innerHTML='<div class="fb-dot"></div>Firebase Online';
-      document.body.appendChild(b);
-    });
   }
 }catch(e){console.warn('Firebase não configurado:',e.message);}
+
+// Indicador de conexão
+document.addEventListener('DOMContentLoaded',()=>{
+  const b=document.createElement('div');b.className='fb-badge';
+  if(SUPABASE_OK){b.innerHTML='<div class="fb-dot"></div>Online — Supabase';}
+  else if(FB_OK){b.innerHTML='<div class="fb-dot"></div>Online — Firebase';}
+  else{b.innerHTML='📦 Modo Local (IndexedDB)';}
+  document.body.appendChild(b);
+});
 
 // ═══════════════════════════════════════════
 // ANTHROPIC CLAUDE — chave inserida pelo utilizador
@@ -831,26 +887,64 @@ const UNIS=[
 ];
 
 // ═══════════════════════════════════════════
-// STORAGE — Firestore + localStorage fallback
+// STORAGE — Supabase + IndexedDB + localStorage
 // ═══════════════════════════════════════════
+
+// Carregar documentos do Supabase
 async function loadDocsFromCloud(){
-  if(!FB_OK)return;
-  try{
-    const snap=await db.collection('documents').orderBy('ano','desc').limit(200).get();
-    const remote=snap.docs.map(d=>({id:d.id,...d.data()}));
-    localStorage.setItem('pmz_docs',JSON.stringify(remote));
-    DOCS=remote;
-    render();
-  }catch(e){console.warn('Firestore load error:',e);}
+  // Tentar Supabase primeiro
+  if(SUPABASE_OK){
+    try{
+      const {data,error}=await supabase.from('documents').select('*').order('createdAt',{ascending:false}).limit(500);
+      if(!error&&data){
+        const docs=data.map(d=>({id:d.id.toString(),title:d.title,autor:d.autor,ano:d.ano,nivel:d.nivel,area:d.area,uni:d.uni,fac:d.fac,createdAt:d.createdAt}));
+        // Sync para IndexedDB
+        await dbClear('documents');
+        for(const d of docs)await dbAdd('documents',d);
+        DOCS=docs;
+        render();
+        return;
+      }
+    }catch(e){console.warn('Supabase load error:',e);}
+  }
+  // Fallback Firebase
+  if(FB_OK){
+    try{
+      const snap=await fbDb.collection('documents').orderBy('ano','desc').limit(200).get();
+      const remote=snap.docs.map(d=>({id:d.id,...d.data()}));
+      localStorage.setItem('pmz_docs',JSON.stringify(remote));
+      DOCS=remote;
+      render();
+      return;
+    }catch(e){console.warn('Firebase load error:',e);}
+  }
+  // Fallback IndexedDB local
+  const localDocs=await dbGetAll('documents').catch(()=>[]);
+  if(localDocs.length){DOCS=localDocs;render();}
 }
+
+// Guardar documento no cloud
+async function saveDocToCloud(doc){
+  // Supabase
+  if(SUPABASE_OK){
+    try{
+      await supabase.from('documents').insert({title:doc.title,autor:doc.autor,ano:doc.ano,nivel:doc.nivel,area:doc.area,uni:doc.uni,fac:doc.fac});
+    }catch(e){console.warn('Supabase save error:',e);}
+  }
+  // Firebase fallback
+  if(FB_OK){
+    try{
+      await fbDb.collection('documents').doc(doc.id).set({...doc,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }catch(e){console.warn('Firebase save error:',e);}
+  }
+  // IndexedDB local (sempre)
+  try{await dbAdd('documents',doc);}catch(e){}
+}
+
 function ldocs(){try{return JSON.parse(localStorage.getItem('pmz_docs')||'[]')}catch(e){return[]}}
 function sdocs(d){
   try{localStorage.setItem('pmz_docs',JSON.stringify(d));}catch(e){showToast('⚠️ Armazenamento cheio!');}
-  if(FB_OK&&d.length){
-    // sync new doc to Firestore (only first item = latest upload)
-    const nd=d[0];
-    db.collection('documents').doc(nd.id).set({title:nd.title,autor:nd.autor,ano:nd.ano,nivel:nd.nivel,area:nd.area,uni:nd.uni,fac:nd.fac,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.warn('Firestore write:',e));
-  }
+  if(d.length>0)saveDocToCloud(d[0]);
 }
 function lfile(id){try{return localStorage.getItem('pmz_f_'+id)}catch(e){return null}}
 function sfile(id,data){try{localStorage.setItem('pmz_f_'+id,data);return true}catch(e){showToast('⚠️ Ficheiro muito grande.');return false;}}
@@ -1005,13 +1099,35 @@ function selPay(el){document.querySelectorAll('.popt').forEach(o=>o.classList.re
 function confirmPay(){
   if(curDoc===null)return;
   const d=DOCS[curDoc];
+  // Obter número WhatsApp do admin (das configurações ou padrão)
+  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258841234567'; // ALTERAR PARA TEU NÚMERO
+  const msg=encodeURIComponent(`Olá! Quero comprar o documento "${d.title}" (${d.uni}, ${d.ano}) — 50 MZN. Meu nome: ___`);
+  const whatsappUrl=`https://wa.me/${adminPhone}?text=${msg}`;
+  
+  // Guardar como comprado
   const b=lbought();if(!b.includes(d.id))b.push(d.id);sbought(b);
   // Credit author wallet (30 MZN)
   const w=lwallet()+30;swallet(w);
+  
   const fd=lfile(d.id);
   if(fd){const a=document.getElementById('dlLink');a.href=fd;a.download=d.title+'.pdf';}
+  
+  // Mostrar instruções de pagamento
   document.getElementById('payScr').style.display='none';
   document.getElementById('okScr').style.display='';
+  
+  // Adicionar botão WhatsApp na tela de sucesso
+  const okScr=document.getElementById('okScr');
+  if(!document.getElementById('whatsappBtn')){
+    const waBtn=document.createElement('a');
+    waBtn.id='whatsappBtn';
+    waBtn.href=whatsappUrl;
+    waBtn.target='_blank';
+    waBtn.className='bdl';
+    waBtn.style.cssText='background:#25D366;margin-top:12px;display:inline-flex;align-items:center;gap:8px;text-decoration:none';
+    waBtn.innerHTML='💬 Pagar via WhatsApp';
+    okScr.querySelector('.scr').insertBefore(waBtn,okScr.querySelector('.bcan'));
+  }
 }
 
 // PREVIEW
@@ -1140,7 +1256,41 @@ document.addEventListener('keydown',function(e){
 });
 
 buildAcc();render();
-if(FB_OK)loadDocsFromCloud();
+loadDocsFromCloud();
+
+// Popular com documentos de exemplo se vazio
+setTimeout(async()=>{
+  if(DOCS.length===0){
+    const exemplos=[
+      {title:'Análise do impacto das microfinanças no desenvolvimento rural da província de Gaza',autor:'Ana Maria Sitoe',ano:2023,nivel:'Mestrado',area:'Economia',uni:'UEM',fac:'Faculdade de Economia'},
+      {title:'Direito à saúde em Moçambique: desafios e perspectivas no pós-independência',autor:'João Carlos Tembe',ano:2022,nivel:'Licenciatura',area:'Direito',uni:'UEM',fac:'Faculdade de Direito'},
+      {title:'A influência das redes sociais na comunicação política: estudo de caso das eleições municipais',autor:'Fernanda Alfredo Macamo',ano:2024,nivel:'Licenciatura',area:'Comunicação',uni:'ISRI',fac:'Departamento de Ciências da Comunicação'},
+      {title:'Gestão de recursos hídricos na bacia do rio Limpopo: sustentabilidade e governação',autor:'Ricardo Manuel Nhaca',ano:2023,nivel:'Doutoramento',area:'Engenharia',uni:'UEM',fac:'Faculdade de Engenharia'},
+      {title:'Estratégias de ensino-aprendizagem da língua portuguesa nas escolas primárias de Maputo',autor:'Teresa Augusto Chilisse',ano:2022,nivel:'Licenciatura',area:'Educação',uni:'UP',fac:'Faculdade de Educação'},
+      {title:'O papel do empreendedorismo feminino no combate à pobreza urbana na cidade da Beira',autor:'Sofia Manuel Cossa',ano:2024,nivel:'Mestrado',area:'Negócios',uni:'UCM',fac:'Faculdade de Ciências Sociais e Políticas'},
+      {title:'Implementação do sistema de informação hospitalar no Hospital Central de Nampula',autor:'Paulo José Macamo',ano:2023,nivel:'Licenciatura',area:'Tecnologia',uni:'UNILÚRIO',fac:'Faculdade de Ciências de Saúde'},
+      {title:'Políticas públicas de saúde maternal em Moçambique: avanços e desafios (2010-2023)',autor:'Marta Francisco Mabunda',ano:2024,nivel:'Doutoramento',area:'Saúde',uni:'UEM',fac:'Faculdade de Ciências de Saúde'},
+      {title:'Análise da qualidade de crédito nas instituições de microfinanças em Moçambique',autor:'David Ernesto Mondlane',ano:2022,nivel:'Licenciatura',area:'Finanças',uni:'ISCTEM',fac:'Faculdade de Gestão e Administração'},
+      {title:'Tecnologias de informação e comunicação na educação superior: o caso da UDM',autor:'Carla Sérgio Nhangave',ano:2023,nivel:'Monografia',area:'Educação',uni:'UDM',fac:'Faculdade de Ciências Económicas'},
+      {title:'Impacto das alterações climáticas na produção agrícola em Tete',autor:'António José Mahumane',ano:2024,nivel:'Mestrado',area:'Agronomia',uni:'UniZambeze',fac:'Faculdade de Ciências Agrárias'},
+      {title:'A evolução do direito do trabalho em Moçambique: uma análise crítico-histórica',autor:'Beatriz Inocêncio Simango',ano:2022,nivel:'Licenciatura',area:'Direito',uni:'USTM',fac:'Faculdade de Ciências Jurídicas'},
+      {title:'Turismo como motor de desenvolvimento local: o caso do arquipélago de Quirimbas',autor:'Nelson Pedro Lucas',ano:2023,nivel:'Licenciatura',area:'Turismo',uni:'UNILÚRIO',fac:'Faculdade de Ciências Naturais'},
+      {title:'Financiamento da educação básica em Moçambique: fontes, mecanismos e desafios',autor:'Olinda José Cumbana',ano:2024,nivel:'Mestrado',area:'Educação',uni:'UP',fac:'Faculdade de Psicologia e Ciências de Educação'},
+      {title:'Governança corporativa e desempenho financeiro nas empresas do setor extractivo',autor:'Victor Miguel Langa',ano:2023,nivel:'Doutoramento',area:'Gestão',uni:'UEM',fac:'Faculdade de Economia'},
+      {title:'Representação social da mulher nos media moçambicanos: estudo comparativo',autor:'Patrícia Alfredo Nhabanga',ano:2022,nivel:'Licenciatura',area:'Comunicação',uni:'ISRI',fac:'Departamento de Relações Internacionais'},
+    ];
+    const ids=[];
+    for(const ex of exemplos){
+      const id='d'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+      const doc={id,title:ex.title,autor:ex.autor,ano:ex.ano,nivel:ex.nivel,area:ex.area,uni:ex.uni,fac:ex.fac};
+      try{await dbAdd('documents',doc);ids.push(id);}catch(e){}
+    }
+    // Recarregar
+    DOCS=await dbGetAll('documents').catch(()=>[]);
+    render();
+    showToast(`📚 ${exemplos.length} documentos de exemplo adicionados!`);
+  }
+},500);
 
 // ═══════════════════════════════════════════
 // MOBILE MENU TOGGLE
@@ -1450,6 +1600,7 @@ async function renderAdminDashboard(){
 async function renderAdminConfig(){
   const settings=await dbGetAll('settings').catch(()=>[]);
   const s={};settings.forEach(i=>s[i.key]=i.value);
+  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258841234567';
 
   document.getElementById('adminContent').innerHTML=`
     <div class="admin-card">
@@ -1465,9 +1616,17 @@ async function renderAdminConfig(){
       <button class="admin-btn success" onclick="saveGeneralConfig()">💾 Guardar Configurações</button>
     </div>
     <div class="admin-card">
+      <h4>💬 Pagamento via WhatsApp</h4>
+      <label class="admin-label">Teu número WhatsApp (com código do país)</label>
+      <input class="admin-input" id="cfgWhatsApp" type="tel" value="${adminPhone}" placeholder="25884XXXXXXX">
+      <div style="font-size:11px;color:var(--gr4);margin-bottom:8px">Formato: 258 + número. Exemplo: 258841234567</div>
+      <button class="admin-btn success" onclick="saveWhatsAppConfig()">💾 Guardar Número</button>
+    </div>
+    <div class="admin-card">
       <h4>🗄️ Base de Dados</h4>
       <p>Motor: <b>IndexedDB</b> — ${DB_NAME} v${DB_VERSION}</p>
-      <p>Estado: <span class="admin-badge green">Activa</span></p>
+      <p>Supabase: ${SUPABASE_OK?'<span class="admin-badge green">Conectado</span>':'<span class="admin-badge yellow">Não configurado</span>'}</p>
+      <p>Firebase: ${FB_OK?'<span class="admin-badge green">Conectado</span>':'<span class="admin-badge yellow">Não configurado</span>'}</p>
       <div style="margin-top:10px">
         <button class="admin-btn" onclick="exportDB()">📥 Exportar Dados</button>
         <button class="admin-btn" onclick="document.getElementById('importFile').click()">📤 Importar Dados</button>
@@ -1482,6 +1641,13 @@ async function renderAdminConfig(){
       <button class="admin-btn" onclick="changeAdminPwd()">Alterar Palavra-passe</button>
     </div>
   `;
+}
+
+function saveWhatsAppConfig(){
+  const phone=document.getElementById('cfgWhatsApp').value.trim();
+  if(!phone||phone.length<9){showToast('⚠️ Número inválido.');return;}
+  localStorage.setItem('pmz_admin_phone',phone);
+  showToast('✅ Número WhatsApp guardado!');
 }
 
 async function saveGeneralConfig(){

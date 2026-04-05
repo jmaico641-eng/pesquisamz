@@ -1,91 +1,208 @@
-# PesquisaMZ — Repositório Académico de Moçambique
+# 📚 PesquisaMZ — Repositório Académico de Moçambique
 
-Plataforma web para pesquisar, comprar e submeter trabalhos académicos de universidades moçambicanas.
+> Plataforma completa para pesquisar, gerar e submeter trabalhos académicos com IA.
 
-## 🚀 Deploy Rápido
+**Desenvolvedor:** Junir Maico Jorge  
+**Versão:** 2.0  
+**Licença:** MIT
 
-### Opção 1: Abrir localmente
-```bash
-# Simplesmente abre o ficheiro no browser:
-xdg-open index.html
-# ou
-firefox index.html
+---
+
+## 🚀 Funcionalidades
+
+| Funcionalidade | Descrição |
+|---|---|
+| 🔍 **Pesquisa Avançada** | Por título, autor, área, universidade, faculdade, nível |
+| 📄 **Repositório** | Documentos de 9 universidades moçambicanas |
+| 💰 **Pagamento WhatsApp** | M-Pesa, e-Mola, mKesh via WhatsApp Business |
+| 🤖 **Gerador IA** | Claude Sonnet 4 para estruturas de trabalhos |
+| 🎓 **Cursos Online** | 12 cursos com planos gerados por IA |
+| 💼 **Carteira** | Autores ganham 30 MZN por download |
+| ⚙️ **Painel Admin** | Dashboard, configurações, gestão completa |
+| 📱 **100% Responsivo** | Android, Tablet, Laptop, Desktop |
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** HTML5, CSS3, JavaScript (vanilla)
+- **Base de Dados:** IndexedDB (local) + Supabase (cloud, opcional)
+- **IA:** Anthropic Claude (Sonnet 4)
+- **Deploy:** Vercel (automático via GitHub)
+- **Analytics:** Google Analytics 4
+
+---
+
+## 📋 Configuração Inicial
+
+### 1. Supabase (Backend Partilhado) — OPCIONAL mas RECOMENDADO
+
+1. Cria conta em https://supabase.com
+2. Cria novo projeto: `pesquisamz`
+3. Vai a **SQL Editor** e executa:
+
+```sql
+CREATE TABLE documents (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  title TEXT NOT NULL,
+  autor TEXT NOT NULL,
+  ano INTEGER,
+  nivel TEXT,
+  area TEXT,
+  uni TEXT,
+  fac TEXT,
+  createdAt TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Row Level Security (permitir leitura a todos)
+ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leitura pública" ON documents FOR SELECT USING (true);
+CREATE POLICY "Inserção pública" ON documents FOR INSERT WITH CHECK (true);
 ```
 
-### Opção 2: Servidor local (Python)
-```bash
-cd pesquisamz
-python3 -m http.server 8080
-# Acede a http://localhost:8080
+4. Vai a **Settings → API** e copia:
+   - Project URL → `https://xxxxx.supabase.co`
+   - anon public key → `eyJhbG...`
+
+5. No ficheiro `index.html`, substitui:
+```javascript
+const SUPABASE_URL='https://SEU_PROJECTO.supabase.co';  // ← Teu URL
+const SUPABASE_KEY='SUA_ANON_KEY';                      // ← Tua chave
 ```
 
-### Opção 3: Deploy gratuito na internet
+### 2. Anthropic Claude API (Gerador IA)
 
-#### Netlify (Recomendado)
-1. Cria conta em [netlify.com](https://netlify.com)
-2. Arrasta a pasta `pesquisamz` para o dashboard
-3. Pronto! URL público em segundos
+1. Cria conta em https://console.anthropic.com
+2. Vai a **Settings → API Keys**
+3. Cria nova chave
+4. No site: clica **⚙️ Admin** → aba **🤖 IA Config** → cola a chave
 
-#### GitHub Pages
-1. Cria repositório no GitHub
-2. Faz push do ficheiro `index.html`
-3. Activa GitHub Pages nas settings
+### 3. Google Analytics 4 (Opcional)
 
-#### Vercel
-1. Cria conta em [vercel.com](https://vercel.com)
-2. Importa o projecto
-3. Deploy automático
+1. Cria conta em https://analytics.google.com
+2. Cria propriedade: `PesquisaMZ`
+3. Copia o Measurement ID (formato `G-XXXXXXX`)
+4. No `index.html`, substitui `G-XXXXXXXXXX` pelo teu ID
 
-## ✨ Funcionalidades
+### 4. Número WhatsApp
 
-- 🔍 **Pesquisa** por título, autor, área ou faculdade
-- 🏫 **Filtros** por universidade, faculdade e nível académico
-- 👁 **Pré-visualização** de documentos PDF
-- 💰 **Pagamento** via M-Pesa, e-Mola ou mKesh
-- 📤 **Submissão** de trabalhos com upload de PDF
-- 💼 **Carteira** para autores receberem por downloads
-- 📱 **Design responsivo** para mobile e desktop
-- ⌨️ **Atalhos** (Enter para pesquisar, ESC para fechar modais)
+1. Abre o site → **⚙️ Admin** → aba **⚙️ Configurações**
+2. Secção **💬 Pagamento via WhatsApp**
+3. Insere teu número: `25884XXXXXXX`
+4. Clica **💾 Guardar Número**
 
-## 🏫 Universidades Incluídas
+---
 
-- UEM — Universidade Eduardo Mondlane
-- UCM — Universidade Católica de Moçambique
-- ISRI — Instituto Superior de Relações Internacionais
-- UniZambeze — Universidade Zambeze
-- UDM — Universidade Daomés de Moçambique
-- UNILÚRIO — Universidade Lúrio
-- USTM — Universidade São Tomás de Moçambique
-- ISCTEM — Instituto Superior de Ciências e Tecnologia
-- UP — Universidade Pedagógica
+## 🗄️ Base de Dados
 
-## 🛠 Bugs Corrigidos
+### Estrutura
 
-- ✅ XSS vulnerability — inputs agora escapados correctamente
-- ✅ Pesquisa não incluía área e faculdade
-- ✅ Mensagem de erro quando não há documentos vs sem resultados
-- ✅ `dlv()` não prevenia comportamento padrão
-- ✅ `rmF()` não removia checkbox correctamente
-- ✅ Espaços no Google Fonts URL
-- ✅ Conflito de nomes de classe CSS (`.flbl`)
-- ✅ Fechar modais com ESC e clique fora
-- ✅ Validação melhorada de uploads
+| Store | Campos | Uso |
+|---|---|---|
+| `documents` | id, title, autor, ano, nivel, area, uni, fac | Documentos académicos |
+| `settings` | key, value | Configurações do sistema |
+| `users` | id, name, phone, role, balance | Utilizadores |
+| `courses` | id, title, area, level, price | Cursos personalizados |
+| `purchases` | id, userId, docId, createdAt | Histórico de compras |
 
-## 🆕 Funcionalidades Novas
+### Backup / Restore
 
-- ✅ Carteira do autor (30 MZN por download)
-- ✅ Modal "Como funciona"
-- ✅ Pesquisa com Enter
-- ✅ Fechar modais com ESC
-- ✅ Mensagens de erro mais claras
-- ✅ HTML escaping para segurança
+No painel admin → aba **⚙️ Configurações** → secção **🗄️ Base de Dados**:
+- **📥 Exportar Dados** → Download JSON
+- **📤 Importar Dados** → Upload JSON de backup
 
-## 📝 Notas
+---
 
-- Dados guardados no `localStorage` do browser
-- Limite de ~5-10MB dependendo do browser
-- Para produção, recomenda-se backend com base de dados
+## 🌐 Deploy
 
-## 📄 Licença
+### Via Vercel (Recomendado)
 
-Desenvolvido por Nexus AI
+1. Push para GitHub já feito ✅
+2. Vai a https://vercel.com → **Add New Project**
+3. Seleciona `pesquisamz` → **Deploy**
+4. Pronto! URL: `https://pesquisamz.vercel.app`
+
+### Deploy automático
+
+Cada push para `master` faz deploy automático na Vercel em ~1 minuto.
+
+---
+
+## 🔐 Painel Admin
+
+**Acesso:** Clica em **⚙️ Admin** na navbar (texto dourado)  
+**Password padrão:** `admin2024` (alterar nas configurações!)
+
+### Abas disponíveis:
+
+| Aba | Funcionalidades |
+|---|---|
+| 📊 Dashboard | Estatísticas, receita, actividade recente |
+| ⚙️ Configurações | Nome, preço, WhatsApp, export/import DB |
+| 📄 Documentos | Listar, eliminar documentos |
+| 👤 Utilizadores | Listar, editar saldo, eliminar |
+| 🎓 Cursos | Adicionar/eliminar cursos |
+| 🤖 IA Config | Configurar chave Anthropic Claude |
+
+---
+
+## 💰 Modelo de Receita
+
+| Item | Valor |
+|---|---|
+| Preço por documento | 50 MZN |
+| Comissão do autor | 30 MZN |
+| **Tua receita por venda** | **20 MZN** |
+
+### Projeção:
+- **10 vendas/dia** = 200 MZN/dia = **6,000 MZN/mês**
+- **30 vendas/dia** = 600 MZN/dia = **18,000 MZN/mês**
+- **100 vendas/dia** = 2,000 MZN/dia = **60,000 MZN/mês**
+
+---
+
+## 🎯 Checklist para Lançamento
+
+- [ ] Configurar Supabase (URL + Key no index.html)
+- [ ] Configurar chave Anthropic API (no painel admin)
+- [ ] Inserir número WhatsApp (no painel admin)
+- [ ] Configurar Google Analytics (trocar G-XXXXXXXXXX)
+- [ ] Adicionar 50+ documentos reais
+- [ ] Alterar password admin (padrão: admin2024)
+- [ ] Testar fluxo de compra via WhatsApp
+- [ ] Criar página Facebook/Instagram
+- [ ] Partilhar em grupos de estudantes
+
+---
+
+## 📞 Suporte
+
+- **GitHub Issues:** https://github.com/jmaico641-eng/pesquisamz/issues
+- **WhatsApp:** Inserir teu número no painel admin
+
+---
+
+## 📝 Changelog
+
+### v2.0 (Abril 2026)
+- ✅ Painel Admin completo
+- ✅ Base de dados IndexedDB
+- ✅ Supabase como backend
+- ✅ Pagamento via WhatsApp
+- ✅ SEO otimizado (Open Graph, meta tags)
+- ✅ Google Analytics 4
+- ✅ 16 documentos de exemplo
+- ✅ 100% responsivo (mobile-first)
+
+### v1.0
+- Plataforma básica
+- Gerador IA (Groq → Claude)
+- Cursos online
+- Carteira de autor
+
+---
+
+## 📜 Licença
+
+Desenvolvido por **Junir Maico Jorge**  
+MIT License — uso livre com atribuição.
