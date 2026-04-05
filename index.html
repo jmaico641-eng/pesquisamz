@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PesquisaMZ — Repositório Académico de Moçambique</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Firebase SDK v10 compat -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 <style>
 :root{
   --g9:#03231A;--g8:#04342C;--g7:#085041;--g6:#0F6E56;--g5:#1D9E75;--g4:#3BBEA0;
@@ -147,8 +151,8 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 .bbn{background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .bbn:hover{background:var(--g5)}
 /* UPLOAD */
-#upModal .modal{max-width:540px}
-.ubody{padding:22px 26px;display:flex;flex-direction:column;gap:14px;max-height:75vh;overflow-y:auto}
+#upModal .modal{max-width:540px;max-height:85vh;display:flex;flex-direction:column}
+.ubody{padding:22px 26px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;flex:1}
 .flabel{font-size:13px;font-weight:500;color:#3d3d3d;margin-bottom:5px}
 .finp{width:100%;padding:10px 14px;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-family:var(--fb);font-size:14px;color:var(--gr9);outline:none;transition:border-color .15s}
 .finp:focus{border-color:var(--g5)}
@@ -173,8 +177,8 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 .wallet-btn{background:var(--gold);color:var(--g9);border:none;border-radius:var(--rsm);padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
 .wallet-btn:hover{background:#F5BE60}
 /* ABOUT MODAL */
-#aboutModal .modal{max-width:600px}
-.about-body{padding:26px;line-height:1.7;font-size:14px;color:var(--gr6)}
+#aboutModal .modal{max-width:600px;max-height:85vh;display:flex;flex-direction:column}
+.about-body{padding:26px;line-height:1.7;font-size:14px;color:var(--gr6);overflow-y:auto;flex:1}
 .about-body h3{font-family:var(--fd);color:var(--gr9);margin:18px 0 8px;font-size:17px}
 .about-body p{margin-bottom:12px}
 .about-body ul{padding-left:20px;margin-bottom:12px}
@@ -183,6 +187,26 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 .about-step{background:var(--gr0);border-radius:var(--rmd);padding:14px;text-align:center}
 .about-step .num{font-family:var(--fd);font-size:22px;color:var(--g6);display:block;margin-bottom:4px}
 .about-step .txt{font-size:12px;color:var(--gr6)}
+/* Tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0}.tab{padding:7px 16px;border:1px solid var(--gr2);border-radius:var(--rsm);background:white;font-size:13px;color:var(--gr6);cursor:pointer;font-family:var(--fb);transition:all .15s}.tab:hover{border-color:var(--g4);color:var(--g6)}.tab.active{background:var(--g6);color:white;border-color:var(--g6)}
+/* AI output */
+.ai-output{background:var(--gr0);border:1px solid var(--gr1);border-radius:var(--rmd);padding:16px 18px;font-size:12.5px;color:var(--gr8);line-height:1.8;white-space:pre-wrap;max-height:320px;overflow-y:auto;font-family:'DM Sans',sans-serif}
+/* Courses */
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.course-card{background:white;border:1px solid var(--gr1);border-radius:var(--rlg);overflow:hidden;transition:all .18s;box-shadow:var(--ss)}
+.course-card:hover{border-color:#5DCAA5;box-shadow:var(--sm);transform:translateY(-2px)}
+.course-thumb{height:88px;display:flex;align-items:center;justify-content:center;font-size:38px}
+.course-body{padding:14px}
+.course-title{font-size:13px;font-weight:600;color:var(--gr9);margin-bottom:6px;line-height:1.4}
+.course-tag{font-size:11px;background:var(--g0);color:var(--g7);padding:2px 8px;border-radius:10px;font-weight:500;display:inline-block;margin:2px 2px 6px 0}
+.course-price{font-family:var(--fd);font-size:18px;color:var(--g7)}
+.course-enroll{width:100%;padding:9px;background:var(--g6);color:white;border:none;border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:8px;transition:all .15s}.course-enroll:hover{background:var(--g5)}
+/* Spinner */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Firebase badge */
+.fb-badge{position:fixed;bottom:16px;right:16px;background:var(--g8);color:var(--g2);font-size:11px;padding:6px 12px;border-radius:20px;box-shadow:var(--sm);z-index:80;display:flex;align-items:center;gap:6px;opacity:.85}
+.fb-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:fbp 2s infinite}@keyframes fbp{0%,100%{opacity:1}50%{opacity:.35}}
 @media(max-width:820px){
   .main{grid-template-columns:1fr;padding:16px}
   .sidebar{position:static;max-height:none}
@@ -192,6 +216,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
   .about-steps{grid-template-columns:1fr}
   .wallet-bar{flex-direction:column;gap:12px;text-align:center}
   .wallet-info{flex-direction:column}
+  .course-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -205,6 +230,8 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
   <div class="nav-links">
     <a class="nav-a" href="#" onclick="showAbout();return false;">Como funciona</a>
     <a class="nav-a" href="#" onclick="showWallet();return false;">Minha carteira</a>
+    <a class="nav-a" href="#" onclick="openCourses();return false;">📚 Cursos</a>
+    <a class="nav-a" href="#" onclick="openAI();return false;">🤖 IA</a>
     <button class="btn-sub" onclick="openUpload()">+ Submeter trabalho</button>
   </div>
 </nav>
@@ -310,8 +337,8 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 
 <!-- UPLOAD MODAL -->
 <div class="ovl" id="upModal">
-  <div class="modal" style="max-width:540px">
-    <div class="mtop"><h2>Submeter trabalho académico</h2><div class="msub">Publicado imediatamente após submissão</div></div>
+  <div class="modal" style="max-width:540px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>Submeter trabalho académico</h2><div class="msub">Publicado imediatamente após submissão</div></div>
     <div class="ubody">
       <div><div class="flabel">Título do trabalho *</div><input class="finp" id="upT" type="text" placeholder="Ex: Análise do impacto das microfinanças em Gaza"></div>
       <div class="frow">
@@ -347,9 +374,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 
 <!-- WALLET MODAL -->
 <div class="ovl" id="walletModal">
-  <div class="modal" style="max-width:460px">
-    <div class="mtop"><h2>Minha carteira</h2><div class="msub">Saldo acumulado por downloads dos teus trabalhos</div></div>
-    <div class="mbody">
+  <div class="modal" style="max-width:460px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>Minha carteira</h2><div class="msub">Saldo acumulado por downloads dos teus trabalhos</div></div>
+    <div class="mbody" style="overflow-y:auto;flex:1">
       <div class="prow"><div class="plbl">Saldo disponível</div><div class="pval" id="walletBal">0 <span style="font-size:16px;color:var(--gr4);font-family:var(--fb)">MZN</span></div></div>
       <div style="font-size:13px;font-weight:600;color:var(--gr6);margin-bottom:10px">Método de levantamento</div>
       <div class="pmths">
@@ -396,9 +423,109 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
   </div>
 </div>
 
+<!-- AI GENERATOR MODAL -->
+<div class="ovl" id="aiModal">
+  <div class="modal" style="max-width:640px;max-height:92vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com Google Gemini</div></div>
+    <div class="ubody" style="overflow-y:auto;flex:1">
+      <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
+        <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Gemini API</div>
+        <input class="finp" id="aiKey" type="password" placeholder="AIzaSy...">
+        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--g6)">aistudio.google.com/app/apikey</a></div>
+      </div>
+      <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
+        <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Trabalho Académico</div>
+        <div><div class="flabel">Tema do trabalho *</div><input class="finp" id="aiTema" type="text" placeholder="Ex: Impacto das microfinanças no desenvolvimento rural de Gaza"></div>
+        <div class="frow" style="margin-top:10px">
+          <div><div class="flabel">Nível académico</div><select class="finp" id="aiNivel"><option>Licenciatura</option><option>Mestrado</option><option>Doutoramento</option><option>Monografia</option></select></div>
+          <div><div class="flabel">Nº de páginas</div><input class="finp" id="aiPag" type="number" value="60" min="20" max="300"></div>
+        </div>
+        <div class="frow" style="margin-top:10px">
+          <div><div class="flabel">Área de estudo</div><input class="finp" id="aiArea" type="text" placeholder="Ex: Economia, Direito, Saúde..."></div>
+          <div><div class="flabel">Universidade</div><select class="finp" id="aiUni2"></select></div>
+        </div>
+        <div class="srow" style="margin-top:14px">
+          <button class="bpag" style="margin-bottom:0" onclick="runAI()" id="aiBtn">✨ Gerar Estrutura</button>
+          <button class="bcan" style="width:auto;padding:12px 18px" onclick="closeAI()">Fechar</button>
+        </div>
+        <div id="aiOut" style="display:none;margin-top:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div><button class="bprev" onclick="copyAI('aiOutText')">📋 Copiar</button></div>
+          <div id="aiOutText" class="ai-output"></div>
+        </div>
+      </div>
+      <div style="border-top:2px solid var(--g0);margin-top:20px;padding-top:16px">
+        <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">🎓 Plano de Curso Online</div>
+        <div><div class="flabel">Tema do curso *</div><input class="finp" id="aiCursoTema" type="text" placeholder="Ex: Gestão Financeira para Empreendedores Moçambicanos"></div>
+        <div class="frow" style="margin-top:10px">
+          <div><div class="flabel">Duração</div><select class="finp" id="aiCursoDur"><option>4 semanas</option><option>8 semanas</option><option>12 semanas</option><option>6 meses</option></select></div>
+          <div><div class="flabel">Nível</div><select class="finp" id="aiCursoNiv"><option>Iniciante</option><option>Intermédio</option><option>Avançado</option></select></div>
+        </div>
+        <button class="bpag" style="margin-bottom:0;margin-top:12px;background:linear-gradient(135deg,var(--g7),var(--g5))" onclick="runCursoAI()" id="aiCursoBtn">🎓 Gerar Plano de Curso</button>
+        <div id="aiCursoOut" style="display:none;margin-top:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">🎓 Plano de Curso</div><button class="bprev" onclick="copyAI('aiCursoText')">📋 Copiar</button></div>
+          <div id="aiCursoText" class="ai-output"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- COURSES MODAL -->
+<div class="ovl" id="coursesModal">
+  <div class="modal" style="max-width:920px;max-height:92vh;display:flex;flex-direction:column">
+    <div class="pvhead"><h3>📚 Cursos Online — PesquisaMZ Academy</h3><button class="pvclose" onclick="closeCourses()">✕</button></div>
+    <div style="padding:20px 24px;overflow-y:auto;flex:1">
+      <div class="tabs" id="courseTabs">
+        <button class="tab active" onclick="filterCourses('all',this)">Todos</button>
+        <button class="tab" onclick="filterCourses('Economia',this)">💼 Economia</button>
+        <button class="tab" onclick="filterCourses('Direito',this)">⚖️ Direito</button>
+        <button class="tab" onclick="filterCourses('Saúde',this)">🏥 Saúde</button>
+        <button class="tab" onclick="filterCourses('Tecnologia',this)">💻 Tecnologia</button>
+        <button class="tab" onclick="filterCourses('Educação',this)">🎓 Educação</button>
+        <button class="tab" onclick="filterCourses('Negócios',this)">📊 Negócios</button>
+      </div>
+      <div style="margin-top:18px" id="courseGrid" class="course-grid"></div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
+// ═══════════════════════════════════════════
+// FIREBASE CONFIG — substitui com os teus valores
+// ═══════════════════════════════════════════
+const FB_CONFIG={
+  apiKey:"SUA_API_KEY",
+  authDomain:"SEU_PROJECT.firebaseapp.com",
+  projectId:"SEU_PROJECT_ID",
+  storageBucket:"SEU_PROJECT.appspot.com",
+  messagingSenderId:"SEU_SENDER_ID",
+  appId:"SEU_APP_ID"
+};
+let db=null,fbStorage=null,FB_OK=false;
+try{
+  if(FB_CONFIG.apiKey&&FB_CONFIG.apiKey!=='SUA_API_KEY'){
+    firebase.initializeApp(FB_CONFIG);
+    db=firebase.firestore();
+    fbStorage=firebase.storage();
+    FB_OK=true;
+    document.addEventListener('DOMContentLoaded',()=>{
+      const b=document.createElement('div');b.className='fb-badge';
+      b.innerHTML='<div class="fb-dot"></div>Firebase Online';
+      document.body.appendChild(b);
+    });
+  }
+}catch(e){console.warn('Firebase não configurado:',e.message);}
+
+// ═══════════════════════════════════════════
+// GEMINI AI — chave inserida pelo utilizador
+// ═══════════════════════════════════════════
+const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+async function callGemini(prompt,key){
+  const r=await fetch(`${GEMINI_URL}?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Gemini');}
+  const d=await r.json();
+  return d.candidates?.[0]?.content?.parts?.[0]?.text||'Sem resposta.';
+}
 const UNIS=[
   {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
     {l:"Faculdades — Maputo",i:["Faculdade de Agronomia e Engenharia Florestal","Faculdade de Arquitectura e Planeamento Físico","Faculdade de Ciências","Faculdade de Ciências de Saúde","Faculdade de Direito","Faculdade de Economia","Faculdade de Educação","Faculdade de Engenharia","Faculdade de Letras e Ciências Sociais","Faculdade de Medicina","Faculdade de Veterinária","Instituto de Ciências da Comunicação","Instituto Superior de Relações Internacionais"]},
@@ -428,11 +555,30 @@ const UNIS=[
     {l:"Extensões",i:["Extensão de Nampula","Extensão de Beira","Extensão de Quelimane","Extensão de Inhambane","Extensão de Tete","Extensão de Lichinga","Extensão de Pemba","Extensão de Xai-Xai"]}]}
 ];
 
-// Storage helpers
+// ═══════════════════════════════════════════
+// STORAGE — Firestore + localStorage fallback
+// ═══════════════════════════════════════════
+async function loadDocsFromCloud(){
+  if(!FB_OK)return;
+  try{
+    const snap=await db.collection('documents').orderBy('ano','desc').limit(200).get();
+    const remote=snap.docs.map(d=>({id:d.id,...d.data()}));
+    localStorage.setItem('pmz_docs',JSON.stringify(remote));
+    DOCS=remote;
+    render();
+  }catch(e){console.warn('Firestore load error:',e);}
+}
 function ldocs(){try{return JSON.parse(localStorage.getItem('pmz_docs')||'[]')}catch(e){return[]}}
-function sdocs(d){try{localStorage.setItem('pmz_docs',JSON.stringify(d))}catch(e){showToast('⚠️ Armazenamento cheio! Remove documentos antigos.');}}
+function sdocs(d){
+  try{localStorage.setItem('pmz_docs',JSON.stringify(d));}catch(e){showToast('⚠️ Armazenamento cheio!');}
+  if(FB_OK&&d.length){
+    // sync new doc to Firestore (only first item = latest upload)
+    const nd=d[0];
+    db.collection('documents').doc(nd.id).set({title:nd.title,autor:nd.autor,ano:nd.ano,nivel:nd.nivel,area:nd.area,uni:nd.uni,fac:nd.fac,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.warn('Firestore write:',e));
+  }
+}
 function lfile(id){try{return localStorage.getItem('pmz_f_'+id)}catch(e){return null}}
-function sfile(id,data){try{localStorage.setItem('pmz_f_'+id,data);return true}catch(e){showToast('⚠️ Ficheiro demasiado grande para guardar localmente.');return false;}}
+function sfile(id,data){try{localStorage.setItem('pmz_f_'+id,data);return true}catch(e){showToast('⚠️ Ficheiro muito grande.');return false;}}
 function lbought(){try{return JSON.parse(localStorage.getItem('pmz_bought')||'[]')}catch(e){return[]}}
 function sbought(a){try{localStorage.setItem('pmz_bought',JSON.stringify(a))}catch(e){}}
 function lwallet(){try{return parseFloat(localStorage.getItem('pmz_wallet')||'0')}catch(e){return 0}}
@@ -711,6 +857,130 @@ document.addEventListener('keydown',function(e){
 });
 
 buildAcc();render();
+if(FB_OK)loadDocsFromCloud();
+
+// ═══════════════════════════════════════════
+// AI GENERATOR
+// ═══════════════════════════════════════════
+function openAI(){
+  if(!document.getElementById('aiUni2').options.length){
+    document.getElementById('aiUni2').innerHTML=UNIS.map(u=>`<option value="${u.a}">${u.a} — ${u.n.slice(0,28)}</option>`).join('');
+  }
+  document.getElementById('aiModal').classList.add('open');
+}
+function closeAI(){document.getElementById('aiModal').classList.remove('open');}
+async function runAI(){
+  const key=document.getElementById('aiKey').value.trim();
+  const tema=document.getElementById('aiTema').value.trim();
+  const nivel=document.getElementById('aiNivel').value;
+  const pag=document.getElementById('aiPag').value||60;
+  const area=document.getElementById('aiArea').value.trim()||'Geral';
+  const uni=document.getElementById('aiUni2').value;
+  if(!key){showToast('⚠️ Introduz a tua chave Gemini API.');return;}
+  if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
+  const btn=document.getElementById('aiBtn');
+  btn.innerHTML='<span class="spinner"></span>A gerar...';
+  btn.disabled=true;
+  try{
+    const prompt=`Actua como orientador académico moçambicano. Cria uma estrutura completa para um trabalho de ${nivel} sobre "${tema}" na área de ${area} para a ${uni}. O trabalho deve ter aproximadamente ${pag} páginas.\n\nInclui:\n1. TÍTULO OFICIAL\n2. RESUMO (150 palavras)\n3. PALAVRAS-CHAVE (5-7)\n4. ÍNDICE COMPLETO com capítulos e subcapítulos numerados\n5. INTRODUÇÃO (esboço)\n6. METODOLOGIA sugerida\n7. BIBLIOGRAFIA base (5 referências)\n\nEscreve em Português de Moçambique. Sê específico e académico.`;
+    const txt=await callGemini(prompt,key);
+    document.getElementById('aiOutText').textContent=txt;
+    document.getElementById('aiOut').style.display='';
+    showToast('✅ Estrutura gerada com sucesso!');
+  }catch(e){
+    showToast('❌ Erro: '+e.message);
+  }finally{
+    btn.innerHTML='✨ Gerar Estrutura';
+    btn.disabled=false;
+  }
+}
+async function runCursoAI(){
+  const key=document.getElementById('aiKey').value.trim();
+  const tema=document.getElementById('aiCursoTema').value.trim();
+  const dur=document.getElementById('aiCursoDur').value;
+  const niv=document.getElementById('aiCursoNiv').value;
+  if(!key){showToast('⚠️ Introduz a tua chave Gemini API.');return;}
+  if(!tema){showToast('⚠️ Introduz o tema do curso.');return;}
+  const btn=document.getElementById('aiCursoBtn');
+  btn.innerHTML='<span class="spinner"></span>A gerar...';
+  btn.disabled=true;
+  try{
+    const prompt=`Cria um plano de curso online completo em Português sobre "${tema}" com duração de ${dur} para nível ${niv}. Contexto: Moçambique.\n\nInclui:\n1. NOME DO CURSO\n2. DESCRIÇÃO (2 parágrafos)\n3. OBJECTIVOS DE APRENDIZAGEM (5-8 pontos)\n4. PRÉ-REQUISITOS\n5. MÓDULOS DETALHADOS (cada módulo com: nome, duração, tópicos, actividade prática)\n6. AVALIAÇÃO (como será avaliado o aluno)\n7. MATERIAL NECESSÁRIO\n8. CERTIFICAÇÃO\n\nSe específico e prático para o contexto moçambicano.`;
+    const txt=await callGemini(prompt,key);
+    document.getElementById('aiCursoText').textContent=txt;
+    document.getElementById('aiCursoOut').style.display='';
+    showToast('✅ Plano de curso gerado!');
+  }catch(e){
+    showToast('❌ Erro: '+e.message);
+  }finally{
+    btn.innerHTML='🎓 Gerar Plano de Curso';
+    btn.disabled=false;
+  }
+}
+function copyAI(id){
+  const txt=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(txt).then(()=>showToast('✅ Copiado para a área de transferência!')).catch(()=>showToast('Erro ao copiar.'));
+}
+
+// ═══════════════════════════════════════════
+// CURSOS ONLINE
+// ═══════════════════════════════════════════
+const COURSES=[
+  {id:'c1',icon:'💼',area:'Economia',title:'Contabilidade para Iniciantes',dur:'8 semanas',nivel:'Iniciante',preco:500,desc:'Princípios básicos de contabilidade aplicados ao mercado moçambicano.'},
+  {id:'c2',icon:'📊',area:'Negócios',title:'Empreendedorismo em Moçambique',dur:'6 semanas',nivel:'Iniciante',preco:400,desc:'Como criar e gerir o teu negócio em Moçambique. Registo, finanças e marketing.'},
+  {id:'c3',icon:'⚖️',area:'Direito',title:'Direito Comercial Moçambicano',dur:'12 semanas',nivel:'Intermédio',preco:800,desc:'Legislação comercial, contratos e obrigações no contexto jurídico moçambicano.'},
+  {id:'c4',icon:'🏥',area:'Saúde',title:'Saúde Pública e Epidemiologia',dur:'10 semanas',nivel:'Intermédio',preco:700,desc:'Controlo de doenças, epidemiologia e políticas de saúde em África.'},
+  {id:'c5',icon:'💻',area:'Tecnologia',title:'Programação Web do Zero',dur:'12 semanas',nivel:'Iniciante',preco:900,desc:'HTML, CSS e JavaScript para criar websites profissionais. Do zero ao deploy.'},
+  {id:'c6',icon:'🤖',area:'Tecnologia',title:'Inteligência Artificial Aplicada',dur:'8 semanas',nivel:'Avançado',preco:1200,desc:'Machine Learning, ChatGPT API e automação para empresas moçambicanas.'},
+  {id:'c7',icon:'🎓',area:'Educação',title:'Metodologias de Ensino Activo',dur:'4 semanas',nivel:'Intermédio',preco:350,desc:'Técnicas modernas de ensino para professores do ensino primário e secundário.'},
+  {id:'c8',icon:'📈',area:'Economia',title:'Análise Financeira Avançada',dur:'10 semanas',nivel:'Avançado',preco:1000,desc:'Modelos financeiros, avaliação de empresas e análise de investimentos.'},
+  {id:'c9',icon:'🌍',area:'Negócios',title:'Comércio Internacional e Exportação',dur:'6 semanas',nivel:'Intermédio',preco:650,desc:'Como exportar produtos moçambicanos para mercados internacionais.'},
+  {id:'c10',icon:'🏛️',area:'Direito',title:'Direito Administrativo',dur:'8 semanas',nivel:'Avançado',preco:750,desc:'Administração pública, recursos e procedimentos administrativos em Moçambique.'},
+  {id:'c11',icon:'👶',area:'Saúde',title:'Nutrição Materno-Infantil',dur:'4 semanas',nivel:'Iniciante',preco:300,desc:'Alimentação saudável na gravidez, amamentação e primeiros anos de vida.'},
+  {id:'c12',icon:'🎨',area:'Educação',title:'Design Gráfico com Canva',dur:'4 semanas',nivel:'Iniciante',preco:250,desc:'Cria materiais visuais profissionais para negócios e redes sociais. Sem experiência necessária.'}
+];
+let coursesFilter='all';
+function openCourses(){
+  document.getElementById('coursesModal').classList.add('open');
+  renderCourses();
+}
+function closeCourses(){document.getElementById('coursesModal').classList.remove('open');}
+function filterCourses(area,btn){
+  coursesFilter=area;
+  document.querySelectorAll('#courseTabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses();
+}
+function renderCourses(){
+  const list=coursesFilter==='all'?COURSES:COURSES.filter(c=>c.area===coursesFilter);
+  const g=document.getElementById('courseGrid');
+  if(!list.length){g.innerHTML='<p style="color:var(--gr4);text-align:center;padding:40px">Nenhum curso nesta área ainda.</p>';return;}
+  g.innerHTML=list.map(c=>`<div class="course-card">
+    <div class="course-thumb" style="background:linear-gradient(135deg,var(--g8),var(--g6))">${c.icon}</div>
+    <div class="course-body">
+      <div class="course-title">${c.title}</div>
+      <div><span class="course-tag">${c.area}</span><span class="course-tag">${c.nivel}</span><span class="course-tag">⏱ ${c.dur}</span></div>
+      <div class="course-price">${c.preco} <span style="font-size:12px;color:var(--gr4);font-family:var(--fb)">MZN</span></div>
+      <button class="course-enroll" onclick="enrollCourse('${c.id}','${escAttr(c.title)}',${c.preco})">Inscrever agora</button>
+    </div>
+  </div>`).join('');
+}
+function enrollCourse(id,title,preco){
+  showToast(`✅ Inscrito em "${title}"! Receberás o acesso via M-Pesa após o pagamento de ${preco} MZN.`);
+}
+
+// Backdrop close for new modals
+['aiModal','coursesModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this){if(id==='aiModal')closeAI();else closeCourses();}
+  });
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(document.getElementById('aiModal').classList.contains('open'))closeAI();
+    else if(document.getElementById('coursesModal').classList.contains('open'))closeCourses();
+  }
+},true);
 </script>
 </body>
 </html>
