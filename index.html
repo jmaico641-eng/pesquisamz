@@ -25,9 +25,9 @@
 body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100vh;overflow-x:hidden}
 .nav{position:sticky;top:0;z-index:90;background:var(--g8);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
 .logo{font-family:var(--fd);font-size:22px;color:var(--white)}.logo em{color:var(--gold);font-style:normal}
-.logo-wrap{display:flex;flex-direction:column;gap:1px}
-.logo-by{font-size:10px;color:var(--g4);letter-spacing:1.2px;font-weight:500;text-transform:uppercase}
-.logo-by b{color:var(--gold)}
+.logo-wrap{display:flex;flex-direction:column;gap:2px}
+.logo-by{font-size:11px;color:var(--gold);letter-spacing:1.5px;font-weight:700;text-transform:uppercase;text-shadow:0 0 8px rgba(232,168,56,.4);background:rgba(232,168,56,.1);padding:3px 10px;border-radius:4px;display:inline-block}
+.logo-by b{color:var(--gold);font-weight:800}
 .nav-links{display:flex;gap:6px;align-items:center}
 .nav-a{color:var(--g2);font-size:13px;padding:6px 14px;border-radius:var(--rsm);cursor:pointer;border:none;background:none;text-decoration:none;transition:all .15s}
 .nav-a:hover{background:rgba(255,255,255,.1);color:white}
@@ -422,7 +422,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <nav class="nav">
   <div class="logo-wrap">
     <div class="logo">Pesquisa<em>MZ</em></div>
-    <div class="logo-by">Desenvolvido pela <b>Nexus AI</b></div>
+    <div class="logo-by">Desenvolvido por <b>Junir Maico Jorge</b></div>
   </div>
   <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
   <div class="nav-links" id="navLinks">
