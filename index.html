@@ -426,12 +426,12 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <!-- AI GENERATOR MODAL -->
 <div class="ovl" id="aiModal">
   <div class="modal" style="max-width:640px;max-height:92vh;display:flex;flex-direction:column">
-    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com Google Gemini</div></div>
+    <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Groq AI</b> (Llama 3.3 70B)</div></div>
     <div class="ubody" style="overflow-y:auto;flex:1">
       <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
-        <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Gemini API</div>
-        <input class="finp" id="aiKey" type="password" placeholder="AIzaSy...">
-        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--g6)">aistudio.google.com/app/apikey</a></div>
+        <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
+        <input class="finp" id="aiKey" type="password" placeholder="gsk_...">
+        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Trabalho Académico</div>
@@ -517,14 +517,15 @@ try{
 }catch(e){console.warn('Firebase não configurado:',e.message);}
 
 // ═══════════════════════════════════════════
-// GEMINI AI — chave inserida pelo utilizador
+// GROQ AI — chave inserida pelo utilizador
 // ═══════════════════════════════════════════
-const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-async function callGemini(prompt,key){
-  const r=await fetch(`${GEMINI_URL}?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Gemini');}
+const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL='llama-3.3-70b-versatile';
+async function callGroq(prompt,key){
+  const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:2048})});
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Groq');}
   const d=await r.json();
-  return d.candidates?.[0]?.content?.parts?.[0]?.text||'Sem resposta.';
+  return d.choices?.[0]?.message?.content||'Sem resposta.';
 }
 const UNIS=[
   {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
@@ -706,12 +707,19 @@ function renderTags(){
   af.innerHTML=h;
 }
 function rmU(u){selUnis.delete(u);const i=UNIS.findIndex(x=>x.a===u);if(i>=0)document.getElementById('uc'+i).checked=false;applyFilters();}
-function rmF(f){selFacs.delete(f);document.querySelectorAll('.fchk').forEach(c=>{if(c.value===f)c.checked=false;});applyFilters();}
+function rmF(f){
+  selFacs.delete(f);
+  document.querySelectorAll('.fchk').forEach(c=>{
+    if(c.value===f){c.checked=false;}
+  });
+  applyFilters();
+}
 function rmN(n){selNiveis.delete(n);document.querySelectorAll('.nchk').forEach(c=>{if(c.value===n)c.checked=false;});applyFilters();}
 function clearAll(){selUnis.clear();selFacs.clear();selNiveis.clear();document.querySelectorAll('.nchk,.uchk,.fchk').forEach(c=>c.checked=false);applyFilters();}
 
 // PAY
 function openPay(i){
+  if(i<0||i>=DOCS.length){showToast('⚠️ Documento não encontrado.');return;}
   curDoc=i;const d=DOCS[i];
   document.getElementById('payDocTitle').textContent=d.title.length>80?d.title.slice(0,80)+'…':d.title;
   document.getElementById('payScr').style.display='';
@@ -734,6 +742,7 @@ function confirmPay(){
 
 // PREVIEW
 function openPv(i){
+  if(i<0||i>=DOCS.length){showToast('⚠️ Documento não encontrado.');return;}
   const d=DOCS[i]; curDoc=i;
   document.getElementById('pvTitle').textContent=d.title;
   const fd=lfile(d.id);
@@ -876,14 +885,14 @@ async function runAI(){
   const pag=document.getElementById('aiPag').value||60;
   const area=document.getElementById('aiArea').value.trim()||'Geral';
   const uni=document.getElementById('aiUni2').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Gemini API.');return;}
+  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
   const btn=document.getElementById('aiBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar...';
   btn.disabled=true;
   try{
     const prompt=`Actua como orientador académico moçambicano. Cria uma estrutura completa para um trabalho de ${nivel} sobre "${tema}" na área de ${area} para a ${uni}. O trabalho deve ter aproximadamente ${pag} páginas.\n\nInclui:\n1. TÍTULO OFICIAL\n2. RESUMO (150 palavras)\n3. PALAVRAS-CHAVE (5-7)\n4. ÍNDICE COMPLETO com capítulos e subcapítulos numerados\n5. INTRODUÇÃO (esboço)\n6. METODOLOGIA sugerida\n7. BIBLIOGRAFIA base (5 referências)\n\nEscreve em Português de Moçambique. Sê específico e académico.`;
-    const txt=await callGemini(prompt,key);
+    const txt=await callGroq(prompt,key);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
     showToast('✅ Estrutura gerada com sucesso!');
@@ -899,14 +908,14 @@ async function runCursoAI(){
   const tema=document.getElementById('aiCursoTema').value.trim();
   const dur=document.getElementById('aiCursoDur').value;
   const niv=document.getElementById('aiCursoNiv').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Gemini API.');return;}
+  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do curso.');return;}
   const btn=document.getElementById('aiCursoBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar...';
   btn.disabled=true;
   try{
     const prompt=`Cria um plano de curso online completo em Português sobre "${tema}" com duração de ${dur} para nível ${niv}. Contexto: Moçambique.\n\nInclui:\n1. NOME DO CURSO\n2. DESCRIÇÃO (2 parágrafos)\n3. OBJECTIVOS DE APRENDIZAGEM (5-8 pontos)\n4. PRÉ-REQUISITOS\n5. MÓDULOS DETALHADOS (cada módulo com: nome, duração, tópicos, actividade prática)\n6. AVALIAÇÃO (como será avaliado o aluno)\n7. MATERIAL NECESSÁRIO\n8. CERTIFICAÇÃO\n\nSe específico e prático para o contexto moçambicano.`;
-    const txt=await callGemini(prompt,key);
+    const txt=await callGroq(prompt,key);
     document.getElementById('aiCursoText').textContent=txt;
     document.getElementById('aiCursoOut').style.display='';
     showToast('✅ Plano de curso gerado!');
