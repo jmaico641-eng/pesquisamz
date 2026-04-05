@@ -1091,7 +1091,7 @@ function confirmPay(){
   if(curDoc===null)return;
   const d=DOCS[curDoc];
   // Obter número WhatsApp do admin (das configurações ou padrão)
-  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258841234567'; // ALTERAR PARA TEU NÚMERO
+  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532'; // ALTERAR PARA TEU NÚMERO
   const msg=encodeURIComponent(`Olá! Quero comprar o documento "${d.title}" (${d.uni}, ${d.ano}) — 50 MZN. Meu nome: ___`);
   const whatsappUrl=`https://wa.me/${adminPhone}?text=${msg}`;
   
@@ -1591,7 +1591,7 @@ async function renderAdminDashboard(){
 async function renderAdminConfig(){
   const settings=await dbGetAll('settings').catch(()=>[]);
   const s={};settings.forEach(i=>s[i.key]=i.value);
-  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258841234567';
+  const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532';
 
   document.getElementById('adminContent').innerHTML=`
     <div class="admin-card">
@@ -1610,7 +1610,7 @@ async function renderAdminConfig(){
       <h4>💬 Pagamento via WhatsApp</h4>
       <label class="admin-label">Teu número WhatsApp (com código do país)</label>
       <input class="admin-input" id="cfgWhatsApp" type="tel" value="${adminPhone}" placeholder="25884XXXXXXX">
-      <div style="font-size:11px;color:var(--gr4);margin-bottom:8px">Formato: 258 + número. Exemplo: 258841234567</div>
+      <div style="font-size:11px;color:var(--gr4);margin-bottom:8px">Formato: 258 + número. Exemplo: 258856810532</div>
       <button class="admin-btn success" onclick="saveWhatsAppConfig()">💾 Guardar Número</button>
     </div>
     <div class="admin-card">
