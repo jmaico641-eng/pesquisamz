@@ -1233,6 +1233,33 @@ document.addEventListener('keydown',function(e){
 buildAcc();render();
 if(FB_OK)loadDocsFromCloud();
 
+// Documentos de exemplo se vazio
+setTimeout(()=>{
+  if(DOCS.length===0){
+    const docs=[
+      {id:'d1',title:'Análise do impacto das microfinanças no desenvolvimento rural da província de Gaza',autor:'Ana Maria Sitoe',ano:2023,nivel:'Mestrado',area:'Economia',uni:'UEM',fac:'Faculdade de Economia'},
+      {id:'d2',title:'Direito à saúde em Moçambique: desafios e perspectivas no pós-independência',autor:'João Carlos Tembe',ano:2022,nivel:'Licenciatura',area:'Direito',uni:'UEM',fac:'Faculdade de Direito'},
+      {id:'d3',title:'A influência das redes sociais na comunicação política: estudo de caso das eleições municipais',autor:'Fernanda Alfredo Macamo',ano:2024,nivel:'Licenciatura',area:'Comunicação',uni:'ISRI',fac:'Departamento de Ciências da Comunicação'},
+      {id:'d4',title:'Gestão de recursos hídricos na bacia do rio Limpopo: sustentabilidade e governação',autor:'Ricardo Manuel Nhaca',ano:2023,nivel:'Doutoramento',area:'Engenharia',uni:'UEM',fac:'Faculdade de Engenharia'},
+      {id:'d5',title:'Estratégias de ensino-aprendizagem da língua portuguesa nas escolas primárias de Maputo',autor:'Teresa Augusto Chilisse',ano:2022,nivel:'Licenciatura',area:'Educação',uni:'UP',fac:'Faculdade de Educação'},
+      {id:'d6',title:'O papel do empreendedorismo feminino no combate à pobreza urbana na cidade da Beira',autor:'Sofia Manuel Cossa',ano:2024,nivel:'Mestrado',area:'Negócios',uni:'UCM',fac:'Faculdade de Ciências Sociais e Políticas'},
+      {id:'d7',title:'Implementação do sistema de informação hospitalar no Hospital Central de Nampula',autor:'Paulo José Macamo',ano:2023,nivel:'Licenciatura',area:'Tecnologia',uni:'UNILÚRIO',fac:'Faculdade de Ciências de Saúde'},
+      {id:'d8',title:'Políticas públicas de saúde maternal em Moçambique: avanços e desafios (2010-2023)',autor:'Marta Francisco Mabunda',ano:2024,nivel:'Doutoramento',area:'Saúde',uni:'UEM',fac:'Faculdade de Ciências de Saúde'},
+      {id:'d9',title:'Análise da qualidade de crédito nas instituições de microfinanças em Moçambique',autor:'David Ernesto Mondlane',ano:2022,nivel:'Licenciatura',area:'Finanças',uni:'ISCTEM',fac:'Faculdade de Gestão e Administração'},
+      {id:'d10',title:'Tecnologias de informação e comunicação na educação superior: o caso da UDM',autor:'Carla Sérgio Nhangave',ano:2023,nivel:'Monografia',area:'Educação',uni:'UDM',fac:'Faculdade de Ciências Económicas'},
+      {id:'d11',title:'Impacto das alterações climáticas na produção agrícola em Tete',autor:'António José Mahumane',ano:2024,nivel:'Mestrado',area:'Agronomia',uni:'UniZambeze',fac:'Faculdade de Ciências Agrárias'},
+      {id:'d12',title:'A evolução do direito do trabalho em Moçambique: uma análise crítico-histórica',autor:'Beatriz Inocêncio Simango',ano:2022,nivel:'Licenciatura',area:'Direito',uni:'USTM',fac:'Faculdade de Ciências Jurídicas'},
+      {id:'d13',title:'Turismo como motor de desenvolvimento local: o caso do arquipélago de Quirimbas',autor:'Nelson Pedro Lucas',ano:2023,nivel:'Licenciatura',area:'Turismo',uni:'UNILÚRIO',fac:'Faculdade de Ciências Naturais'},
+      {id:'d14',title:'Financiamento da educação básica em Moçambique: fontes, mecanismos e desafios',autor:'Olinda José Cumbana',ano:2024,nivel:'Mestrado',area:'Educação',uni:'UP',fac:'Faculdade de Psicologia e Ciências de Educação'},
+      {id:'d15',title:'Governança corporativa e desempenho financeiro nas empresas do setor extractivo',autor:'Victor Miguel Langa',ano:2023,nivel:'Doutoramento',area:'Gestão',uni:'UEM',fac:'Faculdade de Economia'},
+      {id:'d16',title:'Representação social da mulher nos media moçambicanos: estudo comparativo',autor:'Patrícia Alfredo Nhabanga',ano:2022,nivel:'Licenciatura',area:'Comunicação',uni:'ISRI',fac:'Departamento de Relações Internacionais'}
+    ];
+    localStorage.setItem('pmz_docs',JSON.stringify(docs));
+    DOCS=docs;render();
+    showToast('📚 '+docs.length+' documentos carregados!');
+  }
+},400);
+
 // ═══════════════════════════════════════════
 // MOBILE MENU TOGGLE
 // ═══════════════════════════════════════════
