@@ -1,0 +1,10 @@
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.pdf
+node_modules/

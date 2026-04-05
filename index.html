@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PesquisaMZ — Repositório Académico de Moçambique</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g9:#03231A;--g8:#04342C;--g7:#085041;--g6:#0F6E56;--g5:#1D9E75;--g4:#3BBEA0;
+  --g2:#9FE1CB;--g1:#C8F0E3;--g0:#E1F5EE;
+  --gold:#E8A838;--white:#FDFCFA;
+  --gr0:#F5F4F0;--gr1:#ECEAE3;--gr2:#D5D3C9;--gr4:#9B9890;--gr6:#5A5852;--gr8:#2A2825;--gr9:#1A1917;
+  --fd:'DM Serif Display',Georgia,serif;--fb:'DM Sans',system-ui,sans-serif;
+  --rsm:6px;--rmd:10px;--rlg:16px;--rxl:24px;
+  --ss:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --sm:0 4px 16px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.06);
+  --sl:0 12px 40px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100vh;overflow-x:hidden}
+.nav{position:sticky;top:0;z-index:90;background:var(--g8);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:60px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.logo{font-family:var(--fd);font-size:20px;color:var(--white)}.logo em{color:var(--gold);font-style:normal}
+.logo-wrap{display:flex;flex-direction:column;gap:0}
+.logo-by{font-size:9px;color:var(--g4);letter-spacing:.8px;font-weight:500}
+.logo-by b{color:var(--gold)}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-a{color:var(--g2);font-size:12px;padding:5px 10px;border-radius:var(--rsm);cursor:pointer;border:none;background:none;text-decoration:none;transition:all .15s;white-space:nowrap}
+.nav-a:hover{background:rgba(255,255,255,.1);color:white}
+.btn-sub{background:var(--gold);color:var(--g9);padding:7px 14px;border-radius:var(--rsm);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--fb);transition:all .15s;white-space:nowrap}
+.btn-sub:hover{background:#F5BE60;transform:translateY(-1px)}
+.user-menu{display:flex;align-items:center;gap:8px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--g5);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:600}
+.user-name{color:var(--g2);font-size:12px;font-weight:500}
+.btn-logout{background:rgba(255,255,255,.1);color:var(--g2);border:1px solid rgba(255,255,255,.2);padding:5px 12px;border-radius:var(--rsm);font-size:11px;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.btn-logout:hover{background:rgba(255,255,255,.2)}
+/* AUTH SCREENS */
+.auth-overlay{position:fixed;inset:0;background:var(--g8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-overlay.hidden{display:none}
+.auth-box{background:white;border-radius:var(--rxl);padding:40px 32px;max-width:420px;width:100%;box-shadow:var(--sl)}
+.auth-box .logo-auth{font-family:var(--fd);font-size:28px;color:var(--g8);text-align:center;margin-bottom:4px}.auth-box .logo-auth em{color:var(--gold);font-style:normal}
+.auth-box .auth-by{text-align:center;font-size:10px;color:var(--g4);margin-bottom:24px}
+.auth-box .auth-by b{color:var(--gold)}
+.auth-box h2{font-family:var(--fd);font-size:22px;color:var(--g8);margin-bottom:6px;text-align:center}
+.auth-box .auth-sub{font-size:13px;color:var(--gr4);text-align:center;margin-bottom:24px}
+.auth-field{margin-bottom:16px}
+.auth-field label{display:block;font-size:12px;font-weight:600;color:var(--gr6);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.auth-field input,.auth-field select{width:100%;padding:12px 14px;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-size:14px;font-family:var(--fb);outline:none;transition:border-color .15s}
+.auth-field input:focus,.auth-field select:focus{border-color:var(--g5)}
+.auth-btn{width:100%;padding:14px;background:var(--g6);color:white;border:none;border-radius:var(--rmd);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;margin-top:8px}
+.auth-btn:hover{background:var(--g5)}
+.auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--gr4)}
+.auth-switch a{color:var(--g5);cursor:pointer;font-weight:600;text-decoration:none}
+.auth-switch a:hover{text-decoration:underline}
+.auth-error{background:#FCEBEB;color:#A32D2D;padding:10px 14px;border-radius:var(--rsm);font-size:13px;margin-bottom:16px;display:none}
+.auth-error.show{display:block}
+/* HERO */
+.hero{background:var(--g8);background-image:radial-gradient(ellipse 80% 60% at 70% 40%,rgba(29,158,117,.25),transparent 70%),radial-gradient(ellipse 40% 40% at 10% 80%,rgba(232,168,56,.12),transparent 60%);padding:48px 20px 56px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.025) 39px,rgba(255,255,255,.025) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.025) 39px,rgba(255,255,255,.025) 40px)}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;position:relative}
+.hero h1{font-family:var(--fd);font-size:clamp(24px,5vw,40px);color:var(--white);line-height:1.15;margin-bottom:12px;position:relative}
+.hero h1 em{color:var(--g2);font-style:italic}
+.hero-sub{font-size:14px;color:var(--g2);max-width:500px;margin:0 auto 24px;line-height:1.6;position:relative}
+.sw{max-width:600px;margin:0 auto;background:white;border-radius:var(--rlg);padding:5px;display:flex;gap:5px;box-shadow:var(--sl);position:relative}
+.sw input{flex:1;border:none;outline:none;font-family:var(--fb);font-size:13px;padding:9px 12px;color:var(--gr9)}
+.sw input::placeholder{color:var(--gr4)}
+.sw button{background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.sw button:hover{background:var(--g5)}
+/* TABS */
+.tabs{display:flex;background:var(--g9);border-bottom:2px solid rgba(255,255,255,.05)}
+.tab{flex:1;text-align:center;padding:12px 8px;font-size:12px;font-weight:600;color:var(--g2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
+.tab:hover{color:white;background:rgba(255,255,255,.03)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab .tab-icon{font-size:16px;display:block;margin-bottom:2px}
+/* STATS */
+.stats{display:flex;justify-content:center;background:var(--g9)}
+.si{flex:1;max-width:160px;text-align:center;padding:14px 10px;border-right:1px solid rgba(255,255,255,.07)}
+.si:last-child{border-right:none}
+.sn{font-family:var(--fd);font-size:22px;color:var(--g4);display:block;line-height:1}
+.sl2{font-size:10px;color:var(--g2);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+/* MAIN */
+.main{display:grid;grid-template-columns:280px 1fr;gap:20px;max-width:1200px;margin:0 auto;padding:24px 20px}
+.sidebar{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 90px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--gr2);border-radius:4px}
+.scard{background:white;border-radius:var(--rlg);border:1px solid var(--gr1);overflow:hidden;box-shadow:var(--ss)}
+.shead{padding:14px 16px 10px;border-bottom:1px solid var(--gr1);display:flex;align-items:center;justify-content:space-between}
+.stitle{font-size:12px;font-weight:600;color:var(--gr6);text-transform:uppercase;letter-spacing:1px}
+.clr{font-size:11px;color:var(--g5);cursor:pointer;border:none;background:none;font-family:var(--fb)}
+.lchip{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--rsm);cursor:pointer;transition:all .15s;border:1px solid transparent}
+.lchip:hover{background:var(--gr0)}
+.lchip input{accent-color:var(--g6);width:13px;height:13px}.lchip span{font-size:12px;color:#3d3d3d}
+.uitem{border-bottom:1px solid var(--gr1)}.uitem:last-child{border-bottom:none}
+.uhead{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .1s;user-select:none}
+.uhead:hover{background:var(--gr0)}
+.uchk{accent-color:var(--g6);width:13px;height:13px;flex-shrink:0}
+.uabb{font-size:10px;font-weight:600;background:var(--g1);color:var(--g8);padding:2px 6px;border-radius:3px;flex-shrink:0}
+.uname{font-size:12px;font-weight:500;color:var(--gr8);flex:1;line-height:1.3}
+.utog{font-size:14px;color:var(--gr4);transition:transform .2s;flex-shrink:0}.utog.open{transform:rotate(90deg)}
+.facs{display:none;padding:0 14px 8px 36px;flex-direction:column;gap:3px}.facs.open{display:flex}
+.fgrp{margin-bottom:4px}
+.flbl{font-size:10px;font-weight:600;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.fitem{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:var(--rsm);cursor:pointer;transition:all .1s}
+.fitem:hover{background:var(--g0)}.fitem input{accent-color:var(--g6);width:12px;height:12px;flex-shrink:0}
+.fitem span{font-size:11px;color:var(--gr6);line-height:1.3}
+.content{min-width:0}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rcount{font-size:12px;color:var(--gr6)}.rcount strong{color:var(--gr9)}
+.sortsel{font-family:var(--fb);font-size:12px;border:1px solid var(--gr2);border-radius:var(--rsm);padding:6px 10px;background:white;color:#3d3d3d;cursor:pointer;outline:none}
+.aftags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.ftag{display:flex;align-items:center;gap:4px;background:var(--g0);border:1px solid var(--g2);color:var(--g8);font-size:11px;font-weight:500;padding:3px 8px;border-radius:16px}
+.ftag button{background:none;border:none;cursor:pointer;color:var(--g6);font-size:13px;line-height:1;padding:0}
+.dgrid{display:flex;flex-direction:column;gap:10px}
+.dcard{background:white;border-radius:var(--rlg);border:1px solid var(--gr1);padding:16px 18px;transition:all .18s;box-shadow:var(--ss);display:flex;gap:14px;align-items:flex-start}
+.dcard:hover{border-color:#5DCAA5;box-shadow:var(--sm);transform:translateY(-1px)}
+.dico{width:40px;height:46px;border-radius:var(--rsm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;letter-spacing:.5px;position:relative;overflow:hidden;background:linear-gradient(135deg,#FF6B6B,#EE3030);color:white}
+.dico::before{content:'';position:absolute;top:0;right:0;border-left:10px solid rgba(255,255,255,.2);border-bottom:10px solid transparent}
+.dbody{flex:1;min-width:0}
+.dtitle{font-size:14px;font-weight:500;color:var(--gr9);line-height:1.4;margin-margin-bottom:6px}
+.dmeta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}
+.tn-mestrado{background:#EEEDFE;color:#3C3489}
+.tn-licenciatura{background:#E6F1FB;color:#0C447C}
+.tn-doutoramento{background:#FAEEDA;color:#633806}
+.tn-monografia{background:#FCEBEB;color:#A32D2D}
+.ta{background:var(--gr1);color:var(--gr6)}
+.tu{background:var(--g0);color:var(--g7)}
+.dautor{font-size:11px;color:var(--gr4)}
+.dright{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+.price{font-family:var(--fd);font-size:18px;color:var(--g7)}
+.price span{font-size:11px;color:var(--gr4);font-family:var(--fb)}
+.cbtns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.bprev{background:white;color:var(--g6);border:1px solid #5DCAA5;border-radius:var(--rsm);padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.bprev:hover{background:var(--g0)}
+.bbuy{background:var(--g6);color:white;border:none;border-radius:var(--rsm);padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:3px}
+.bbuy:hover{background:var(--g5)}
+.empty{text-align:center;padding:50px 16px;background:white;border-radius:var(--rlg);border:1px solid var(--gr1)}
+.eico{font-size:36px;margin-bottom:12px;opacity:.4}
+.etitle{font-size:15px;font-weight:500;color:var(--gr6);margin-bottom:4px}
+.esub{font-size:12px;color:var(--gr4)}
+.pgn{display:flex;justify-content:center;align-items:center;gap:5px;margin-top:24px}
+.pgb{width:32px;height:32px;border-radius:var(--rsm);border:1px solid var(--gr2);background:white;color:#3d3d3d;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:var(--fb)}
+.pgb:hover{border-color:var(--g4);color:var(--g6)}.pgb.act{background:var(--g6);color:white;border-color:var(--g6)}
+/* MODALS */
+.ovl{display:none;position:fixed;inset:0;background:rgba(4,52,44,.65);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
+.ovl.open{display:flex}
+.modal{background:white;border-radius:var(--rxl);box-shadow:var(--sl);overflow:hidden;animation:sup .25s ease;width:100%}
+@keyframes sup{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mtop{background:var(--g8);background-image:radial-gradient(ellipse at 80% 20%,rgba(29,158,117,.4),transparent 70%);padding:20px 22px}
+.mtop h2{font-family:var(--fd);font-size:18px;color:white;margin-bottom:4px}
+.msub{font-size:12px;color:var(--g2);line-height:1.4}
+.mbody{padding:20px 22px}
+.prow{display:flex;align-items:center;justify-content:space-between;background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px 16px;margin-bottom:16px}
+.plbl{font-size:12px;color:var(--gr6)}
+.pval{font-family:var(--fd);font-size:24px;color:var(--g7)}
+.pmths{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.popt{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--rmd);border:1.5px solid var(--gr2);cursor:pointer;transition:all .15s}
+.popt:hover{border-color:#5DCAA5;background:var(--g0)}.popt.sel{border-color:var(--g5);background:var(--g0)}
+.plogo{width:36px;height:36px;border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0}
+.pm{background:#E00B0B}.pe{background:#F7A800}.pk{background:#004A99}
+.pname{font-size:13px;font-weight:600;color:var(--gr9)}.psub{font-size:11px;color:var(--gr4)}
+.prad{width:16px;height:16px;border-radius:50%;border:2px solid var(--gr2);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.popt.sel .prad{border-color:var(--g5);background:var(--g5)}
+.popt.sel .prad::after{content:'';width:7px;height:7px;border-radius:50%;background:white;display:block}
+.bpag{width:100%;padding:12px;background:var(--g6);color:white;border:none;border-radius:var(--rmd);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;margin-bottom:8px}
+.bpag:hover{background:var(--g5)}
+.bcan{width:100%;padding:10px;background:none;color:#888;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-size:13px;cursor:pointer;font-family:var(--fb)}
+.scr{padding:32px 22px;text-align:center}
+.schk{width:56px;height:56px;border-radius:50%;background:var(--g5);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;color:white}
+.scr h2{font-family:var(--fd);font-size:20px;color:var(--gr9);margin-bottom:6px}
+.scr p{font-size:13px;color:#888;line-height:1.5;margin-bottom:20px}
+.bdl{display:inline-flex;align-items:center;gap:8px;background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-bottom:10px;transition:all .15s;text-decoration:none}
+.bdl:hover{background:var(--g5);transform:translateY(-1px)}
+/* PREVIEW */
+#pvModal .modal{max-width:800px;max-height:85vh;display:flex;flex-direction:column;border-radius:var(--rlg)}
+.pvhead{background:var(--g8);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pvhead h3{font-family:var(--fd);font-size:14px;color:white;max-width:560px;line-height:1.3}
+.pvclose{background:rgba(255,255,255,.15);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pvclose:hover{background:rgba(255,255,255,.25)}
+.pvbody{flex:1;overflow:hidden;min-height:400px}
+.pvbody iframe{width:100%;height:100%;border:none;min-height:400px}
+.pvfoot{padding:12px 18px;border-top:1px solid var(--gr1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:white}
+.pvnote{font-size:11px;color:var(--gr4)}
+.bbn{background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.bbn:hover{background:var(--g5)}
+/* UPLOAD */
+#upModal .modal{max-width:500px;max-height:85vh;display:flex;flex-direction:column}
+.ubody{padding:18px 22px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.flabel{font-size:12px;font-weight:500;color:#3d3d3d;margin-bottom:4px}
+.finp{width:100%;padding:9px 12px;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-family:var(--fb);font-size:13px;color:var(--gr9);outline:none;transition:border-color .15s}
+.finp:focus{border-color:var(--g5)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dz{border:2px dashed var(--gr2);border-radius:var(--rmd);padding:24px 16px;text-align:center;cursor:pointer;transition:all .15s}
+.dz:hover,.dz.dg{border-color:var(--g4);background:var(--g0)}
+.dz.hf{border-color:var(--g5);background:var(--g0);border-style:solid}
+.dzico{font-size:24px;margin-bottom:6px}.dztxt{font-size:12px;color:#888}.dztxt strong{color:var(--g6)}
+.enote{background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:10px 14px;font-size:12px;color:var(--g8);line-height:1.5}
+.enote strong{color:var(--g6)}
+.pbwrap{background:var(--gr1);border-radius:16px;height:5px;overflow:hidden;margin-top:3px;display:none}
+.pbbar{height:100%;background:var(--g5);border-radius:16px;width:0;transition:width .3s}
+.srow{display:flex;gap:8px}
+/* AI GENERATOR */
+.ai-section{background:linear-gradient(135deg,var(--g8),var(--g7));border-radius:var(--rlg);padding:24px;margin-bottom:20px;box-shadow:var(--sm)}
+.ai-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ai-icon{width:48px;height:48px;border-radius:var(--rmd);background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:24px}
+.ai-title{font-family:var(--fd);font-size:18px;color:white}
+.ai-sub{font-size:12px;color:var(--g2)}
+.ai-form{display:flex;flex-direction:column;gap:10px}
+.ai-field{display:flex;flex-direction:column;gap:4px}
+.ai-field label{font-size:11px;font-weight:600;color:var(--g2);text-transform:uppercase;letter-spacing:.5px}
+.ai-field input,.ai-field select,.ai-field textarea{width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,.15);border-radius:var(--rmd);font-family:var(--fb);font-size:13px;color:white;background:rgba(255,255,255,.08);outline:none;transition:border-color .15s}
+.ai-field input:focus,.ai-field select:focus,.ai-field textarea:focus{border-color:var(--g4)}
+.ai-field textarea{min-height:80px;resize:vertical}
+.ai-field select option{background:var(--g8);color:white}
+.ai-gen-btn{background:var(--gold);color:var(--g9);border:none;border-radius:var(--rmd);padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fb);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.ai-gen-btn:hover{background:#F5BE60;transform:translateY(-1px)}
+.ai-gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ai-output{background:rgba(0,0,0,.2);border-radius:var(--rmd);padding:16px;margin-top:12px;min-height:120px;max-height:400px;overflow-y:auto;display:none}
+.ai-output.show{display:block}
+.ai-output h4{color:var(--gold);font-size:13px;margin-bottom:8px}
+.ai-output p{color:var(--g2);font-size:12px;line-height:1.6;white-space:pre-wrap}
+.ai-output .ai-actions{display:flex;gap:8px;margin-top:12px}
+.ai-output .ai-actions button{padding:8px 16px;border-radius:var(--rsm);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.ai-download{background:var(--g5);color:white;border:none}
+.ai-download:hover{background:var(--g4)}
+.ai-copy{background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.2)}
+.ai-copy:hover{background:rgba(255,255,255,.25)}
+/* COURSES */
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.course-card{background:white;border-radius:var(--rlg);border:1px solid var(--gr1);overflow:hidden;box-shadow:var(--ss);transition:all .18s}
+.course-card:hover{border-color:#5DCAA5;box-shadow:var(--sm);transform:translateY(-2px)}
+.course-banner{height:140px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;overflow:hidden}
+.course-banner::before{content:'';position:absolute;inset:0;opacity:.15}
+.cb-economia{background:linear-gradient(135deg,#667eea,#764ba2)}
+.cb-direito{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.cb-saude{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.cb-engenharia{background:linear-gradient(135deg,#43e97b,#38f9d)}
+.cb-educacao{background:linear-gradient(135deg,#fa709a,#fee140)}
+.cb-tecnologia{background:linear-gradient(135deg,#a18cd1,#fbc2eb)}
+.course-body{padding:16px}
+.course-title{font-size:15px;font-weight:600;color:var(--gr9);margin-bottom:6px;line-height:1.3}
+.course-desc{font-size:12px;color:var(--gr4);margin-bottom:10px;line-height:1.5}
+.course-meta{display:flex;align-items:center;justify-content:space-between}
+.course-level{font-size:10px;font-weight:600;background:var(--g0);color:var(--g7);padding:3px 8px;border-radius:10px;text-transform:uppercase}
+.course-btn{background:var(--g6);color:white;border:none;border-radius:var(--rsm);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.course-btn:hover{background:var(--g5)}
+/* COURSE VIEWER */
+#courseModal .modal{max-width:800px;max-height:90vh;display:flex;flex-direction:column}
+.course-viewer{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.cv-header{background:var(--g8);padding:16px 22px;flex-shrink:0}
+.cv-header h3{font-family:var(--fd);font-size:18px;color:white;margin-bottom:2px}
+.cv-header p{font-size:12px;color:var(--g2)}
+.cv-chat{flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.cv-msg{display:flex;gap:10px;max-width:85%}
+.cv-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.cv-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.cv-msg.ai .cv-avatar{background:var(--gold);color:var(--g9)}
+.cv-msg.user .cv-avatar{background:var(--g5);color:white}
+.cv-bubble{padding:10px 14px;border-radius:var(--rmd);font-size:13px;line-height:1.6}
+.cv-msg.ai .cv-bubble{background:var(--gr0);color:var(--gr8)}
+.cv-msg.user .cv-bubble{background:var(--g6);color:white}
+.cv-input-area{padding:14px 22px;border-top:1px solid var(--gr1);display:flex;gap:8px;flex-shrink:0;background:white}
+.cv-input-area input{flex:1;padding:10px 14px;border:1.5px solid var(--gr2);border-radius:var(--rmd);font-family:var(--fb);font-size:13px;outline:none}
+.cv-input-area input:focus{border-color:var(--g5)}
+.cv-input-area button{background:var(--g6);color:white;border:none;border-radius:var(--rmd);padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb)}
+/* WALLET */
+.wallet-bar{background:linear-gradient(135deg,var(--g8),var(--g9));padding:14px 18px;border-radius:var(--rlg);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sm)}
+.wallet-info{display:flex;align-items:center;gap:12px}
+.wallet-icon{width:40px;height:40px;border-radius:var(--rmd);background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--g9)}
+.wallet-label{font-size:11px;color:var(--g2);text-transform:uppercase;letter-spacing:1px}
+.wallet-amount{font-family:var(--fd);font-size:20px;color:var(--white)}
+.wallet-btn{background:var(--gold);color:var(--g9);border:none;border-radius:var(--rsm);padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.wallet-btn:hover{background:#F5BE60}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--g8);color:white;padding:10px 20px;border-radius:var(--rmd);font-size:13px;font-weight:500;z-index:999;transition:transform .3s;white-space:nowrap;box-shadow:var(--sl)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* TYPING INDICATOR */
+.typing{display:flex;gap:4px;padding:8px 0}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--gr4);animation:typing 1.4s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+/* RESPONSIVE */
+@media(max-width:820px){
+  .main{grid-template-columns:1fr;padding:14px}
+  .sidebar{position:static;max-height:none}
+  .nav{padding:0 12px;height:54px}
+  .nav-a{display:none}
+  .hero{padding:32px 14px 40px}
+  .stats{flex-wrap:wrap}.si{max-width:none;flex:1 1 45%}
+  .cbtns{flex-direction:column}
+  .tabs{overflow-x:auto}
+  .tab{font-size:10px;padding:10px 6px}
+  .courses-grid{grid-template-columns:1fr}
+  .wallet-bar{flex-direction:column;gap:10px;text-align:center}
+  .wallet-info{flex-direction:column}
+  .ai-section{padding:18px}
+  .logo-by{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <!-- LOGIN -->
+  <div class="auth-box" id="loginBox">
+    <div class="logo-auth">Pesquisa<em>MZ</em></div>
+    <div class="auth-by">Desenvolvido por <b>Junior Maico Jorge</b></div>
+    <h2>Entrar na plataforma</h2>
+    <p class="auth-sub">Acede ao repositório académico nacional</p>
+    <div class="auth-error" id="loginError"></div>
+    <div class="auth-field">
+      <label>Número M-Pesa / e-Mola / mKesh</label>
+      <input type="tel" id="loginPhone" placeholder="84/85/86/87 XXX XXXX" maxlength="12">
+    </div>
+    <div class="auth-field">
+      <label>Palavra-passe</label>
+      <input type="password" id="loginPass" placeholder="A tua palavra-passe">
+    </div>
+    <button class="auth-btn" onclick="doLogin()">Entrar</button>
+    <p class="auth-switch">Não tens conta? <a onclick="showRegister()">Criar conta</a></p>
+  </div>
+  <!-- REGISTER -->
+  <div class="auth-box" id="registerBox" style="display:none">
+    <div class="logo-auth">Pesquisa<em>MZ</em></div>
+    <div class="auth-by">Desenvolvido por <b>Junior Maico Jorge</b></div>
+    <h2>Criar conta</h2>
+    <p class="auth-sub">Regista-te para aceder a todos os documentos</p>
+    <div class="auth-error" id="registerError"></div>
+    <div class="auth-field">
+      <label>Nome completo</label>
+      <input type="text" id="regName" placeholder="O teu nome completo">
+    </div>
+    <div class="auth-field">
+      <label>Número de telefone</label>
+      <input type="tel" id="regPhone" placeholder="84/85/86/87 XXX XXXX" maxlength="12">
+    </div>
+    <div class="auth-field">
+      <label>Método de pagamento</label>
+      <select id="regMethod">
+        <option value="mpesa">M-Pesa (Vodacom)</option>
+        <option value="emola">e-Mola (Movitel)</option>
+        <option value="mkesh">mKesh (BIM)</option>
+      </select>
+    </div>
+    <div class="auth-field">
+      <label>Palavra-passe</label>
+      <input type="password" id="regPass" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="auth-field">
+      <label>Confirmar palavra-passe</label>
+      <input type="password" id="regPass2" placeholder="Repete a palavra-passe">
+    </div>
+    <button class="auth-btn" onclick="doRegister()">Criar conta</button>
+    <p class="auth-switch">Já tens conta? <a onclick="showLogin()">Entrar</a></p>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo-wrap">
+    <div class="logo">Pesquisa<em>MZ</em></div>
+    <div class="logo-by">Desenvolvido por <b>Junior Maico Jorge</b></div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-a" href="#" onclick="showTab('repositorio');return false;">Repositório</a>
+    <a class="nav-a" href="#" onclick="showTab('ia');return false;">Gerador IA</a>
+    <a class="nav-a" href="#" onclick="showTab('cursos');return false;">Cursos Grátis</a>
+    <a class="nav-a" href="#" onclick="showSettings();return false;">⚙️</a>
+    <div class="user-menu" id="userMenu" style="display:none">
+      <div class="user-avatar" id="userAvatar">J</div>
+      <span class="user-name" id="userName">Utilizador</span>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+</nav>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="repositorio" onclick="showTab('repositorio')"><span class="tab-icon">📚</span>Repositório</div>
+  <div class="tab" data-tab="ia" onclick="showTab('ia')"><span class="tab-icon">🤖</span>Gerador IA</div>
+  <div class="tab" data-tab="cursos" onclick="showTab('cursos')"><span class="tab-icon">🎓</span>Cursos Grátis</div>
+</div>
+
+<!-- HERO (only for repositorio) -->
+<div class="hero" id="heroSection">
+  <div class="eyebrow">Repositório Académico Nacional</div>
+  <h1>Pesquisa académica<br><em>feita em Moçambique</em></h1>
+  <p class="hero-sub">Acede a teses, monografias e dissertações de todas as universidades do país.</p>
+  <div class="sw">
+    <input type="text" id="searchInput" placeholder="Pesquisar por título, autor, palavra-chave..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">Pesquisar</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats" id="statsSection">
+  <div class="si"><span class="sn" id="statDocs">0</span><div class="sl2">Documentos</div></div>
+  <div class="si"><span class="sn">9</span><div class="sl2">Universidades</div></div>
+  <div class="si"><span class="sn">60+</span><div class="sl2">Faculdades</div></div>
+  <div class="si"><span class="sn">50 MZN</span><div class="sl2">Por documento</div></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <!-- SIDEBAR (repositorio) -->
+  <aside class="sidebar" id="sidebarRepo">
+    <div class="scard">
+      <div class="shead"><span class="stitle">Filtros</span><button class="clr" onclick="clearAll()">Limpar</button></div>
+      <div style="padding:12px 14px 4px;border-bottom:1px solid var(--gr1)">
+        <div style="font-size:10px;font-weight:600;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Nível académico</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label class="lchip"><input type="checkbox" class="nchk" value="Mestrado" onchange="applyFilters()"><span>Mestrado</span></label>
+          <label class="lchip"><input type="checkbox" class="nchk" value="Doutoramento" onchange="applyFilters()"><span>Doutoramento</span></label>
+          <label class="lchip"><input type="checkbox" class="nchk" value="Licenciatura" onchange="applyFilters()"><span>Licenciatura</span></label>
+          <label class="lchip"><input type="checkbox" class="nchk" value="Monografia" onchange="applyFilters()"><span>Monografia</span></label>
+        </div>
+      </div>
+      <div style="padding:12px 14px 4px"><div style="font-size:10px;font-weight:600;color:var(--gr4);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Universidades</div></div>
+      <div id="uniAcc"></div>
+    </div>
+  </aside>
+
+  <!-- CONTENT AREA -->
+  <main class="content" id="mainContent">
+    <!-- REPOSITORIO -->
+    <div id="tabRepositorio">
+      <div class="toolbar">
+        <div class="rcount" id="rcount">0 documentos</div>
+        <select class="sortsel" onchange="applyFilters()"><option value="rec">Mais recente</option><option value="az">A → Z</option><option value="za">Z → A</option></select>
+      </div>
+      <div class="aftags" id="aftags"></div>
+      <div class="dgrid" id="dgrid"></div>
+      <div class="pgn" id="pgn"></div>
+    </div>
+    <!-- IA GENERATOR -->
+    <div id="tabIA" style="display:none">
+      <div class="ai-section">
+        <div class="ai-header">
+          <div class="ai-icon">🤖</div>
+          <div><div class="ai-title">Gerador de Trabalhos Académicos</div><div class="ai-sub">Powered by Qwen AI — 50 MZN por trabalho</div></div>
+        </div>
+        <div class="ai-form">
+          <div class="ai-field">
+            <label>Tema do trabalho</label>
+            <input type="text" id="aiTema" placeholder="Ex: Impacto das microfinanças no desenvolvimento rural">
+          </div>
+          <div class="ai-field">
+            <label>Nível académico</label>
+            <select id="aiNivel"><option>Licenciatura</option><option>Mestrado</option><option>Doutoramento</option><option>Monografia</option></select>
+          </div>
+          <div class="ai-field">
+            <label>Área de estudo</label>
+            <input type="text" id="aiArea" placeholder="Ex: Economia, Direito, Saúde...">
+          </div>
+          <div class="ai-field">
+            <label>Instruções adicionais (opcional)</label>
+            <textarea id="aiInstrucoes" placeholder="Detalhes específicos que queres incluir..."></textarea>
+          </div>
+          <button class="ai-gen-btn" onclick="generateWork()" id="aiGenBtn">🤖 Gerar trabalho académico — 50 MZN</button>
+        </div>
+        <div class="ai-output" id="aiOutput">
+          <h4>📄 Trabalho Gerado</h4>
+          <p id="aiOutputText"></p>
+          <div class="ai-actions">
+            <button class="ai-copy" onclick="copyAIWork()">📋 Copiar</button>
+            <button class="ai-download" onclick="downloadAIWork()">⬇ Descarregar PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- COURSES -->
+    <div id="tabCursos" style="display:none">
+      <div style="margin-bottom:20px">
+        <h2 style="font-family:var(--fd);font-size:22px;color:var(--gr9);margin-bottom:4px">🎓 Cursos Gratuitos</h2>
+        <p style="font-size:13px;color:var(--gr4)">Aprende com a IA Qwen — docente virtual em várias áreas</p>
+      </div>
+      <div class="courses-grid" id="coursesGrid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- PAY MODAL -->
+<div class="ovl" id="payOvl">
+  <div class="modal" style="max-width:420px">
+    <div id="payScr">
+      <div class="mtop"><h2>Comprar documento</h2><div class="msub" id="payDocTitle">—</div></div>
+      <div class="mbody">
+        <div class="prow"><div class="plbl">Valor a pagar</div><div class="pval">50 <span style="font-size:14px;color:var(--gr4);font-family:var(--fb)">MZN</span></div></div>
+        <div style="font-size:12px;font-weight:600;color:var(--gr6);margin-bottom:8px">Método de pagamento</div>
+        <div class="pmths">
+          <div class="popt sel" onclick="selPay(this)"><div class="plogo pm">M</div><div><div class="pname">M-Pesa</div><div class="psub">Vodacom</div></div><div class="prad"></div></div>
+          <div class="popt" onclick="selPay(this)"><div class="plogo pe">e</div><div><div class="pname">e-Mola</div><div class="psub">Movitel</div></div><div class="prad"></div></div>
+          <div class="popt" onclick="selPay(this)"><div class="plogo pk">mk</div><div><div class="pname">mKesh</div><div class="psub">BIM</div></div><div class="prad"></div></div>
+        </div>
+        <button class="bpag" onclick="confirmPay()">Pagar 50 MZN e descarregar</button>
+        <button class="bcan" onclick="closePayOvl()">Cancelar</button>
+      </div>
+    </div>
+    <div id="okScr" style="display:none">
+      <div class="scr">
+        <div class="schk">✓</div>
+        <h2>Pagamento confirmado!</h2>
+        <p>O teu documento foi desbloqueado.</p>
+        <a class="bdl" id="dlLink" href="#" download>⬇ Descarregar PDF</a><br>
+        <button class="bcan" style="max-width:180px;margin:0 auto" onclick="closePayOvl()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="ovl" id="pvModal">
+  <div class="modal" style="max-width:800px;max-height:85vh;display:flex;flex-direction:column;border-radius:var(--rlg)">
+    <div class="pvhead"><h3 id="pvTitle">—</h3><button class="pvclose" onclick="closePv()">✕</button></div>
+    <div class="pvbody"><iframe id="pvFrame" src="about:blank"></iframe></div>
+    <div class="pvfoot" id="pvFoot">
+      <span class="pvnote">👁 Pré-visualização</span>
+      <button class="bbn" id="pvBtn">Comprar — 50 MZN</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="ovl" id="upModal">
+  <div class="modal" style="max-width:500px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>Submeter trabalho</h2><div class="msub">Publicado imediatamente</div></div>
+    <div class="ubody">
+      <div><div class="flabel">Título *</div><input class="finp" id="upT" type="text" placeholder="Título do trabalho"></div>
+      <div class="frow">
+        <div><div class="flabel">Autor *</div><input class="finp" id="upA" type="text" placeholder="Nome completo"></div>
+        <div><div class="flabel">Ano *</div><input class="finp" id="upY" type="number" placeholder="2024" min="2000" max="2030"></div>
+      </div>
+      <div class="frow">
+        <div><div class="flabel">Nível *</div><select class="finp" id="upN"><option>Licenciatura</option><option>Mestrado</option><option>Doutoramento</option><option>Monografia</option></select></div>
+        <div><div class="flabel">Área *</div><input class="finp" id="upAr" type="text" placeholder="Ex: Economia"></div>
+      </div>
+      <div class="frow">
+        <div><div class="flabel">Universidade *</div><select class="finp" id="upU" onchange="updFac()"></select></div>
+        <div><div class="flabel">Faculdade *</div><select class="finp" id="upF"></select></div>
+      </div>
+      <div>
+        <div class="flabel">Ficheiro PDF *</div>
+        <div class="dz" id="dz" onclick="document.getElementById('fi').click()" ondragover="dov(event)" ondragleave="dlv(event)" ondrop="ddr(event)">
+          <input type="file" id="fi" style="display:none" accept=".pdf" onchange="fsel(this)">
+          <div class="dzico" id="dzico">📄</div>
+          <div class="dztxt" id="dztxt"><strong>Clica para seleccionar</strong> ou arrasta aqui</div>
+        </div>
+        <div class="pbwrap" id="pbw"><div class="pbbar" id="pbb"></div></div>
+      </div>
+      <div class="enote">💰 Ganha <strong>30 MZN</strong> por cada download do teu trabalho.</div>
+      <div class="srow">
+        <button class="bpag" style="margin-bottom:0" onclick="submitWork()">Publicar</button>
+        <button class="bcan" style="width:auto;padding:10px 16px" onclick="closeUp()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div class="ovl" id="walletModal">
+  <div class="modal" style="max-width:420px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>Minha carteira</h2><div class="msub">Saldo dos teus trabalhos</div></div>
+    <div class="mbody" style="overflow-y:auto;flex:1">
+      <div class="prow"><div class="plbl">Saldo</div><div class="pval" id="walletBal">0 <span style="font-size:14px;color:var(--gr4);font-family:var(--fb)">MZN</span></div></div>
+      <div style="font-size:12px;font-weight:600;color:var(--gr6);margin-bottom:8px">Método de levantamento</div>
+      <div class="pmths">
+        <div class="popt sel" onclick="selPay(this)"><div class="plogo pm">M</div><div><div class="pname">M-Pesa</div></div><div class="prad"></div></div>
+        <div class="popt" onclick="selPay(this)"><div class="plogo pe">e</div><div><div class="pname">e-Mola</div></div><div class="prad"></div></div>
+        <div class="popt" onclick="selPay(this)"><div class="plogo pk">mk</div><div><div class="pname">mKesh</div></div><div class="prad"></div></div>
+      </div>
+      <div style="margin-bottom:14px"><div class="flabel">Número de telefone</div><input class="finp" id="walletPhone" type="tel" placeholder="84 XXX XXXX"></div>
+      <button class="bpag" onclick="withdrawWallet()">Solicitar levantamento</button>
+      <button class="bcan" onclick="closeWallet()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE VIEWER MODAL -->
+<div class="ovl" id="courseModal">
+  <div class="modal" style="max-width:800px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="course-viewer">
+      <div class="cv-header">
+        <h3 id="cvTitle">—</h3>
+        <p id="cvDesc">—</p>
+      </div>
+      <div class="cv-chat" id="cvChat"></div>
+      <div class="cv-input-area">
+        <input type="text" id="cvInput" placeholder="Faz uma pergunta à IA docente..." onkeydown="if(event.key==='Enter')sendCourseMsg()">
+        <button onclick="sendCourseMsg()">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="ovl" id="settingsModal">
+  <div class="modal" style="max-width:460px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>⚙️ Definições</h2><div class="msub">Configurações da plataforma</div></div>
+    <div class="mbody" style="overflow-y:auto;flex:1">
+      <div style="margin-bottom:20px">
+        <div style="font-size:14px;font-weight:600;color:var(--gr9);margin-bottom:4px">🤖 API Key da Google Gemini (IA)</div>
+        <div style="font-size:12px;color:var(--gr4);margin-bottom:10px">Necessária para o gerador de trabalhos e chat dos cursos. Obtém grátis em <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--g5)">aistudio.google.com</a></div>
+        <input class="finp" id="settingsApiKey" type="password" placeholder="AIzaSyxxxxxxxxxxxxxxx">
+        <button class="bpag" style="margin-top:10px;margin-bottom:0" onclick="saveApiKey()">💾 Guardar API Key</button>
+      </div>
+      <div style="padding-top:16px;border-top:1px solid var(--gr1)">
+        <div style="font-size:14px;font-weight:600;color:var(--gr9);margin-bottom:4px">🗑️ Dados</div>
+        <button class="bcan" style="width:auto;padding:8px 16px;font-size:12px" onclick="if(confirm('Apagar todos os dados?')){localStorage.clear();location.reload();}">Limpar todos os dados</button>
+      </div>
+      <button class="bcan" onclick="closeSettings()" style="margin-top:16px">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== DATA ====================
+const UNIS=[
+  {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Agronomia e Engenharia Florestal","Faculdade de Arquitectura e Planeamento Físico","Faculdade de Ciências","Faculdade de Ciências de Saúde","Faculdade de Direito","Faculdade de Economia","Faculdade de Educação","Faculdade de Engenharia","Faculdade de Letras e Ciências Sociais","Faculdade de Medicina","Faculdade de Veterinária","Instituto de Ciências da Comunicação","Instituto Superior de Relações Internacionais"]},
+    {l:"Extensões",i:["Extensão de Nampula","Extensão de Quelimane","Extensão de Tete","Extensão de Chimoio","Extensão de Inhambane","Extensão de Xai-Xai"]}]},
+  {a:"UCM",n:"Universidade Católica de Moçambique",f:[
+    {l:"Faculdades — Beira",i:["Faculdade de Ciências de Saúde","Faculdade de Educação","Faculdade de Ciências Sociais e Políticas","Instituto de Administração e Gestão de Empresas","Faculdade de Engenharia e Ciências"]},
+    {l:"Extensões",i:["Extensão de Nampula","Extensão de Pemba","Extensão de Lichinga","Extensão de Chimoio","Extensão de Tete","Extensão de Maputo"]}]},
+  {a:"ISRI",n:"Instituto Superior de Relações Internacionais",f:[
+    {l:"Departamentos — Maputo",i:["Departamento de Relações Internacionais","Departamento de Diplomacia","Departamento de Direito Internacional","Departamento de Ciências Políticas"]},
+    {l:"Extensões",i:["Extensão de Beira","Extensão de Nampula"]}]},
+  {a:"UniZambeze",n:"Universidade Zambeze",f:[
+    {l:"Faculdades — Beira",i:["Faculdade de Ciências da Saúde","Faculdade de Ciências Agrárias","Faculdade de Engenharia","Faculdade de Ciências Naturais e Matemática","Faculdade de Educação","Instituto de Gestão e Negócios"]},
+    {l:"Extensões",i:["Extensão de Quelimane","Extensão de Tete","Extensão de Chimoio"]}]},
+  {a:"UDM",n:"Universidade Daomés de Moçambique",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Ciências Económicas","Faculdade de Direito","Faculdade de Engenharia Informática","Faculdade de Ciências da Saúde"]},
+    {l:"Extensões",i:["Extensão de Matola","Extensão de Beira"]}]},
+  {a:"UNILÚRIO",n:"Universidade Lúrio",f:[
+    {l:"Faculdades — Nampula",i:["Faculdade de Ciências de Saúde","Faculdade de Engenharia","Faculdade de Ciências Agrárias","Faculdade de Ciências Naturais","Faculdade de Arquitectura e Urbanismo"]},
+    {l:"Extensões",i:["Extensão de Pemba","Extensão de Lichinga","Extensão de Ilha de Moçambique"]}]},
+  {a:"USTM",n:"Universidade São Tomás de Moçambique",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Ciências Jurídicas","Faculdade de Economia e Gestão","Faculdade de Ciências da Computação","Faculdade de Ciências de Educação"]},
+    {l:"Extensões",i:["Extensão de Inhambane","Extensão de Xai-Xai","Extensão de Maxixe"]}]},
+  {a:"ISCTEM",n:"Instituto Superior de Ciências e Tecnologia de Moçambique",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Gestão e Administração","Faculdade de Tecnologias de Informação","Faculdade de Direito","Faculdade de Ciências de Comunicação"]}]},
+  {a:"UP",n:"Universidade Pedagógica",f:[
+    {l:"Faculdades — Maputo",i:["Faculdade de Ciências Naturais e Matemática","Faculdade de Ciências Sociais e Filosofia","Faculdade de Educação Física e Desporto","Faculdade de Línguas e Comunicação","Faculdade de Psicologia e Ciências de Educação"]},
+    {l:"Extensões",i:["Extensão de Nampula","Extensão de Beira","Extensão de Quelimane","Extensão de Inhambane","Extensão de Tete","Extensão de Lichinga","Extensão de Pemba","Extensão de Xai-Xai"]}]}
+];
+
+const COURSES=[
+  {id:"eco",title:"Introdução à Economia",desc:"Fundamentos de micro e macroeconomia aplicados ao contexto moçambicano",level:"Básico",icon:"📊",cls:"cb-economia",topics:["Oferta e procura","PIB e inflação","Política monetária","Economia de Moçambique"]},
+  {id:"dir",title:"Direito Constitucional",desc:"Princípios fundamentais da Constituição da República de Moçambique",level:"Básico",icon:"⚖️",cls:"cb-direito",topics:["Direitos fundamentais","Organização do Estado","Poder judicial","Revisão constitucional"]},
+  {id:"sau",title:"Saúde Pública",desc:"Conceitos básicos de saúde pública e epidemiologia em Moçambique",level:"Básico",icon:"🏥",cls:"cb-saude",topics:["Epidemiologia","Sistema de saúde","Doenças endémicas","Prevenção e vacinação"]},
+  {id:"eng",title:"Fundamentos de Engenharia",desc:"Princípios básicos de engenharia civil e estruturas",level:"Básico",icon:"🏗️",cls:"cb-engenharia",topics:["Resistência dos materiais","Estruturas básicas","Topografia","Segurança no trabalho"]},
+  {id:"edu",title:"Ciências da Educação",desc:"Teorias e práticas pedagógicas para o ensino moderno",level:"Básico",icon:"📖",cls:"cb-educacao",topics:["Didáctica","Psicologia da educação","Planeamento curricular","Avaliação da aprendizagem"]},
+  {id:"tec",title:"Introdução à Programação",desc:"Lógica de programação e desenvolvimento web para iniciantes",level:"Básico",icon:"💻",cls:"cb-tecnologia",topics:["Algoritmos","HTML/CSS","JavaScript","Bases de dados"]}
+];
+
+// ==================== AUTH ====================
+function lusers(){try{return JSON.parse(localStorage.getItem('pmz_users')||'[]')}catch(e){return[]}}
+function susers(u){try{localStorage.setItem('pmz_users',JSON.stringify(u))}catch(e){}}
+function lsession(){try{return JSON.parse(localStorage.getItem('pmz_session')||'null')}catch(e){return null}}
+function ssession(s){try{localStorage.setItem('pmz_session',JSON.stringify(s))}catch(e){}}
+
+let currentUser=null;
+
+function checkSession(){
+  const s=lsession();
+  if(s){
+    const users=lusers();
+    currentUser=users.find(u=>u.phone===s.phone)||null;
+  }
+  if(currentUser){
+    document.getElementById('authOverlay').classList.add('hidden');
+    document.getElementById('userMenu').style.display='flex';
+    document.getElementById('userAvatar').textContent=currentUser.name.charAt(0).toUpperCase();
+    document.getElementById('userName').textContent=currentUser.name.split(' ')[0];
+  } else {
+    document.getElementById('authOverlay').classList.remove('hidden');
+    document.getElementById('userMenu').style.display='none';
+  }
+}
+
+function showLogin(){document.getElementById('loginBox').style.display='';document.getElementById('registerBox').style.display='none';}
+function showRegister(){document.getElementById('loginBox').style.display='none';document.getElementById('registerBox').style.display='';}
+
+function doLogin(){
+  const phone=document.getElementById('loginPhone').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const errEl=document.getElementById('loginError');
+  if(!phone||phone.length<9){errEl.textContent='Introduz um número válido.';errEl.classList.add('show');return;}
+  if(!pass){errEl.textContent='Introduz a palavra-passe.';errEl.classList.add('show');return;}
+  const users=lusers();
+  const user=users.find(u=>u.phone===phone&&u.pass===pass);
+  if(!user){errEl.textContent='Número ou palavra-passe incorrectos.';errEl.classList.add('show');return;}
+  errEl.classList.remove('show');
+  currentUser=user;
+  ssession({phone:user.phone});
+  checkSession();
+  showToast('✅ Bem-vindo, '+user.name.split(' ')[0]+'!');
+}
+
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const phone=document.getElementById('regPhone').value.trim();
+  const method=document.getElementById('regMethod').value;
+  const pass=document.getElementById('regPass').value;
+  const pass2=document.getElementById('regPass2').value;
+  const errEl=document.getElementById('registerError');
+  if(!name){errEl.textContent='Introduz o teu nome.';errEl.classList.add('show');return;}
+  if(!phone||phone.length<9){errEl.textContent='Introduz um número válido.';errEl.classList.add('show');return;}
+  if(pass.length<6){errEl.textContent='A palavra-passe deve ter pelo menos 6 caracteres.';errEl.classList.add('show');return;}
+  if(pass!==pass2){errEl.textContent='As palavras-passe não coincidem.';errEl.classList.add('show');return;}
+  const users=lusers();
+  if(users.find(u=>u.phone===phone)){errEl.textContent='Este número já está registado.';errEl.classList.add('show');return;}
+  errEl.classList.remove('show');
+  const user={name,phone,method,pass,wallet:0,createdAt:new Date().toISOString()};
+  users.push(user);
+  susers(users);
+  currentUser=user;
+  ssession({phone:user.phone});
+  checkSession();
+  showToast('✅ Conta criada com sucesso! Bem-vindo, '+name.split(' ')[0]+'!');
+}
+
+function doLogout(){
+  currentUser=null;
+  localStorage.removeItem('pmz_session');
+  document.getElementById('authOverlay').classList.remove('hidden');
+  document.getElementById('userMenu').style.display='none';
+  document.getElementById('loginPhone').value='';
+  document.getElementById('loginPass').value='';
+  showLogin();
+  showToast('Sessão terminada.');
+}
+
+// ==================== STORAGE ====================
+function ldocs(){try{return JSON.parse(localStorage.getItem('pmz_docs')||'[]')}catch(e){return[]}}
+function sdocs(d){try{localStorage.setItem('pmz_docs',JSON.stringify(d))}catch(e){showToast('⚠️ Armazenamento cheio!');}}
+function lfile(id){try{return localStorage.getItem('pmz_f_'+id)}catch(e){return null}}
+function sfile(id,data){try{localStorage.setItem('pmz_f_'+id,data);return true}catch(e){showToast('⚠️ Ficheiro demasiado grande.');return false;}}
+function lbought(){try{return JSON.parse(localStorage.getItem('pmz_bought')||'[]')}catch(e){return[]}}
+function sbought(a){try{localStorage.setItem('pmz_bought',JSON.stringify(a))}catch(e){}}
+
+let DOCS=ldocs(), curDoc=null;
+let selUnis=new Set(), selFacs=new Set(), selNiveis=new Set();
+let curPage=1; const PP=8;
+
+// ==================== TABS ====================
+function showTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.getElementById('tabRepositorio').style.display=tab==='repositorio'?'':'none';
+  document.getElementById('tabIA').style.display=tab==='ia'?'':'none';
+  document.getElementById('tabCursos').style.display=tab==='cursos'?'':'none';
+  document.getElementById('heroSection').style.display=tab==='repositorio'?'':'none';
+  document.getElementById('statsSection').style.display=tab==='repositorio'?'':'none';
+  document.getElementById('sidebarRepo').style.display=tab==='repositorio'?'':'none';
+  if(tab==='cursos')renderCourses();
+}
+
+// ==================== ACCORDION ====================
+function buildAcc(){
+  const c=document.getElementById('uniAcc');c.innerHTML='';
+  UNIS.forEach((u,i)=>{
+    const el=document.createElement('div');el.className='uitem';
+    el.innerHTML=`<div class="uhead" onclick="togU(${i})">
+      <input type="checkbox" class="uchk" id="uc${i}" onclick="event.stopPropagation();togUC(${i},this)">
+      <span class="uabb">${u.a}</span><span class="uname">${u.n}</span>
+      <span class="utog" id="ut${i}">›</span></div>
+    <div class="facs" id="fc${i}">${u.f.map(g=>`<div class="fgrp"><div class="flbl">${g.l}</div>${g.i.map(f=>`<label class="fitem"><input type="checkbox" class="fchk" value="${f}" data-u="${u.a}" onchange="togF(this)"><span>${f}</span></label>`).join('')}</div>`).join('')}</div>`;
+    c.appendChild(el);
+  });
+}
+function togU(i){document.getElementById('fc'+i).classList.toggle('open');document.getElementById('ut'+i).classList.toggle('open');}
+function togUC(i,cb){
+  const u=UNIS[i];
+  if(cb.checked){selUnis.add(u.a);document.getElementById('fc'+i).classList.add('open');document.getElementById('ut'+i).classList.add('open');}
+  else{selUnis.delete(u.a);u.f.flatMap(g=>g.i).forEach(f=>selFacs.delete(f));document.querySelectorAll(`.fchk[data-u="${u.a}"]`).forEach(c=>c.checked=false);}
+  applyFilters();
+}
+function togF(cb){
+  if(cb.checked){selFacs.add(cb.value);selUnis.add(cb.dataset.u);const i=UNIS.findIndex(u=>u.a===cb.dataset.u);document.getElementById('uc'+i).checked=true;}
+  else selFacs.delete(cb.value);
+  applyFilters();
+}
+document.querySelectorAll('.nchk').forEach(cb=>cb.addEventListener('change',function(){if(this.checked)selNiveis.add(this.value);else selNiveis.delete(this.value);applyFilters();}));
+
+// ==================== FILTER ====================
+function getFiltered(){
+  const q=document.getElementById('searchInput').value.toLowerCase().trim();
+  const s=document.querySelector('.sortsel').value;
+  let arr=DOCS.filter(d=>{
+    if(q&&!d.title.toLowerCase().includes(q)&&!d.autor.toLowerCase().includes(q)&&!(d.area&&d.area.toLowerCase().includes(q))&&!(d.fac&&d.fac.toLowerCase().includes(q)))return false;
+    if(selNiveis.size>0&&!selNiveis.has(d.nivel))return false;
+    if(selFacs.size>0){if(!selFacs.has(d.fac))return false;}
+    else if(selUnis.size>0){if(!selUnis.has(d.uni))return false;}
+    return true;
+  });
+  if(s==='az')arr.sort((a,b)=>a.title.localeCompare(b.title));
+  else if(s==='za')arr.sort((a,b)=>b.title.localeCompare(a.title));
+  else arr.sort((a,b)=>b.ano-a.ano);
+  return arr;
+}
+function applyFilters(){curPage=1;render();renderTags();}
+function doSearch(){applyFilters();}
+
+function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function escAttr(s){return(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function render(){
+  DOCS=ldocs();
+  document.getElementById('statDocs').textContent=DOCS.length;
+  const fil=getFiltered(), total=fil.length;
+  document.getElementById('rcount').innerHTML=`Mostrando <strong>${Math.min(PP,total)}</strong> de <strong>${total}</strong> documentos`;
+  const start=(curPage-1)*PP, page=fil.slice(start,start+PP);
+  const g=document.getElementById('dgrid');
+  if(!page.length){
+    g.innerHTML=`<div class="empty"><div class="eico">📚</div><div class="etitle">${DOCS.length===0?'Ainda não há documentos publicados':'Nenhum documento encontrado'}</div><div class="esub">${DOCS.length===0?'Sê o primeiro a submeter!':'Tenta ajustar os filtros'}</div></div>`;
+  } else {
+    const bought=lbought();
+    g.innerHTML=page.map(d=>{
+      const ri=DOCS.findIndex(x=>x.id===d.id);
+      const own=bought.includes(d.id);
+      const hf=!!lfile(d.id);
+      const fu=hf?lfile(d.id):'#';
+      return `<div class="dcard">
+        <div class="dico">PDF</div>
+        <div class="dbody">
+          <div class="dtitle">${escHtml(d.title)}</div>
+          <div class="dmeta">
+            <span class="tag tn-${d.nivel.toLowerCase()}">${d.nivel}</span>
+            <span class="tag tu">${escHtml(d.uni)}</span>
+            <span class="tag ta">${escHtml(d.area)}</span>
+          </div>
+          <div class="dautor">${escHtml(d.fac)} · ${escHtml(d.autor)} · ${d.ano}</div>
+        </div>
+        <div class="dright">
+          ${own&&hf
+            ?`<div class="price" style="font-size:13px;color:var(--g6)">✓ Comprado</div>
+              <div class="cbtns">
+                <button class="bprev" onclick="openPv(${ri})">👁 Ver</button>
+                <a class="bbuy" href="${fu}" download="${escAttr(d.title)}.pdf">⬇ Download</a>
+              </div>`
+            :`<div class="price">50 <span>MZN</span></div>
+              <div class="cbtns">
+                ${hf?`<button class="bprev" onclick="openPv(${ri})">👁 Ver</button>`:''}
+                <button class="bbuy" onclick="openPay(${ri})">Comprar</button>
+              </div>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+  }
+  renderPgn(total);
+}
+
+function renderPgn(total){
+  const pages=Math.ceil(total/PP), p=document.getElementById('pgn');
+  if(pages<=1){p.innerHTML='';return;}
+  let h='';
+  if(curPage>1)h+=`<button class="pgb" onclick="goP(${curPage-1})">‹</button>`;
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-curPage)<=1)h+=`<button class="pgb ${i===curPage?'act':''}" onclick="goP(${i})">${i}</button>`;
+    else if(Math.abs(i-curPage)===2)h+=`<span style="color:var(--gr4);padding:0 4px">…</span>`;
+  }
+  if(curPage<pages)h+=`<button class="pgb" onclick="goP(${curPage+1})">›</button>`;
+  p.innerHTML=h;
+}
+function goP(p){curPage=p;render();window.scrollTo({top:0,behavior:'smooth'});}
+
+function renderTags(){
+  const af=document.getElementById('aftags');let h='';
+  selUnis.forEach(u=>h+=`<div class="ftag">${u} <button onclick="rmU('${u.replace(/'/g,"\\'")}')">×</button></div>`);
+  selFacs.forEach(f=>h+=`<div class="ftag">${f.length>25?f.slice(0,25)+'…':f} <button onclick="rmF('${f.replace(/'/g,"\\'")}')">×</button></div>`);
+  selNiveis.forEach(n=>h+=`<div class="ftag">${n} <button onclick="rmN('${n}')">×</button></div>`);
+  af.innerHTML=h;
+}
+function rmU(u){selUnis.delete(u);const i=UNIS.findIndex(x=>x.a===u);if(i>=0)document.getElementById('uc'+i).checked=false;applyFilters();}
+function rmF(f){selFacs.delete(f);document.querySelectorAll('.fchk').forEach(c=>{if(c.value===f)c.checked=false;});applyFilters();}
+function rmN(n){selNiveis.delete(n);document.querySelectorAll('.nchk').forEach(c=>{if(c.value===n)c.checked=false;});applyFilters();}
+function clearAll(){selUnis.clear();selFacs.clear();selNiveis.clear();document.querySelectorAll('.nchk,.uchk,.fchk').forEach(c=>c.checked=false);applyFilters();}
+
+// ==================== PAY ====================
+function openPay(i){
+  curDoc=i;const d=DOCS[i];
+  document.getElementById('payDocTitle').textContent=d.title.length>70?d.title.slice(0,70)+'…':d.title;
+  document.getElementById('payScr').style.display='';
+  document.getElementById('okScr').style.display='none';
+  document.getElementById('payOvl').classList.add('open');
+}
+function closePayOvl(){document.getElementById('payOvl').classList.remove('open');render();}
+function selPay(el){document.querySelectorAll('.popt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function confirmPay(){
+  if(curDoc===null)return;
+  const d=DOCS[curDoc];
+  const b=lbought();if(!b.includes(d.id))b.push(d.id);sbought(b);
+  const fd=lfile(d.id);
+  if(fd){const a=document.getElementById('dlLink');a.href=fd;a.download=d.title+'.pdf';}
+  document.getElementById('payScr').style.display='none';
+  document.getElementById('okScr').style.display='';
+}
+
+// ==================== PREVIEW ====================
+function openPv(i){
+  const d=DOCS[i];curDoc=i;
+  document.getElementById('pvTitle').textContent=d.title;
+  const fd=lfile(d.id);
+  document.getElementById('pvFrame').src=fd||'about:blank';
+  const bought=lbought(),own=bought.includes(d.id);
+  const foot=document.getElementById('pvFoot');
+  if(own&&fd){
+    foot.innerHTML=`<span class="pvnote">✓ Desbloqueado</span><a class="bbn" href="${fd}" download="${escAttr(d.title)}.pdf">⬇ Download</a>`;
+  } else {
+    foot.innerHTML=`<span class="pvnote">👁 Pré-visualização</span><button class="bbn" onclick="closePv();openPay(${i})">Comprar — 50 MZN</button>`;
+  }
+  document.getElementById('pvModal').classList.add('open');
+}
+function closePv(){document.getElementById('pvModal').classList.remove('open');document.getElementById('pvFrame').src='about:blank';}
+
+// ==================== UPLOAD ====================
+let selFile=null;
+function openUpload(){
+  const s=document.getElementById('upU');
+  s.innerHTML=UNIS.map(u=>`<option value="${u.a}">${u.a} — ${u.n.slice(0,25)}</option>`).join('');
+  updFac();selFile=null;resetDz();
+  ['upT','upA','upAr'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('upY').value=new Date().getFullYear();
+  document.getElementById('upModal').classList.add('open');
+}
+function closeUp(){document.getElementById('upModal').classList.remove('open');}
+function updFac(){
+  const a=document.getElementById('upU').value,u=UNIS.find(x=>x.a===a);
+  if(!u)return;
+  document.getElementById('upF').innerHTML=u.f.flatMap(g=>g.i.map(f=>`<option>${f}</option>`)).join('');
+}
+function resetDz(){document.getElementById('dzico').textContent='📄';document.getElementById('dztxt').innerHTML='<strong>Clica para seleccionar</strong> ou arrasta aqui';document.getElementById('dz').className='dz';document.getElementById('pbw').style.display='none';document.getElementById('pbb').style.width='0';document.getElementById('fi').value='';}
+function dov(e){e.preventDefault();document.getElementById('dz').classList.add('dg');}
+function dlv(e){e.preventDefault();document.getElementById('dz').classList.remove('dg');}
+function ddr(e){e.preventDefault();document.getElementById('dz').classList.remove('dg');const f=e.dataTransfer.files[0];if(f)hfile(f);}
+function fsel(inp){if(inp.files[0])hfile(inp.files[0]);}
+function hfile(f){
+  if(f.type!=='application/pdf'){showToast('Selecciona um ficheiro PDF.');return;}
+  if(f.size>50*1024*1024){showToast('Ficheiro demasiado grande. Máx 50MB.');return;}
+  selFile=f;
+  document.getElementById('dzico').textContent='✅';
+  document.getElementById('dztxt').innerHTML=`<strong>${escHtml(f.name)}</strong><br><span style="font-size:10px">${(f.size/1024/1024).toFixed(2)} MB</span>`;
+  document.getElementById('dz').classList.add('hf');
+}
+function submitWork(){
+  const title=document.getElementById('upT').value.trim();
+  const autor=document.getElementById('upA').value.trim();
+  const ano=parseInt(document.getElementById('upY').value)||new Date().getFullYear();
+  const nivel=document.getElementById('upN').value;
+  const area=document.getElementById('upAr').value.trim();
+  const uni=document.getElementById('upU').value;
+  const fac=document.getElementById('upF').value;
+  if(!title){showToast('Preenche o título.');return;}
+  if(!autor){showToast('Preenche o autor.');return;}
+  if(!area){showToast('Preenche a área.');return;}
+  if(!selFile){showToast('Selecciona o ficheiro PDF.');return;}
+  const pw=document.getElementById('pbw'),pb=document.getElementById('pbb');
+  pw.style.display='block';
+  const reader=new FileReader();
+  reader.onprogress=e=>{if(e.lengthComputable)pb.style.width=Math.round(e.loaded/e.total*80)+'%';};
+  reader.onload=e=>{
+    pb.style.width='90%';
+    const fd=e.target.result;
+    const id='d'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+    const ok=sfile(id,fd);
+    if(!ok){pw.style.display='none';return;}
+    const docs=ldocs();
+    docs.unshift({id,title,autor,ano,nivel,area,uni,fac});
+    sdocs(docs);DOCS=ldocs();
+    pb.style.width='100%';
+    setTimeout(()=>{closeUp();render();showToast('✅ Trabalho publicado!');},400);
+  };
+  reader.onerror=()=>{showToast('Erro ao ler o ficheiro.');pw.style.display='none';};
+  reader.readAsDataURL(selFile);
+}
+
+// ==================== GOOGLE GEMINI AI API ====================
+const GEMINI_API_KEY='AIzaSyCcxECmP1_C5o2JIsP4RAppN3WQ1HrO3pA';
+const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+function getGeminiKey(){
+  return localStorage.getItem('pmz_gemini_key')||'';
+}
+
+async function aiChat(messages, maxTokens=4000){
+  const key=getGeminiKey();
+  if(!key){
+    throw new Error('Configura a tua API key em: ⚙️ Definições → API Key. Obtém grátis em aistudio.google.com');
+  }
+  // Converter formato de mensagens para Gemini
+  const contents=messages.filter(m=>m.role!=='system').map(m=>({
+    role:m.role==='assistant'?'model':'user',
+    parts:[{text:m.content}]
+  }));
+
+  // System prompt como primeira mensagem
+  const sysMsg=messages.find(m=>m.role==='system');
+  if(sysMsg){
+    contents.unshift({
+      role:'user',
+      parts:[{text:'Instruções do sistema: '+sysMsg.content+'\n\nAgora responde como solicitado:'}]
+    });
+  }
+
+  const res=await fetch(GEMINI_URL+'?key='+key,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      contents,
+      generationConfig:{
+        temperature:0.7,
+        maxOutputTokens:maxTokens,
+        topP:0.8,
+        topK:40
+      }
+    })
+  });
+
+  if(!res.ok){
+    const err=await res.json();
+    throw new Error('Erro na API: '+res.status+' - '+(err.error?.message||'Erro desconhecido'));
+  }
+
+  const data=await res.json();
+  return data.candidates[0].content.parts[0].text;
+}
+
+// ==================== AI WORK GENERATOR ====================
+let lastAIWork='';
+
+async function generateWork(){
+  if(!currentUser){showToast('Faz login primeiro.');return;}
+  const tema=document.getElementById('aiTema').value.trim();
+  const nivel=document.getElementById('aiNivel').value;
+  const area=document.getElementById('aiArea').value.trim();
+  const instrucoes=document.getElementById('aiInstrucoes').value.trim();
+  if(!tema){showToast('Introduz o tema do trabalho.');return;}
+  if(!area){showToast('Introduz a área de estudo.');return;}
+
+  const btn=document.getElementById('aiGenBtn');
+  btn.disabled=true;
+  btn.textContent='⏳ A gerar trabalho com IA...';
+
+  const output=document.getElementById('aiOutput');
+  const outputText=document.getElementById('aiOutputText');
+  output.classList.add('show');
+  outputText.innerHTML='<div class="typing"><span></span><span></span><span></span></div> A IA está a gerar o teu trabalho...';
+
+  try{
+    const prompt=`Gera um trabalho académico completo em português de Moçambique com a seguinte estrutura:
+- Capa (Universidade Eduardo Mondlane, Faculdade de ${area}, ano ${new Date().getFullYear()})
+- Título: ${tema}
+- Nível: ${nivel}
+- Área: ${area}
+- Resumo com palavras-chave
+- 1. Introdução (contextualização, problema de pesquisa, objectivos, justificativa)
+- 2. Revisão da Literatura (fundamentos teóricos, estudos anteriores)
+- 3. Metodologia (tipo de pesquisa, população e amostra, instrumentos)
+- 4. Resultados e Discussão
+- 5. Conclusão e Recomendações
+- Referências Bibliográficas (formato ABNT, autores moçambicanos reais quando possível)
+
+${instrucoes?'Instruções adicionais: '+instrucoes:''}
+
+O trabalho deve ser detalhado, com linguagem académica formal e contexto moçambicano. Usa formatação clara com títulos e subtítulos.`;
+
+    const work=await aiChat([
+      {role:'system',content:'És um assistente académico especializado em universidades de Moçambique. Gera trabalhos académicos completos, detalhados e bem estruturados em português.'},
+      {role:'user',content:prompt}
+    ], 4000);
+
+    lastAIWork=work;
+    outputText.textContent=work;
+    showToast('✅ Trabalho gerado com sucesso pela IA!');
+  }catch(err){
+    outputText.textContent='Erro ao gerar trabalho: '+err.message+'. Tenta novamente.';
+    showToast('❌ Erro ao gerar trabalho.');
+  }
+
+  btn.disabled=false;
+  btn.textContent='🤖 Gerar trabalho académico — 50 MZN';
+}
+
+function copyAIWork(){
+  if(!lastAIWork){showToast('Nenhum trabalho para copiar.');return;}
+  navigator.clipboard.writeText(lastAIWork).then(()=>showToast('📋 Trabalho copiado!')).catch(()=>showToast('Erro ao copiar.'));
+}
+
+function downloadAIWork(){
+  if(!lastAIWork){showToast('Nenhum trabalho para descarregar.');return;}
+  const tema=document.getElementById('aiTema').value.trim()||'trabalho';
+  const blob=new Blob([lastAIWork],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=tema.replace(/[^a-zA-Z0-9àáâãéêíóôõúçÀÁÂÃÉÊÍÓÔÕÚÇ ]/g,'').replace(/ /g,'_')+'.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇ Download iniciado!');
+}
+
+// ==================== COURSES ====================
+let currentCourse=null;
+let courseHistory=[];
+
+function renderCourses(){
+  const g=document.getElementById('coursesGrid');
+  g.innerHTML=COURSES.map(c=>`
+    <div class="course-card">
+      <div class="course-banner ${c.cls}">${c.icon}</div>
+      <div class="course-body">
+        <div class="course-title">${c.title}</div>
+        <div class="course-desc">${c.desc}</div>
+        <div class="course-meta">
+          <span class="course-level">${c.level}</span>
+          <button class="course-btn" onclick="openCourse('${c.id}')">Começar curso</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openCourse(id){
+  currentCourse=COURSES.find(c=>c.id===id);
+  if(!currentCourse)return;
+  courseHistory=[];
+  document.getElementById('cvTitle').textContent=currentCourse.title;
+  document.getElementById('cvDesc').textContent=currentCourse.desc;
+  const chat=document.getElementById('cvChat');
+  chat.innerHTML='';
+  addCourseMsg('ai',`Olá! 👋 Sou a IA Qwen, a tua docente para **${currentCourse.title}**.\n\nNeste curso vais aprender sobre:\n${currentCourse.topics.map(t=>`• ${t}`).join('\n')}\n\nO que gostarias de aprender primeiro?`);
+  document.getElementById('courseModal').classList.add('open');
+}
+
+function addCourseMsg(type,text){
+  const chat=document.getElementById('cvChat');
+  const div=document.createElement('div');
+  div.className=`cv-msg ${type}`;
+  const avatar=document.createElement('div');
+  avatar.className='cv-avatar';
+  avatar.textContent=type==='ai'?'🤖':'👤';
+  const bubble=document.createElement('div');
+  bubble.className='cv-bubble';
+  bubble.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function showTyping(){
+  const chat=document.getElementById('cvChat');
+  const div=document.createElement('div');
+  div.className='cv-msg ai';
+  div.id='typingIndicator';
+  const avatar=document.createElement('div');
+  avatar.className='cv-avatar';
+  avatar.textContent='🤖';
+  const bubble=document.createElement('div');
+  bubble.className='cv-bubble';
+  bubble.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function removeTyping(){
+  const t=document.getElementById('typingIndicator');
+  if(t)t.remove();
+}
+
+async function sendCourseMsg(){
+  const input=document.getElementById('cvInput');
+  const msg=input.value.trim();
+  if(!msg)return;
+  input.value='';
+  addCourseMsg('user',msg);
+  courseHistory.push({role:'user',content:msg});
+
+  showTyping();
+
+  try{
+    const systemMsg={role:'system',content:`És a IA Qwen, docente universitária especializada em várias áreas. Estás a ensinar o curso "${currentCourse.title}" a estudantes moçambicanos de nível básico.
+
+Tópicos do curso: ${currentCourse.topics.join(', ')}
+
+Responde em português de Moçambique, de forma clara, educativa e encorajadora. Usa exemplos do contexto moçambicano quando possível. As respostas devem ser educativas, bem estruturadas e apropriadas para estudantes de nível básico.`};
+
+    const messages=[systemMsg,...courseHistory.slice(-10).map(h=>({role:h.role==='ai'?'assistant':'user',content:h.content}))];
+    const response=await aiChat(messages, 2000);
+
+    removeTyping();
+    addCourseMsg('ai',response);
+    courseHistory.push({role:'ai',content:response});
+  }catch(err){
+    removeTyping();
+    addCourseMsg('ai','⚠️ Erro ao processar a tua pergunta: '+err.message+'. Tenta novamente.');
+  }
+}
+
+// ==================== SETTINGS ====================
+function showSettings(){
+  document.getElementById('settingsApiKey').value=localStorage.getItem('pmz_gemini_key')||'';
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
+function saveApiKey(){
+  const key=document.getElementById('settingsApiKey').value.trim();
+  if(!key){showToast('Introduz a API key.');return;}
+  if(!key.startsWith('AIza')){showToast('API key inválida. Deve começar com AIza');return;}
+  localStorage.setItem('pmz_gemini_key',key);
+  showToast('✅ API key guardada com sucesso!');
+  closeSettings();
+}
+
+// ==================== WALLET ====================
+function showWallet(){
+  if(!currentUser){showToast('Faz login primeiro.');return;}
+  const users=lusers();
+  const u=users.find(x=>x.phone===currentUser.phone);
+  if(u)currentUser=u;
+  document.getElementById('walletBal').innerHTML=`${currentUser.wallet||0} <span style="font-size:14px;color:var(--gr4);font-family:var(--fb)">MZN</span>`;
+  document.getElementById('walletModal').classList.add('open');
+}
+function closeWallet(){document.getElementById('walletModal').classList.remove('open');}
+function withdrawWallet(){
+  const phone=document.getElementById('walletPhone').value.trim();
+  if(!phone||phone.length<9){showToast('Número de telefone inválido.');return;}
+  const bal=currentUser.wallet||0;
+  if(bal<100){showToast('Mínimo para levantamento: 100 MZN');return;}
+  const users=lusers();
+  const idx=users.findIndex(x=>x.phone===currentUser.phone);
+  if(idx>=0){users[idx].wallet=0;susers(users);currentUser=users[idx];}
+  closeWallet();
+  showToast(`✅ Pedido de ${bal} MZN enviado para ${phone}. Receberás em até 24h.`);
+}
+
+// ==================== TOAST ====================
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ==================== BACKDROP CLOSE ====================
+['payOvl','upModal','pvModal','walletModal','courseModal','settingsModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this){
+      if(id==='pvModal')closePv();
+      else if(id==='payOvl')closePayOvl();
+      else if(id==='upModal')closeUp();
+      else if(id==='walletModal')closeWallet();
+      else if(id==='courseModal')document.getElementById(id).classList.remove('open');
+    }
+  });
+});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(document.getElementById('pvModal').classList.contains('open'))closePv();
+    else if(document.getElementById('payOvl').classList.contains('open'))closePayOvl();
+    else if(document.getElementById('upModal').classList.contains('open'))closeUp();
+    else if(document.getElementById('walletModal').classList.contains('open'))closeWallet();
+    else if(document.getElementById('courseModal').classList.contains('open'))document.getElementById('courseModal').classList.remove('open');
+    else if(document.getElementById('settingsModal').classList.contains('open'))document.getElementById('settingsModal').classList.remove('open');
+  }
+});
+
+// ==================== INIT ====================
+buildAcc();
+checkSession();
+render();
+</script>
+</body>
+</html>
