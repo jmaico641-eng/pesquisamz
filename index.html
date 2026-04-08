@@ -201,6 +201,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 .course-tag{font-size:11px;background:var(--g0);color:var(--g7);padding:2px 8px;border-radius:10px;font-weight:500;display:inline-block;margin:2px 2px 6px 0}
 .course-price{font-family:var(--fd);font-size:18px;color:var(--g7)}
 .course-enroll{width:100%;padding:9px;background:var(--g6);color:white;border:none;border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:8px;transition:all .15s}.course-enroll:hover{background:var(--g5)}
+/* Work type labels */
+.work-type-label:hover{border-color:var(--g4)!important;background:var(--g0)!important}
+.work-type-label:has(input:checked){border-color:var(--g5)!important;background:var(--g0)!important}
 /* Spinner */
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -661,7 +664,20 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
         <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
-        <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Trabalho Académico</div>
+        <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Gerador de Trabalhos Académicos</div>
+        <div style="background:linear-gradient(135deg,var(--g0),var(--g1));border:1px solid var(--g2);border-radius:var(--rmd);padding:12px 16px;margin-bottom:14px">
+          <div class="flabel" style="color:var(--g8);margin-bottom:8px">📚 Tipo de Trabalho</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="monografia" checked style="accent-color:var(--g6)"><span style="font-size:12px">📖 Monografia</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="tese" style="accent-color:var(--g6)"><span style="font-size:12px">🎓 Tese de Doutoramento</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="dissertacao" style="accent-color:var(--g6)"><span style="font-size:12px">📝 Dissertação de Mestrado</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="artigo" style="accent-color:var(--g6)"><span style="font-size:12px">📄 Artigo Científico</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="relatorio" style="accent-color:var(--g6)"><span style="font-size:12px">📊 Relatório de Estágio</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="projeto" style="accent-color:var(--g6)"><span style="font-size:12px">🔬 Projecto de Pesquisa</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="ensaio" style="accent-color:var(--g6)"><span style="font-size:12px">✍️ Ensaio Académico</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="resenha" style="accent-color:var(--g6)"><span style="font-size:12px">📋 Resenha Crítica</span></label>
+          </div>
+        </div>
         <div><div class="flabel">Tema do trabalho *</div><input class="finp" id="aiTema" type="text" placeholder="Ex: Impacto das microfinanças no desenvolvimento rural de Gaza"></div>
         <div style="margin-top:10px"><div class="flabel">Descrição detalhada do trabalho *</div><textarea class="finp" id="aiDescricao" rows="4" placeholder="Descreve o objectivo, escopo, metodologia esperada, público-alvo e requisitos específicos do trabalho..."></textarea></div>
         <div class="frow" style="margin-top:10px">
@@ -1074,6 +1090,7 @@ function clearAdminGroqKey(){
 
 async function runAdminAI(){
   const key=document.getElementById('adminGroqKey')?.value.trim()||localStorage.getItem('pmz_groq_key');
+  const workType=document.querySelector('input[name="adminWorkType"]:checked')?.value||'monografia';
   const tema=document.getElementById('adminTema')?.value.trim();
   const descricao=document.getElementById('adminDescricao')?.value.trim();
   const ref=document.getElementById('adminRef')?.value;
@@ -1085,168 +1102,17 @@ async function runAdminAI(){
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
   
   const btn=document.getElementById('adminAIBtn');
-  btn.innerHTML='<span class="spinner"></span> A gerar trabalho completo...';
+  const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
+  btn.innerHTML=`<span class="spinner"></span> A gerar ${workTypeNames[workType]}...`;
   btn.disabled=true;
   
   try{
     const isPT=idioma==='portugues';
-    const prompt=isPT?
-`Actua como um escritor académico experiente em Moçambique. Cria um TRABALHO ACADÉMICO COMPLETO e não apenas uma estrutura.
-
-══════════════════════════════════════════
-CONFIGURAÇÕES DO TRABALHO:
-- TEMA: "${tema}"
-- DESCRIÇÃO DETALHADA: ${descricao}
-- FORMATO DE REFERÊNCIAS: ${ref}
-- NÚMERO DE PÁGINAS: ${pag}
-- IDIOMA: Português
-
-══════════════════════════════════════════
-FORMATO DE SAÍDA (preenche TODO o conteúdo):
-
-# TÍTULO COMPLETO DO TRABALHO
-
-## FOLHA DE ROSTO
-- Título completo
-- Nome do autor (genérico)
-- Ano: 2026
-
-## RESUMO (150-250 palavras)
-[Escreve o resumo completo aqui]
-
-## PALAVRAS-CHAVE
-[Listar 5-7 palavras-chave]
-
-## AGRADECIMENTOS
-[Escreve um parágrafo de agradecimentos]
-
-## ÍNDICE
-1. INTRODUÇÃO
-   1.1. Contextualização
-   1.2. Problema de Pesquisa
-   1.3. Objectivos (Geral e Específicos)
-   1.4. Justificativa
-   1.5. Estrutura do Trabalho
-
-2. REVISÃO DA LITERATURA
-   2.1. Fundamentação Teórica
-   2.2. Estudos Anteriores
-   2.3. Conceitos-Chave
-
-3. METODOLOGIA
-   3.1. Tipo de Pesquisa
-   3.2. População e Amostra
-   3.3. Instrumentos de Recolha de Dados
-   3.4. Procedimentos de Análise
-
-4. RESULTADOS E DISCUSSÃO
-   4.1. Apresentação dos Resultados
-   4.2. Análise e Interpretação
-   4.3. Discussão com a Literatura
-
-5. CONCLUSÃO E RECOMENDAÇÕES
-   5.1. Conclusão
-   5.2. Recomendações
-   5.3. Limitações
-   5.4. Sugestões para Pesquisas Futuras
-
-REFERÊNCIAS BIBLIOGRÁFICAS
-[Lista de 10-15 referências em formato ${ref}]
-
-══════════════════════════════════════════
-
-INSTRUÇÕES:
-- Escreve TODO o conteúdo de cada secção em texto completo e académico
-- Sê detalhado e específico, como se fosse um trabalho real submetido
-- Usa Português de Moçambique
-- Inclui citações e referências relevantes
-- Mantém tom académico e formal
-- Cada secção deve ter pelo menos 2-3 parágrafos completos
-- Segue rigorosamente o formato de referências ${ref}
-- Baseia-te na descrição fornecida: ${descricao}
-
-Escreve o trabalho COMPLETO agora.`
-:
-`Act as an experienced academic writer. Create a COMPLETE ACADEMIC PAPER, not just an outline.
-
-══════════════════════════════════════════
-PAPER CONFIGURATIONS:
-- TOPIC: "${tema}"
-- DETAILED DESCRIPTION: ${descricao}
-- REFERENCE FORMAT: ${ref}
-- NUMBER OF PAGES: ${pag}
-- LANGUAGE: English
-
-══════════════════════════════════════════
-OUTPUT FORMAT (fill ALL content):
-
-# COMPLETE PAPER TITLE
-
-## TITLE PAGE
-- Full title
-- Author name (generic)
-- Year: 2026
-
-## ABSTRACT (150-250 words)
-[Write complete abstract here]
-
-## KEYWORDS
-[List 5-7 keywords]
-
-## ACKNOWLEDGMENTS
-[Write a paragraph of acknowledgments]
-
-## TABLE OF CONTENTS
-1. INTRODUCTION
-   1.1. Background
-   1.2. Research Problem
-   1.3. Objectives (General and Specific)
-   1.4. Justification
-   1.5. Paper Structure
-
-2. LITERATURE REVIEW
-   2.1. Theoretical Framework
-   2.2. Previous Studies
-   2.3. Key Concepts
-
-3. METHODOLOGY
-   3.1. Research Type
-   3.2. Population and Sample
-   3.3. Data Collection Instruments
-   3.4. Analysis Procedures
-
-4. RESULTS AND DISCUSSION
-   4.1. Results Presentation
-   4.2. Analysis and Interpretation
-   4.3. Discussion with Literature
-
-5. CONCLUSION AND RECOMMENDATIONS
-   5.1. Conclusion
-   5.2. Recommendations
-   5.3. Limitations
-   5.4. Suggestions for Future Research
-
-REFERENCES
-[List 10-15 references in ${ref} format]
-
-══════════════════════════════════════════
-
-INSTRUCTIONS:
-- Write ALL content of each section in complete academic text
-- Be detailed and specific, as if it were a real submitted paper
-- Use academic English
-- Include relevant citations and references
-- Maintain formal academic tone
-- Each section should have at least 2-3 complete paragraphs
-- Strictly follow ${ref} reference format
-- Base on the description provided: ${descricao}
-
-Write the COMPLETE paper now.`;
-    
+    const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
     const txt=await callGroq(prompt,key);
     document.getElementById('adminAIOutText').textContent=txt;
     document.getElementById('adminAIOut').style.display='';
-    showToast(isPT?'✅ Trabalho completo gerado com sucesso!':'✅ Complete paper generated successfully!');
+    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com sucesso!`:`✅ ${workTypeNames[workType]} generated!`);
   }catch(e){
     showToast('❌ Erro: '+e.message);
   }finally{
@@ -1664,6 +1530,7 @@ function openAI(){
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
   const key=getGroqKey();
+  const workType=document.querySelector('input[name="workType"]:checked')?.value||'monografia';
   const tema=document.getElementById('aiTema').value.trim();
   const descricao=document.getElementById('aiDescricao').value.trim();
   const ref=document.getElementById('aiRef').value;
@@ -1675,18 +1542,37 @@ async function runAI(){
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
 
   const btn=document.getElementById('aiBtn');
-  btn.innerHTML='<span class="spinner"></span>A gerar trabalho completo...';
+  const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
+  btn.innerHTML=`<span class="spinner"></span>A gerar ${workTypeNames[workType]}...`;
   btn.disabled=true;
 
   try{
     const isPT=idioma==='portugues';
-    const prompt=isPT?
-`ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
+    const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
+    const txt=await callGroq(prompt,key);
+    document.getElementById('aiOutText').textContent=txt;
+    document.getElementById('aiOut').style.display='';
+    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com sucesso!`:`✅ ${workTypeNames[workType]} generated successfully!`);
+  }catch(e){
+    showToast('❌ Erro: '+e.message);
+  }finally{
+    btn.innerHTML='✨ Gerar Trabalho Completo';
+    btn.disabled=false;
+  }
+}
 
-TAREFA: Cria um TRABALHO ACADÉMICO COMPLETO, DENSO e DETALHADO. Não é um esboço - é o trabalho FINAL completo.
+// ═══════════════════════════════════════════
+// PROMPTS ESPECÍFICOS POR TIPO DE TRABALHO
+// ═══════════════════════════════════════════
+function getWorkPrompt(workType,tema,descricao,ref,pag,isPT){
+const prompts={
+monografia:isPT?
+`ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
+TAREFA: Cria uma MONOGRAFIA COMPLETA, DENSA e DETALHADA.
 
 ══════════════════════════════════════════
 CONFIGURAÇÕES:
+- TIPO: Monografia
 - TEMA: "${tema}"
 - DESCRIÇÃO: ${descricao}
 - REFERÊNCIAS: ${ref}
@@ -1694,136 +1580,80 @@ CONFIGURAÇÕES:
 - IDIOMA: Português Moçambicano
 
 ══════════════════════════════════════════
-ESCRITO COMPLETO - PREENCHE TUDO:
+ESTRUTURA DA MONOGRAFIA - PREENCHE TUDO:
 
-# TÍTULO DO TRABALHO (cria um título académico profissional)
+# TÍTULO DA MONOGRAFIA
 
 ## FOLHA DE ROSTO
-Título Completo Completo Completo
-
-Nome: Autor Genérico da Silva
-
+Título Completo
+Autor: Autor Genérico da Silva
 ${tema}
-
-Trabalho apresentado à Universidade para obtenção do grau académico
-
+Monografia apresentada à Universidade para obtenção do grau de Licenciado
 Ano: 2026
 
----
-
-## RESUMO
-
-Escreve aqui um resumo COMPLETO e DETALHADO com 200-300 palavras. Este resumo deve cobrir todos os aspectos principais do trabalho: objectivos, metodologia, resultados principais e conclusões. Deve ser autocontido e permitir ao leitor compreender a essência completa do trabalho sem ler o resto do documento. Inclui contexto, problemática, abordagem metodológica, achados principais e implicações.
-
----
-
+## RESUMO (200-300 palavras)
 ## PALAVRAS-CHAVE
-
-Palavra-chave 1; Palavra-chave 2; Palavra-chave 3; Palavra-chave 4; Palavra-chave 5; Palavra-chave 6
-
----
-
 ## AGRADECIMENTOS
-
-Escreve aqui um parágrafo completo e bem elaborado de agradecimentos, mencionando orientadores, instituição, família e todos que contribuíram para a realização deste trabalho académico.
-
----
-
 ## LISTA DE ABREVIATURAS E SIGLAS
 
-APA - American Psychological Association
-ABNT - Associação Brasileira de Normas Técnicas
-UEM - Universidade Eduardo Mondlane
-INE - Instituto Nacional de Estatística
-BM - Banco de Moçambique
-
----
-
 ## ÍNDICE GERAL
-
 1. INTRODUÇÃO GERAL
-   1.1 Contextualização e Enquadramento do Problema
-   1.2 Formulação do Problema de Pesquisa
-   1.3 Objectivo Geral do Estudo
-   1.4 Objectivos Específicos
-   1.5 Perguntas de Investigação
-   1.6 Justificativa e Relevância do Estudo
-   1.7 Delimitação do Tema
-   1.8 Estrutura Organizativa do Trabalho
+   1.1 Contextualização e Enquadramento
+   1.2 Formulação do Problema
+   1.3 Objectivos (Geral e Específicos)
+   1.4 Justificativa e Relevância
+   1.5 Delimitação do Tema
+   1.6 Estrutura da Monografia
 
-2. FUNDAMENTAÇÃO TEÓRICA E REVISÃO DA LITERATURA
+2. FUNDAMENTAÇÃO TEÓRICA
    2.1 Bases Teóricas e Conceptuais
    2.2 Revisão Sistemática da Literatura
    2.3 Estudos Empíricos Anteriores
-   2.4 Definição de Conceitos e Termos-Chave
-   2.5 Framework Conceptual do Estudo
+   2.4 Definição de Conceitos-Chave
+   2.5 Framework Conceptual
 
 3. METODOLOGIA DA INVESTIGAÇÃO
-   3.1 Paradigma e Abordagem de Investigação
+   3.1 Paradigma e Abordagem
    3.2 Desenho da Investigação
-   3.3 Contexto e Local do Estudo
-   3.4 População e Caracterização
-   3.5 Amostragem e Critérios de Selecção
-   3.6 Instrumentos de Recolha de Dados
-   3.7 Procedimentos de Recolha de Dados
-   3.8 Técnicas de Análise de Dados
-   3.9 Considerações Éticas e Deontológicas
+   3.3 Contexto e Local
+   3.4 População e Amostra
+   3.5 Instrumentos de Recolha de Dados
+   3.6 Procedimentos de Análise
+   3.7 Considerações Éticas
 
-4. APRESENTAÇÃO, ANÁLISE E DISCUSSÃO DOS RESULTADOS
+4. RESULTADOS E DISCUSSÃO
    4.1 Caracterização da Amostra
-   4.2 Apresentação dos Resultados - Objectivo 1
-   4.3 Apresentação dos Resultados - Objectivo 2
-   4.4 Apresentação dos Resultados - Objectivo 3
-   4.5 Análise Crítica e Interpretação dos Dados
-   4.6 Triangulação com a Literatura
-   4.7 Síntese dos Principais Achados
+   4.2 Apresentação dos Resultados
+   4.3 Análise e Interpretação
+   4.4 Triangulação com a Literatura
+   4.5 Síntese dos Achados
 
-5. CONCLUSÕES, RECOMENDAÇÕES E CONTRIBUIÇÕES
-   5.1 Síntese do Estudo e Conclusões Principais
-   5.2 Contribuições Teóricas e Práticas
-   5.3 Recomendações para Políticas e Práticas
-   5.4 Limitações do Estudo
-   5.5 Sugestões para Investigação Futura
-   5.6 Considerações Finais
+5. CONCLUSÕES E RECOMENDAÇÕES
+   5.1 Síntese e Conclusões
+   5.2 Recomendações
+   5.3 Limitações
+   5.4 Sugestões para Pesquisas Futuras
 
 REFERÊNCIAS BIBLIOGRÁFICAS (formato ${ref})
 
-ANEXOS E APÊNDICES (se aplicável)
+⚠️ INSTRUÇÕES:
+→ MÍNIMO 3-5 parágrafos COMPLETOS por secção
+→ Revisão da Literatura: MÍNIMO 15-20 parágrafos
+→ Metodologia: MÍNIMO 12-15 parágrafos
+→ Resultados: MÍNIMO 15-20 parágrafos
+→ Conclusão: MÍNIMO 8-10 parágrafos
+→ Usa linguagem formal e académica
+→ Inclui citações com (Autor, Ano)
+→ Análise crítica e reflexiva
+→ Conecta com realidade moçambicana
 
-══════════════════════════════════════════
-
-⚠️ INSTRUÇÕES CRÍTICAS - SEGUE RIGOROSAMENTE:
-
-PARA CADA SECÇÃO E SUBSECÇÃO ACIMA:
-→ Escreve MÍNIMO 3-5 parágrafos COMPLETOS e BEM DESENVOLVIDOS
-→ Cada parágrafo deve ter 5-8 linhas de conteúdo académico denso
-→ Usa linguagem formal, técnica e académica
-→ Inclui citações directas e indirectas com (Autor, Ano)
-→ Faz análise crítica e reflexiva, não apenas descritiva
-→ Conecta os temas com a realidade moçambicana
-→ Usa exemplos concretos e dados empíricos
-→ Demonstra profundidade de análise e pensamento crítico
-
-INTRODUÇÃO: Deve contextualizar amplamente o tema, mostrar a relevância em Moçambique, delimitar claramente o problema, apresentar objectivos de forma estruturada.
-
-REVISÃO DA LITERATURA: Deve ser EXTENSA e PROFUNDA. Discute múltiplos autores, compara perspectivas, identifica lacunas na literatura, estabelece diálogos teóricos. MÍNIMO 15-20 parágrafos.
-
-METODOLOGIA: Deve ser DETALHADA e RIGOROSA. Explica cada escolha metodológica, justifica abordagens, descreve instrumentos com precisão. MÍNIMO 12-15 parágrafos.
-
-RESULTADOS: Deve ser RICO em ANÁLISE. Apresenta dados, interpreta, discute com literatura, mostra padrões e tendências. MÍNIMO 15-20 parágrafos.
-
-CONCLUSÃO: Deve ser ABRANGENTE. Sintetiza achados, mostra contribuições, reconhece limitações, aponta caminhos futuros. MÍNIMO 8-10 parágrafos.
-
-REFERÊNCIAS: Lista 15-20 referências académicas REAIS e RELEVANTES em formato ${ref} rigoroso.
-
-⚡ AGORA ESCREVE O TRABALHO COMPLETO COM TODO O CONTEÚDO PREENCHIDO!`
-:
-`YOU ARE AN EXPERT ACADEMIC WRITER WITH 20+ YEARS OF EXPERIENCE.
-
-TASK: Create a COMPLETE, DENSE, and DETAILED ACADEMIC PAPER. This is NOT an outline - it is the FINAL complete paper.
+⚡ ESCREVE A MONOGRAFIA COMPLETA AGORA!`
+:`You are an EXPERT ACADEMIC WRITER with 20+ years of experience.
+TASK: Create a COMPLETE UNDERGRADUATE MONOGRAPH.
 
 ══════════════════════════════════════════
 CONFIGURATIONS:
+- TYPE: Undergraduate Monograph
 - TOPIC: "${tema}"
 - DESCRIPTION: ${descricao}
 - REFERENCES: ${ref}
@@ -1831,137 +1661,568 @@ CONFIGURATIONS:
 - LANGUAGE: Academic English
 
 ══════════════════════════════════════════
-COMPLETE WRITING - FILL EVERYTHING:
+MONOGRAPH STRUCTURE - FILL EVERYTHING:
 
-# PAPER TITLE (create a professional academic title)
-
+# MONOGRAPH TITLE
 ## TITLE PAGE
-Complete Complete Complete Title
-
-Author: Generic Author da Silva
-
-${tema}
-
-A paper submitted to the University in partial fulfillment of the requirements for the degree
-
-Year: 2026
-
----
-
-## ABSTRACT
-
-Write here a COMPLETE and DETAILED abstract with 200-300 words. This abstract must cover all main aspects: objectives, methodology, main results, and conclusions. Must be self-contained.
-
----
-
+## ABSTRACT (200-300 words)
 ## KEYWORDS
-
-Keyword 1; Keyword 2; Keyword 3; Keyword 4; Keyword 5; Keyword 6
-
----
-
 ## ACKNOWLEDGMENTS
-
-Write a complete and well-crafted paragraph of acknowledgments.
-
----
-
 ## LIST OF ABBREVIATIONS
 
-APA - American Psychological Association
-ABNT - Associação Brasileira de Normas Técnicas
-
----
-
 ## TABLE OF CONTENTS
+1. GENERAL INTRODUCTION (8-10 paragraphs)
+2. THEORETICAL FRAMEWORK (20-25 paragraphs)
+3. RESEARCH METHODOLOGY (12-15 paragraphs)
+4. RESULTS AND DISCUSSION (15-20 paragraphs)
+5. CONCLUSIONS AND RECOMMENDATIONS (8-10 paragraphs)
 
-1. GENERAL INTRODUCTION
-   1.1 Contextualization and Problem Framing
-   1.2 Research Problem Statement
-   1.3 General Objective
-   1.4 Specific Objectives
-   1.5 Research Questions
-   1.6 Justification and Relevance
-   1.7 Scope Delimitation
-   1.8 Paper Organization
+REFERENCES (${ref} format, 15-20 references)
 
-2. THEORETICAL FRAMEWORK AND LITERATURE REVIEW
-   2.1 Theoretical and Conceptual Foundations
-   2.2 Systematic Literature Review
-   2.3 Previous Empirical Studies
-   2.4 Definition of Key Concepts and Terms
-   2.5 Conceptual Framework
+⚠️ INSTRUCTIONS:
+→ MINIMUM 3-5 COMPLETE paragraphs per section
+→ Use formal academic language
+→ Include citations (Author, Year)
+→ Critical and reflective analysis
+→ Connect with Mozambican context
 
-3. RESEARCH METHODOLOGY
-   3.1 Research Paradigm and Approach
-   3.2 Research Design
-   3.3 Study Context and Setting
-   3.4 Population and Characterization
-   3.5 Sampling and Selection Criteria
-   3.6 Data Collection Instruments
-   3.7 Data Collection Procedures
-   3.8 Data Analysis Techniques
-   3.9 Ethical Considerations
+⚡ WRITE THE COMPLETE MONOGRAPH NOW!`,
 
-4. RESULTS, ANALYSIS AND DISCUSSION
-   4.1 Sample Characterization
-   4.2 Results - Objective 1
-   4.3 Results - Objective 2
-   4.4 Results - Objective 3
-   4.5 Critical Analysis and Data Interpretation
-   4.6 Triangulation with Literature
-   4.7 Summary of Main Findings
-
-5. CONCLUSIONS, RECOMMENDATIONS AND CONTRIBUTIONS
-   5.1 Study Syn and Main Conclusions
-   5.2 Theoretical and Practical Contributions
-   5.3 Recommendations for Policy and Practice
-   5.4 Study Limitations
-   5.5 Suggestions for Future Research
-   5.6 Final Remarks
-
-REFERENCES (${ref} format)
-
-APPENDICES AND ANNEXES (if applicable)
+tese:isPT?
+`ÉS UM ESCRITOR ACADÉMICO DE ELITE ESPECIALIZADO EM TESES DE DOUTORAMENTO.
+TAREFA: Cria uma TESE DE DOUTORAMENTO COMPLETA, ORIGINAL e PROFUNDA.
 
 ══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Tese de Doutoramento
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+- IDIOMA: Português
 
-⚠️ CRITICAL INSTRUCTIONS - FOLLOW STRICTLY:
+══════════════════════════════════════════
+ESTRUTURA DA TESE DE DOUTORAMENTO:
 
-FOR EACH SECTION AND SUBSECTION ABOVE:
-→ Write MINIMUM 3-5 COMPLETE and WELL-DEVELOPED paragraphs
-→ Each paragraph must have 5-8 lines of dense academic content
-→ Use formal, technical, and academic language
-→ Include direct and indirect citations with (Author, Year)
-→ Provide critical and reflective analysis, not just descriptive
-→ Connect themes with Mozambican context where relevant
-→ Use concrete examples and empirical data
-→ Demonstrate depth of analysis and critical thinking
+# TÍTULO DA TESE
 
-INTRODUCTION: Must broadly contextualize the topic, show relevance, clearly delimit the problem, present structured objectives.
+## FOLHA DE ROSTO
+Título Completo
+Autor: Doutorando Genérico da Silva
+${tema}
+Tese apresentada para obtenção do grau de Doutor
+Ano: 2026
 
-LITERATURE REVIEW: Must be EXTENSIVE and DEEP. Discusses multiple authors, compares perspectives, identifies gaps, establishes theoretical dialogues. MINIMUM 15-20 paragraphs.
+## RESUMO EXPANDIDO (400-500 palavras)
+## PALAVRAS-CHAVE
+## AGRADECIMENTOS
+## DEDICATÓRIA
+## LISTA DE ABREVIATURAS
+## LISTA DE TABELAS E FIGURAS
 
-METHODOLOGY: Must be DETAILED and RIGOROUS. Explains each methodological choice, justifies approaches, describes instruments precisely. MINIMUM 12-15 paragraphs.
+## ESTRUTURA:
+1. INTRODUÇÃO E CONTEXTUALIZAÇÃO
+   1.1 Enquadramento do Problema
+   1.2 Problematização
+   1.3 Objectivos
+   1.4 Hipóteses de Investigação
+   1.5 Justificativa
+   1.6 Originalidade e Contribuição
 
-RESULTS: Must be RICH in ANALYSIS. Presents data, interprets, discusses with literature, shows patterns and trends. MINIMUM 15-20 paragraphs.
+2. REVISÃO CRÍTICA DA LITERATURA
+   2.1 Estado da Arte
+   2.2 Fundamentação Teórica Avançada
+   2.3 Paradigmas e Perspectivas
+   2.4 Lacunas na Literatura
+   2.5 Modelo Conceptual
 
-CONCLUSION: Must be COMPREHENSIVE. Synthesizes findings, shows contributions, acknowledges limitations, points future directions. MINIMUM 8-10 paragraphs.
+3. METODOLOGIA DE INVESTIGAÇÃO
+   3.1 Desenho Investigativo
+   3.2 Abordagem Mist
+   3.3 Contexto e Participantes
+   3.4 Instrumentos Validados
+   3.5 Validação e Fiabilidade
+   3.6 Análise Estatística/Qualitativa
+   3.7 Rigor Científico
 
-REFERENCES: List 15-20 REAL and RELEVANT academic references in strict ${ref} format.
+4. RESULTADOS ORIGINAIS
+   4.1 Análise Descritiva
+   4.2 Resultados Estudo 1
+   4.3 Resultados Estudo 2
+   4.4 Resultados Estudo 3
+   4.5 Análise Comparativa
 
-⚡ NOW WRITE THE COMPLETE PAPER WITH ALL CONTENT FILLED IN!`;
+5. DISCUSSÃO INTEGRADA
+   5.1 Interpretação Profunda
+   5.2 Diálogo com Literatura
+   5.3 Implicações Teóricas
+   5.4 Implicações Práticas
+   5.5 Contribuições Originais
 
-    const txt=await callGroq(prompt,key);
-    document.getElementById('aiOutText').textContent=txt;
-    document.getElementById('aiOut').style.display='';
-    showToast(isPT?'✅ Trabalho completo gerado com sucesso! Usa "👁 Visualizar" para ver formatado.':'✅ Complete paper generated! Use "👁 Visualizar" for formatted view.');
-  }catch(e){
-    showToast('❌ Erro: '+e.message);
-  }finally{
-    btn.innerHTML='✨ Gerar Trabalho Completo';
-    btn.disabled=false;
-  }
+6. CONCLUSÕES E PERSPECTIVAS FUTURAS
+   6.1 Síntese dos Achados
+   6.2 Contribuição para o Campo
+   6.3 Limitações
+   6.4 Agenda de Investigação
+   6.5 Reflexão Final
+
+REFERÊNCIAS (30-50 referências em ${ref})
+ANEXOS E APÊNDICES
+
+⚠️ INSTRUÇÕES TESE DOUTORAMENTO:
+→ NÍVEL DOUTORAL - máxima profundidade
+→ MÍNIMO 5-8 parágrafos por subsecção
+→ Revisão Literatura: MÍNIMO 25-30 parágrafos
+→ Metodologia: MÍNIMO 15-20 parágrafos
+→ Resultados: MÍNIMO 20-25 parágrafos
+→ Discussão: MÍNIMO 15-20 parágrafos
+→ Demonstração de domínio total do tema
+→ Originalidade e contribuição para ciência
+→ Rigor metodológico absoluto
+
+⚡ ESCREVE A TESE COMPLETA AGORA!`
+:`You are an ELITE ACADEMIC WRITER specializing in PhD DISSERTATIONS.
+TASK: Create a COMPLETE, ORIGINAL, and DEEP PhD DISSERTATION.
+
+══════════════════════════════════════════
+CONFIGURATIONS:
+- TYPE: PhD Dissertation
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+- LANGUAGE: Academic English
+
+══════════════════════════════════════════
+STRUCTURE:
+1. INTRODUCTION (10-12 paragraphs)
+2. CRITICAL LITERATURE REVIEW (30-35 paragraphs)
+3. RESEARCH METHODOLOGY (15-20 paragraphs)
+4. ORIGINAL RESULTS (20-25 paragraphs)
+5. INTEGRATED DISCUSSION (15-20 paragraphs)
+6. CONCLUSIONS AND FUTURE PERSPECTIVES (10-12 paragraphs)
+
+REFERENCES (30-50 references in ${ref})
+
+⚠️ PHD LEVEL - Maximum depth and originality
+⚡ WRITE THE COMPLETE DISSERTATION NOW!`,
+
+dissertacao:isPT?
+`ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM DISSERTAÇÕES DE MESTRADO.
+TAREFA: Cria uma DISSERTAÇÃO DE MESTRADO COMPLETA e RIGOROSA.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Dissertação de Mestrado
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+
+══════════════════════════════════════════
+ESTRUTURA:
+1. INTRODUÇÃO (8-10 parágrafos)
+2. REVISÃO DA LITERATURA (20-25 parágrafos)
+3. METODOLOGIA (12-15 parágrafos)
+4. RESULTADOS E ANÁLISE (15-20 parágrafos)
+5. DISCUSSÃO (10-12 parágrafos)
+6. CONCLUSÕES (8-10 parágrafos)
+
+REFERÊNCIAS (20-30 em ${ref})
+
+⚠️ NÍVEL MESTRADO - profundidade avançada
+⚡ ESCREVE A DISSERTAÇÃO COMPLETA AGORA!`
+:`You are an EXPERT ACADEMIC WRITER specializing in MASTER'S DISSERTATIONS.
+TASK: Create a COMPLETE and RIGOROUS Master's Dissertation.
+
+CONFIGURATIONS:
+- TYPE: Master's Dissertation
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+
+STRUCTURE:
+1. INTRODUCTION (8-10 paragraphs)
+2. LITERATURE REVIEW (20-25 paragraphs)
+3. METHODOLOGY (12-15 paragraphs)
+4. RESULTS AND ANALYSIS (15-20 paragraphs)
+5. DISCUSSION (10-12 paragraphs)
+6. CONCLUSIONS (8-10 paragraphs)
+
+REFERENCES (20-30 in ${ref})
+⚡ WRITE THE COMPLETE DISSERTATION NOW!`,
+
+artigo:isPT?
+`ÉS UM ESCRITOR DE ARTIGOS CIENTÍFICOS PARA REVISTAS DE IMPACTO.
+TAREFA: Cria um ARTIGO CIENTÍFICO COMPLETO para submissão a revista.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Artigo Científico
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+
+══════════════════════════════════════════
+ESTRUTURA DO ARTIGO (formato IMRaD):
+
+# TÍTULO DO ARTIGO
+
+## RESUMO/ABSTRACT (250 palavras)
+## PALAVRAS-CHAVE/KEYWORDS
+
+1. INTRODUÇÃO
+   - Contextualização
+   - Lacuna na literatura
+   - Objectivos
+   - Estrutura
+
+2. REVISÃO DA LITERATURA
+   - Estado da arte
+   - Framework teórico
+   - Hipóteses
+
+3. METODOLOGIA
+   - Desenho
+   - Amostra
+   - Instrumentos
+   - Procedimentos
+
+4. RESULTADOS
+   - Análise descritiva
+   - Teste de hipóteses
+   - Análise inferencial
+
+5. DISCUSSÃO
+   - Interpretação
+   - Comparação com literatura
+   - Implicações
+
+6. CONCLUSÃO
+   - Achados principais
+   - Contribuições
+   - Limitações
+   - Pesquisa futura
+
+REFERÊNCIAS (20-30 em ${ref})
+
+⚠️ Formato artigo científico - conciso e rigoroso
+⚡ ESCREVE O ARTIGO COMPLETO AGORA!`
+:`You are a SCIENTIFIC ARTICLE WRITER for high-impact journals.
+TASK: Create a COMPLETE SCIENTIFIC PAPER for journal submission.
+
+CONFIGURATIONS:
+- TYPE: Scientific Article (IMRaD format)
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+
+STRUCTURE:
+1. INTRODUCTION
+2. LITERATURE REVIEW
+3. METHODOLOGY
+4. RESULTS
+5. DISCUSSION
+6. CONCLUSION
+
+REFERENCES (20-30 in ${ref})
+⚡ WRITE THE COMPLETE ARTICLE NOW!`,
+
+relatorio:isPT?
+`ÉS UM ORIENTADOR DE ESTÁGIOS ACADÉMICOS EM MOÇAMBIQUE.
+TAREFA: Cria um RELATÓRIO DE ESTÁGIO COMPLETO e PROFISSIONAL.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Relatório de Estágio
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+
+══════════════════════════════════════════
+ESTRUTURA DO RELATÓRIO:
+
+# RELATÓRIO DE ESTÁGIO
+
+## FOLHA DE ROSTO
+## AGRADECIMENTOS
+## RESUMO EXECUTIVO
+
+1. INTRODUÇÃO
+   - Apresentação da Instituição
+   - Objectivos do Estágio
+   - Período e Local
+   - Estrutura do Relatório
+
+2. CARACTERIZAÇÃO DA INSTITUIÇÃO
+   - História e Missão
+   - Estrutura Organizacional
+   - Áreas de Actuação
+   - Contexto do Estágio
+
+3. ACTIVIDADES DESENVOLVIDAS
+   - Descrição das Funções
+   - Projectos Participados
+   - Competências Desenvolvidas
+   - Desafios Enfrentados
+
+4. FUNDAMENTAÇÃO TEÓRICA
+   - Enquadramento Conceptual
+   - Relação Teoria-Prática
+   - Análise Crítica
+
+5. ANÁLISE E REFLEXÃO
+   - Contribuições do Estágio
+   - Aprendizagens
+   - Impacto na Formação
+   - Recomendações à Instituição
+
+6. CONCLUSÕES
+   - Síntese
+   - Balanço Geral
+   - Perspectivas Futuras
+
+REFERÊNCIAS (10-15 em ${ref})
+ANEXOS (se aplicável)
+
+⚠️ Formato relatório profissional - focado na experiência prática
+⚡ ESCREVE O RELATÓRIO COMPLETO AGORA!`
+:`You are an ACADEMIC INTERNSHIP SUPERVISOR.
+TASK: Create a COMPLETE and PROFESSIONAL INTERNSHIP REPORT.
+
+CONFIGURATIONS:
+- TYPE: Internship Report
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+
+STRUCTURE:
+1. INTRODUCTION
+2. INSTITUTION CHARACTERIZATION
+3. ACTIVITIES DEVELOPED
+4. THEORETICAL FRAMEWORK
+5. ANALYSIS AND REFLECTION
+6. CONCLUSIONS
+
+REFERENCES (10-15 in ${ref})
+⚡ WRITE THE COMPLETE REPORT NOW!`,
+
+projeto:isPT?
+`ÉS UM INVESTIGADOR ESPECIALIZADO EM PROJECTOS DE PESQUISA.
+TAREFA: Cria um PROJECTO DE PESQUISA COMPLETO e VIÁVEL.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Projecto de Pesquisa
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+
+══════════════════════════════════════════
+ESTRUTURA DO PROJECTO:
+
+# PROJECTO DE PESQUISA
+
+## TÍTULO
+## DADOS DO INVESTIGADOR
+
+1. TEMA E TÍTULO
+   - Delimitação do Tema
+   - Justificativa da Escolha
+
+2. PROBLEMA DE PESQUISA
+   - Contextualização
+   - Formulação do Problema
+   - Perguntas de Investigação
+
+3. OBJECTIVOS
+   - Objectivo Geral
+   - Objectivos Específicos
+
+4. HIPÓTESES (se aplicável)
+
+5. JUSTIFICATIVA
+   - Relevância Científica
+   - Relevância Social
+   - Viabilidade
+
+6. REVISÃO DA LITERATURA
+   - Estado da Arte
+   - Fundamentação Teórica
+   - Conceitos-Chave
+
+7. METODOLOGIA
+   - Tipo de Pesquisa
+   - Universo e Amostra
+   - Instrumentos
+   - Cronograma
+   - Orçamento (estimativa)
+
+8. REFERÊNCIAS BIBLIOGRÁFICAS (15-20 em ${ref})
+
+9. CRONOGRAMA DE ACTIVIDADES
+
+10. ORÇAMENTO ESTIMADO
+
+⚠️ Formato projecto - plano de investigação completo
+⚡ ESCREVE O PROJECTO COMPLETO AGORA!`
+:`You are a RESEARCH PROJECT SPECIALIST.
+TASK: Create a COMPLETE and VIABLE RESEARCH PROJECT.
+
+CONFIGURATIONS:
+- TYPE: Research Project
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+
+STRUCTURE:
+1. THEME AND TITLE
+2. RESEARCH PROBLEM
+3. OBJECTIVES
+4. HYPOTHESES
+5. JUSTIFICATION
+6. LITERATURE REVIEW
+7. METHODOLOGY
+8. REFERENCES (15-20 in ${ref})
+9. TIMELINE
+10. ESTIMATED BUDGET
+
+⚡ WRITE THE COMPLETE PROJECT NOW!`,
+
+ensaio:isPT?
+`ÉS UM PENSADOR CRÍTICO E ESCRITOR DE ENSAIOS ACADÉMICOS.
+TAREFA: Cria um ENSAIO ACADÉMICO PROFUNDO e REFLEXIVO.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Ensaio Académico
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- PÁGINAS: ${pag}
+
+══════════════════════════════════════════
+ESTRUTURA DO ENSAIO:
+
+# TÍTULO DO ENSAIO
+
+1. INTRODUÇÃO ENSAÍSTICA
+   - Apresentação do Tema
+   - Tese Central
+   - Abordagem
+
+2. DESENVOLVIMENTO ARGUMENTATIVO
+   - Argumento Principal 1
+   - Argumento Principal 2
+   - Argumento Principal 3
+   - Contra-argumentos e Refutação
+   - Análise Crítica Profunda
+
+3. DISCUSSÃO FILOSÓFICA
+   - Perspectivas Teóricas
+   - Implicações
+   - Reflexão Pessoal
+
+4. CONCLUSÃO ENSAÍSTICA
+   - Retomada da Tese
+   - Síntese Argumentativa
+   - Abertura para Reflexão
+
+REFERÊNCIAS (10-15 em ${ref})
+
+⚠️ Formato ensaio - argumentativo e reflexivo, menos rígido
+⚡ ESCREVE O ENSAIO COMPLETO AGORA!`
+:`You are a CRITICAL THINKER and ACADEMIC ESSAY WRITER.
+TASK: Create a DEEP and REFLECTIVE ACADEMIC ESSAY.
+
+CONFIGURATIONS:
+- TYPE: Academic Essay
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- PAGES: ${pag}
+
+STRUCTURE:
+1. INTRODUCTORY ESSAY
+2. ARGUMENTATIVE DEVELOPMENT
+3. PHILOSOPHICAL DISCUSSION
+4. ESSAY CONCLUSION
+
+REFERENCES (10-15)
+⚡ WRITE THE COMPLETE ESSAY NOW!`,
+
+resenha:isPT?
+`ÉS UM CRÍTICO ACADÉMICO ESPECIALIZADO EM RESENHAS.
+TAREFA: Cria uma RESENHA CRÍTICA COMPLETA e BEM FUNDAMENTADA.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Resenha Crítica
+- TEMA/OBRA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- PÁGINAS: ${pag}
+
+══════════════════════════════════════════
+ESTRUTURA DA RESENHA:
+
+# RESENHA CRÍTICA
+
+## IDENTIFICAÇÃO DA OBRA
+- Título
+- Autor
+- Editora/Ano
+- Páginas
+
+1. APRESENTAÇÃO DA OBRA
+   - Contexto de Produção
+   - Objectivo do Autor
+   - Estrutura Geral
+
+2. SÍNTESE DO CONTEÚDO
+   - Ideias Principais
+   - Argumentos Centrais
+   - Metodologia Utilizada
+
+3. ANÁLISE CRÍTICA
+   - Pontos Fortes
+   - Pontos Fracos
+   - Originalidade
+   - Contribuição para a Área
+   - Comparação com Outras Obras
+
+4. AVALIAÇÃO FINAL
+   - Mérito da Obra
+   - Público-Alvo
+   - Recomendação
+
+REFERÊNCIAS (5-10)
+
+⚠️ Formato resenha - crítica e avaliativa
+⚡ ESCREVE A RESENHA COMPLETA AGORA!`
+:`You are an ACADEMIC CRITIC specializing in CRITICAL REVIEWS.
+TASK: Create a COMPLETE and WELL-FOUNDED CRITICAL REVIEW.
+
+CONFIGURATIONS:
+- TYPE: Critical Review
+- WORK: "${tema}"
+- DESCRIPTION: ${descricao}
+- PAGES: ${pag}
+
+STRUCTURE:
+1. WORK PRESENTATION
+2. CONTENT SYNTHESIS
+3. CRITICAL ANALYSIS
+4. FINAL EVALUATION
+
+REFERENCES (5-10)
+⚡ WRITE THE COMPLETE REVIEW NOW!`
+};
+return prompts[workType]||prompts.monografia;
 }
 
 async function runCursoAI(){
