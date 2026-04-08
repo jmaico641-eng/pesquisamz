@@ -784,6 +784,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
               <button class="bprev" onclick="downloadAsPDF()" style="flex:1;min-width:80px">📄 PDF</button>
               <button class="bprev" onclick="downloadAsWord()" style="flex:1;min-width:80px">📝 Word</button>
               <button class="bprev" onclick="copyAI('aiOutText')" style="flex:1;min-width:80px">📋 Copiar</button>
+              <button class="bprev" onclick="openAIPayModal()" style="flex:1;min-width:80px;background:linear-gradient(135deg,var(--gold),#F5BE60);color:var(--g9);font-weight:700;border:none">💰 Pagar 30 MZN</button>
             </div>
           </div>
           <!-- CONTEÚDO DO TRABALHO -->
@@ -1216,50 +1217,137 @@ function showAccountDashboard(user){
   document.getElementById('dashName').textContent=user.name;
   document.getElementById('dashPhone').textContent=user.phone;
   
-  // Carregar trabalhos comprados
+  // Carregar trabalhos comprados do repositório
   const boughtDocs=JSON.parse(localStorage.getItem('pmz_bought')||'[]');
   const allDocs=JSON.parse(localStorage.getItem('pmz_docs')||'[]');
   const worksList=document.getElementById('myWorksList');
   
-  if(boughtDocs.length===0){
+  // Carregar trabalhos de IA pagos e aprovados
+  const aiOrders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
+  const myApprovedAI=aiOrders.filter(o=>o.userPhone===user.phone && o.status==='approved');
+  
+  if(boughtDocs.length===0 && myApprovedAI.length===0){
     worksList.innerHTML='<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum trabalho adquirido ainda.</div>';
   }else{
-    const myWorks=allDocs.filter(d=>boughtDocs.includes(d.id));
-    worksList.innerHTML=myWorks.map(d=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:white;border-radius:var(--rsm);margin-bottom:6px">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(d.title)}</div>
-          <div style="font-size:9px;color:var(--gr4)">${d.uni} · ${d.nivel}</div>
-        </div>
-        <button class="bprev" onclick="openPv(${allDocs.indexOf(d)})" style="font-size:10px;padding:4px 8px">👁 Ver</button>
-      </div>
-    `).join('')||'<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Trabalhos não encontrados.</div>';
+    let html='';
+    
+    // Trabalhos do repositório
+    const myDocs=allDocs.filter(d=>boughtDocs.includes(d.id));
+    if(myDocs.length>0){
+      html+='<div style="font-size:10px;font-weight:600;color:var(--gr6);margin-bottom:6px">📚 Repositório</div>';
+      myDocs.forEach(d=>{
+        html+=`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:white;border-radius:var(--rsm);margin-bottom:6px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(d.title)}</div>
+              <div style="font-size:9px;color:var(--gr4)">${d.uni} · ${d.nivel}</div>
+            </div>
+            <button class="bprev" onclick="openPv(${allDocs.indexOf(d)})" style="font-size:10px;padding:4px 8px">👁 Ver</button>
+          </div>
+        `;
+      });
+    }
+    
+    // Trabalhos de IA aprovados
+    if(myApprovedAI.length>0){
+      const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+      html+='<div style="font-size:10px;font-weight:600;color:var(--gr6);margin:10px 0 6px">🤖 Trabalhos IA</div>';
+      myApprovedAI.forEach((o,idx)=>{
+        html+=`
+          <div style="padding:8px;background:white;border-radius:var(--rsm);margin-bottom:6px;border:1px solid var(--g1)">
+            <div style="font-size:11px;font-weight:600">📋 ${workTypeNames[o.workType]||o.workType}</div>
+            <div style="font-size:10px;color:var(--gr6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px">${escHtml(o.tema)}</div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">
+              <button class="bprev" onclick="viewApprovedWork(${o.id})" style="font-size:10px;padding:4px 8px;background:var(--g6);color:white">👁 Ver</button>
+              <button class="bprev" onclick="downloadApprovedPDF(${o.id})" style="font-size:10px;padding:4px 8px">📄 PDF</button>
+              <button class="bprev" onclick="downloadApprovedWord(${o.id})" style="font-size:10px;padding:4px 8px">📝 Word</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+    
+    worksList.innerHTML=html;
   }
   
-  // Carregar pedidos de IA
-  const aiOrders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
-  const myAIOrders=aiOrders.filter(o=>o.userPhone===user.phone);
+  // Carregar pedidos de IA pendentes
+  const allAIOrders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
+  const myPendingAI=allAIOrders.filter(o=>o.userPhone===user.phone && o.status==='pending');
   const aiOrdersList=document.getElementById('myAIOrdersList');
   
-  if(myAIOrders.length===0){
+  if(myPendingAI.length===0 && myApprovedAI.length===0){
     aiOrdersList.innerHTML='<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum pedido de IA ainda.</div>';
   }else{
     const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
-    aiOrdersList.innerHTML=myAIOrders.slice(-10).reverse().map(o=>{
-      const statusColors={pending:'background:#fef3c7;color:#92400e',approved:'background:#d1fae5;color:#065f46',rejected:'background:#fee2e2;color:#991b1b'};
-      const statusLabels={pending:'⏳ Pendente',approved:'✅ Aprovado',rejected:'❌ Rejeitado'};
+    const allOrders=[...myPendingAI.map(o=>({...o,_status:'pending'})),...myApprovedAI.map(o=>({...o,_status:'approved'}))].slice(-10).reverse();
+    aiOrdersList.innerHTML=allOrders.map(o=>{
+      const statusColors={pending:'background:#fef3c7;color:#92400e',approved:'background:#d1fae5;color:#065f46'};
+      const statusLabels={pending:'⏳ Aguardando pagamento',approved:'✅ Disponível'};
       return `
         <div style="padding:8px;background:white;border-radius:var(--rsm);margin-bottom:6px">
           <div style="font-size:11px;font-weight:600">${workTypeNames[o.workType]||o.workType}</div>
-          <div style="font-size:10px;color:var(--gr6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.tema}</div>
+          <div style="font-size:10px;color:var(--gr6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(o.tema)}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
-            <span style="font-size:9px;padding:2px 6px;border-radius:4px;${statusColors[o.status]}">${statusLabels[o.status]}</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:4px;${statusColors[o._status]}">${statusLabels[o._status]}</span>
             <span style="font-size:9px;color:var(--gr4)">${new Date(o.createdAt).toLocaleDateString('pt-MZ')}</span>
           </div>
         </div>
       `;
     }).join('');
   }
+}
+
+// Visualizar trabalho aprovado na conta
+function viewApprovedWork(orderId){
+  const orders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
+  const order=orders.find(o=>o.id===orderId);
+  if(!order||!order.content){showToast('⚠️ Trabalho não encontrado.');return;}
+  document.getElementById('workViewerContent').innerHTML=convertToAcademicHTML(order.content);
+  document.getElementById('workViewerModal').classList.add('open');
+  currentZoom=100;
+  updateZoom();
+}
+
+// Download PDF de trabalho aprovado
+function downloadApprovedPDF(orderId){
+  const orders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
+  const order=orders.find(o=>o.id===orderId);
+  if(!order||!order.content){showToast('⚠️ Trabalho não encontrado.');return;}
+  
+  const html=convertToAcademicHTML(order.content);
+  const fullHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${order.tema}</title><style>@page{margin:2.5cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt;line-height:1.8;max-width:17cm;margin:0 auto;color:#000}h1{font-size:16pt;text-align:center;margin:40px 0 30px;text-transform:uppercase;letter-spacing:2px}h2{font-size:14pt;margin:30px 0 15px;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px;color:#333}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}.reference{padding-left:2cm;text-indent:-2cm;margin:8px 0}</style></head><body>${html}</body></html>`;
+  
+  const blob=new Blob([fullHTML],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`${order.tema.substring(0,30).replace(/[^a-zA-Z0-9]/g,'_')}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ HTML descarregado! Abre no navegador e imprime como PDF (Ctrl+P).');
+}
+
+// Download Word de trabalho aprovado
+function downloadApprovedWord(orderId){
+  const orders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
+  const order=orders.find(o=>o.id===orderId);
+  if(!order||!order.content){showToast('⚠️ Trabalho não encontrado.');return;}
+  
+  const html=convertToAcademicHTML(order.content);
+  const wordHTML=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.5cm}body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.8;color:#000}h1{font-size:16pt;text-align:center;margin:40px 0 30px}h2{font-size:14pt;margin:30px 0 15px;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}</style></head><body>${html}</body></html>`;
+  
+  const blob=new Blob(['\ufeff',wordHTML],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`${order.tema.substring(0,30).replace(/[^a-zA-Z0-9]/g,'_')}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Download Word iniciado!');
 }
 
 function logoutAccount(){
@@ -2044,19 +2132,36 @@ function closePayOvl(){document.getElementById('payOvl').classList.remove('open'
 let aiPayData=null;
 
 function openAIPayModal(){
+  // Obter dados do trabalho gerado
+  const text=document.getElementById('aiOutText')?.textContent||'';
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  const user=JSON.parse(localStorage.getItem('pmz_user')||'null');
+  const workType=document.querySelector('input[name="workType"]:checked')?.value||'licenciatura';
   const tema=document.getElementById('aiTema').value.trim();
-  if(!tema){showToast('⚠️ Introduz o tema do trabalho primeiro.');return;}
+  const descricao=document.getElementById('aiDescricao').value.trim();
+  const ref=document.getElementById('aiRef').value;
+  const pag=document.getElementById('aiPag').value||60;
+  const idioma=document.querySelector('input[name="aiIdioma"]:checked')?.value||'portugues';
   
   aiPayData={
-    tema:tema,
-    descricao:document.getElementById('aiDescricao').value.trim(),
-    workType:document.querySelector('input[name="workType"]:checked')?.value||'monografia',
-    ref:document.getElementById('aiRef').value,
-    pag:document.getElementById('aiPag').value||60,
-    idioma:document.querySelector('input[name="aiIdioma"]:checked')?.value||'portugues'
+    tema:tema||'Trabalho Gerado por IA',
+    descricao:descricao||'',
+    workType:workType,
+    ref:ref,
+    pag:pag,
+    idioma:idioma,
+    content:text,
+    generatedAt:new Date().toISOString()
   };
   
-  document.getElementById('aiPayWorkTitle').textContent=`Trabalho: "${tema}"`;
+  // Preencher dados do usuário se tiver conta
+  if(user){
+    document.getElementById('aiPayName').value=user.name||'';
+    document.getElementById('aiPayPhone').value=user.phone||'';
+  }
+  
+  document.getElementById('aiPayWorkTitle').textContent=`Trabalho: "${aiPayData.tema}"`;
   document.getElementById('aiPayScr').style.display='';
   document.getElementById('aiPayOkScr').style.display='none';
   document.getElementById('aiPayOvl').classList.add('open');
@@ -2080,7 +2185,7 @@ function confirmAIPay(){
   if(!name){showToast('⚠️ Introduz o teu nome ou cria uma conta primeiro.');return;}
   if(!phone){showToast('⚠️ Introduz o teu número de telefone ou cria uma conta.');return;}
   
-  // Guardar pedido de pagamento
+  // Guardar pedido de pagamento COM O TRABALHO GERADO
   const orders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
   const order={
     id:Date.now(),
@@ -2091,6 +2196,7 @@ function confirmAIPay(){
     ref:aiPayData.ref,
     pag:aiPayData.pag,
     idioma:aiPayData.idioma,
+    content:aiPayData.content, // Trabalho JÁ GERADO
     userName:name,
     userPhone:phone,
     amount:30,
@@ -2108,13 +2214,16 @@ function confirmAIPay(){
   
   // Enviar para WhatsApp do admin
   const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532';
-  const msg=`🤖 *PEDIDO TRABALHO IA*\n\n📋 Tipo: ${aiPayData.workType}\n📝 Tema: ${aiPayData.tema}\n👤 Nome: ${name}\n📱 Telefone: ${phone}\n💰 Valor: 30 MZN\n\nAguardo confirmação para gerar o trabalho!`;
+  const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+  const msg=`💰 *COMPRA DE TRABALHO*\n\n📋 Tipo: ${workTypeNames[aiPayData.workType]||aiPayData.workType}\n📝 Tema: ${aiPayData.tema}\n👤 Nome: ${name}\n📱 Telefone: ${phone}\n💰 Valor: 30 MZN\n\n✅ Trabalho JÁ GERADO e pronto para entrega.\nAguardo confirmação de pagamento para liberar na conta do usuário.`;
   const waURL=`https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`;
   window.open(waURL,'_blank');
   
   // Mostrar ecrã de sucesso
   document.getElementById('aiPayScr').style.display='none';
   document.getElementById('aiPayOkScr').style.display='';
+  document.getElementById('okScr').querySelector('h2').textContent='💰 Pedido de pagamento!';
+  document.getElementById('okScr').querySelector('p').innerHTML='Envia o comprovativo via WhatsApp.<br>Após confirmação, o trabalho fica disponível na tua conta.';
   showToast('✅ Pedido registado! Envia comprovativo via WhatsApp.');
 }
 
