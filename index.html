@@ -1698,11 +1698,23 @@ function approveAIOrder(id){
   const order=orders.find(o=>o.id===id);
   if(!order)return;
   
-  order.status='approved';
-  order.approvedAt=new Date().toISOString();
-  localStorage.setItem('pmz_ai_orders',JSON.stringify(orders));
+  // Se o trabalho já foi gerado (content existe), apenas aprovar
+  if(order.content){
+    order.status='approved';
+    order.approvedAt=new Date().toISOString();
+    localStorage.setItem('pmz_ai_orders',JSON.stringify(orders));
+    
+    // Notificar usuário via WhatsApp
+    const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+    const msg=`✅ *PAGAMENTO CONFIRMADO!*\n\n📋 Tema: ${order.tema}\n💰 Valor: 30 MZN\n\n🎉 O teu trabalho já está disponível na tua conta!\n\n📱 Acede: 👤 Conta → 🤖 Trabalhos IA\n📄 Faz download em PDF ou Word`;
+    window.open(`https://wa.me/${order.userPhone}?text=${encodeURIComponent(msg)}`,'_blank');
+    
+    showToast(`✅ Pagamento aprovado! Trabalho disponível na conta de ${order.userName}.`);
+    renderAdminAIOrders();
+    return;
+  }
   
-  // Detetar IA configurada pelo admin
+  // Se NÃO tem conteúdo gerado (fluxo antigo), gerar agora
   const hasAnthropic=!!localStorage.getItem('pmz_anthropic_key');
   const hasGroq=!!localStorage.getItem('pmz_groq_key');
   let provider,aiName;
@@ -1716,14 +1728,20 @@ function approveAIOrder(id){
   showToast(`⏳ A gerar trabalho com ${aiName}...`);
   
   callAI(prompt,provider).then(txt=>{
+    order.status='approved';
+    order.content=txt;
+    order.approvedAt=new Date().toISOString();
+    localStorage.setItem('pmz_ai_orders',JSON.stringify(orders));
+    
     const works=JSON.parse(localStorage.getItem('pmz_ai_works')||'[]');
     works.push({id:order.id,tema:order.tema,workType:order.workType,content:txt,userName:order.userName,userPhone:order.userPhone,generatedAt:new Date().toISOString()});
     localStorage.setItem('pmz_ai_works',JSON.stringify(works));
     
-    const msg=`✅ *TRABALHO GERADO COM SUCESSO!*\n\n📋 Tema: ${order.tema}\n🤖 IA: ${aiName}\n\nO teu trabalho foi gerado e está pronto!\nPara receber o ficheiro, envia uma mensagem ao administrador.`;
+    const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+    const msg=`✅ *TRABALHO GERADO E APROVADO!*\n\n📋 Tema: ${order.tema}\n🤖 IA: ${aiName}\n💰 Pagamento: Confirmado\n\n🎉 O teu trabalho está disponível na tua conta!\n\n📱 Acede: 👤 Conta → 🤖 Trabalhos IA\n📄 Download em PDF ou Word`;
     window.open(`https://wa.me/${order.userPhone}?text=${encodeURIComponent(msg)}`,'_blank');
     
-    showToast(`✅ Trabalho gerado com ${aiName}!`);
+    showToast(`✅ Trabalho gerado com ${aiName} e disponível na conta!`);
     renderAdminAIOrders();
   }).catch(e=>{showToast('❌ Erro: '+e.message);});
 }
