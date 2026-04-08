@@ -715,7 +715,8 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
         <div style="background:linear-gradient(135deg,var(--g0),var(--g1));border:1px solid var(--g2);border-radius:var(--rmd);padding:12px 16px;margin-bottom:14px">
           <div class="flabel" style="color:var(--g8);margin-bottom:8px">📚 Tipo de Trabalho</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="monografia" checked style="accent-color:var(--g6)"><span style="font-size:12px">📖 Monografia</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="licenciatura" checked style="accent-color:var(--g6)"><span style="font-size:12px">🎓 Licenciatura</span></label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="monografia" style="accent-color:var(--g6)"><span style="font-size:12px">📖 Monografia</span></label>
             <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="tese" style="accent-color:var(--g6)"><span style="font-size:12px">🎓 Tese de Doutoramento</span></label>
             <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="dissertacao" style="accent-color:var(--g6)"><span style="font-size:12px">📝 Dissertação de Mestrado</span></label>
             <label style="display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s" class="work-type-label"><input type="radio" name="workType" value="artigo" style="accent-color:var(--g6)"><span style="font-size:12px">📄 Artigo Científico</span></label>
@@ -1183,7 +1184,7 @@ function showAccountDashboard(user){
   if(myAIOrders.length===0){
     aiOrdersList.innerHTML='<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum pedido de IA ainda.</div>';
   }else{
-    const workTypeNames={monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+    const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
     aiOrdersList.innerHTML=myAIOrders.slice(-10).reverse().map(o=>{
       const statusColors={pending:'background:#fef3c7;color:#92400e',approved:'background:#d1fae5;color:#065f46',rejected:'background:#fee2e2;color:#991b1b'};
       const statusLabels={pending:'⏳ Pendente',approved:'✅ Aprovado',rejected:'❌ Rejeitado'};
@@ -1497,7 +1498,7 @@ function renderAdminAIOrders(){
   if(pending.length){
     html+=`<div class="admin-card"><h4>⏳ Pedidos de IA Pendentes (${pending.length})</h4>`;
     pending.forEach(o=>{
-      const workTypeNames={monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+      const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
       html+=`<div style="background:var(--gr0);border-radius:var(--rmd);padding:12px;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
           <div>
@@ -1759,7 +1760,7 @@ async function runAdminAI(){
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
   
   const btn=document.getElementById('adminAIBtn');
-  const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
+  const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
   const aiName=provider==='anthropic'?'Claude':'Llama';
   btn.innerHTML=`<span class="spinner"></span> A gerar ${workTypeNames[workType]} com ${aiName}...`;
   btn.disabled=true;
@@ -2308,7 +2309,7 @@ async function runAI(){
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
 
   const btn=document.getElementById('aiBtn');
-  const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
+  const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
   btn.innerHTML=`<span class="spinner"></span>A gerar ${workTypeNames[workType]} com ${aiName}...`;
   btn.disabled=true;
 
@@ -2348,6 +2349,111 @@ if(optEtica){
 }
 
 const prompts={
+licenciatura:isPT?
+`ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM TRABALHOS DE LICENCIATURA EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
+TAREFA: Cria um TRABALHO DE LICENCIATURA COMPLETO, DENSO e DETALHADO.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES:
+- TIPO: Trabalho de Licenciatura
+- TEMA: "${tema}"
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+- IDIOMA: Português Moçambicano
+
+══════════════════════════════════════════
+ESTRUTURA DO TRABALHO DE LICENCIATURA - PREENCHE TUDO:
+
+# TÍTULO DO TRABALHO DE LICENCIATURA
+
+## FOLHA DE ROSTO
+Título Completo
+Autor: Autor Genérico da Silva
+${tema}
+Trabalho de Licenciatura apresentado à Universidade para obtenção do grau de Licenciado
+Ano: 2026
+
+## RESUMO (200-300 palavras)
+## PALAVRAS-CHAVE
+## AGRADECIMENTOS
+## LISTA DE ABREVIATURAS E SIGLAS
+
+## ÍNDICE GERAL
+1. INTRODUÇÃO
+   1.1 Contextualização do Tema
+   1.2 Problema de Pesquisa
+   1.3 Objectivos (Geral e Específicos)
+   1.4 Justificativa
+   1.5 Estrutura do Trabalho
+
+2. FUNDAMENTAÇÃO TEÓRICA
+   2.1 Conceitos e Definições
+   2.2 Teorias Relacionadas
+   2.3 Estudos Anteriores
+
+3. METODOLOGIA
+   3.1 Tipo de Pesquisa
+   3.2 População e Amostra
+   3.3 Instrumentos
+   3.4 Procedimentos de Análise
+
+4. RESULTADOS E DISCUSSÃO
+   4.1 Apresentação dos Dados
+   4.2 Análise
+   4.3 Discussão com a Literatura
+
+5. CONCLUSÃO
+   5.1 Síntese dos Achados
+   5.2 Recomendações
+   5.3 Limitações
+
+REFERÊNCIAS BIBLIOGRÁFICAS (formato ${ref})
+
+⚠️ INSTRUÇÕES:
+→ Nível de Licenciatura - adequado ao grau
+→ MÍNIMO 3-5 parágrafos por secção
+→ Linguagem académica acessível
+→ Citações com (Autor, Ano)
+→ Foco na aplicação prática do conhecimento
+→ Conecta com realidade moçambicana
+
+${advancedInstructions}
+
+⚡ ESCREVE O TRABALHO DE LICENCIATURA COMPLETO AGORA!`
+:`You are an EXPERT ACADEMIC WRITER specializing in UNDERGRADUATE DEGREES in Mozambique.
+TASK: Create a COMPLETE UNDERGRADUATE DEGREE WORK.
+
+══════════════════════════════════════════
+CONFIGURATIONS:
+- TYPE: Undergraduate Degree Work
+- TOPIC: "${tema}"
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+- LANGUAGE: Academic English
+
+══════════════════════════════════════════
+STRUCTURE:
+1. INTRODUCTION (8-10 paragraphs)
+2. THEORETICAL FRAMEWORK (15-20 paragraphs)
+3. METHODOLOGY (10-12 paragraphs)
+4. RESULTS AND DISCUSSION (12-15 paragraphs)
+5. CONCLUSION (6-8 paragraphs)
+
+REFERENCES (${ref} format, 15-20 references)
+
+⚠️ INSTRUCTIONS:
+→ Undergraduate level - accessible academic language
+→ MINIMUM 3-5 paragraphs per section
+→ Include citations (Author, Year)
+→ Focus on practical application of knowledge
+→ Connect with Mozambican context
+
+${advancedInstructions}
+
+⚡ WRITE THE COMPLETE UNDERGRADUATE WORK NOW!`,
+
 monografia:isPT?
 `ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
 TAREFA: Cria uma MONOGRAFIA COMPLETA, DENSA e DETALHADA.
