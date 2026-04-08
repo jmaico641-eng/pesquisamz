@@ -2461,6 +2461,53 @@ function openAI(){
   document.getElementById('aiModal').classList.add('open');
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
+// ═══════════════════════════════════════════
+// FORMATAÇÃO AUTOMÁTICA DE TRABALHOS
+// Remove #, ##, ### e formata profissionalmente
+// ═══════════════════════════════════════════
+function autoFormatWork(text){
+  let formatted=text;
+  
+  // Remover símbolos markdown
+  formatted=formatted.replace(/^#{6,}\s*/gm,'');
+  formatted=formatted.replace(/^#{5}\s*/gm,'');
+  formatted=formatted.replace(/^#{4}\s*/gm,'');
+  formatted=formatted.replace(/^#{3}\s*/gm,'');
+  formatted=formatted.replace(/^#{2}\s*/gm,'');
+  formatted=formatted.replace(/^#{1}\s*/gm,'');
+  
+  // Remover ** e __ (bold markdown)
+  formatted=formatted.replace(/\*\*(.*?)\*\*/g,'$1');
+  formatted=formatted.replace(/__(.*?)__/g,'$1');
+  
+  // Remover * e _ (italic markdown)
+  formatted=formatted.replace(/\*(.*?)\*/g,'$1');
+  formatted=formatted.replace(/_(.*?)_/g,'$1');
+  
+  // Remover --- e *** (horizontal rules markdown)
+  formatted=formatted.replace(/^---+$/gm,'');
+  formatted=formatted.replace(/^\*\*\*+$/gm,'');
+  formatted=formatted.replace(/^═══+$/gm,'');
+  
+  // Remover [ e ] (links markdown)
+  formatted=formatted.replace(/\[(.*?)\]\(.*?\)/g,'$1');
+  formatted=formatted.replace(/\[(.*?)\]/g,'$1');
+  
+  // Remover > (blockquote markdown)
+  formatted=formatted.replace(/^>\s*/gm,'');
+  
+  // Remover linhas de pontilhado de sumário
+  formatted=formatted.replace(/\s*\.+\s*\d+\s*$/gm,'');
+  
+  // Limpar linhas vazias múltiplas (máximo 2)
+  formatted=formatted.replace(/\n{4,}/g,'\n\n\n');
+  
+  // Remover espaços em branco no início/fim
+  formatted=formatted.trim();
+  
+  return formatted;
+}
+
 async function runAI(){
   // Detetar automaticamente qual IA o admin configurou
   const hasAnthropic=!!localStorage.getItem('pmz_anthropic_key');
@@ -2496,12 +2543,15 @@ async function runAI(){
     const isPT=idioma==='portugues';
     const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT,optModular,optAcademico,optCitacoes,optEtica);
     const txt=await callAI(prompt,provider);
-    document.getElementById('aiOutText').textContent=txt;
+    
+    // Formatar automaticamente o trabalho (remover #, ##, etc)
+    const formatted=autoFormatWork(txt);
+    document.getElementById('aiOutText').textContent=formatted;
     document.getElementById('aiOut').style.display='';
     
     // Mostrar dashboard com estatísticas
-    const wordCount=txt.split(/\s+/).filter(w=>w.length>0).length;
-    const charCount=txt.length;
+    const wordCount=formatted.split(/\s+/).filter(w=>w.length>0).length;
+    const charCount=formatted.length;
     const pageCount=Math.max(1,Math.round(wordCount/300));
     const workTypeNames={licenciatura:'Licenciatura',monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
     
@@ -2513,7 +2563,7 @@ async function runAI(){
     document.getElementById('dashAIProvider').textContent=aiName;
     document.getElementById('workDashboard').style.display='';
     
-    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com ${aiName}!`:`✅ ${workTypeNames[workType]} generated with ${aiName}!`);
+    showToast(isPT?`✅ ${workTypeNames[workType]} gerada e formatada!`:`✅ ${workTypeNames[workType]} generated and formatted!`);
   }catch(e){
     showToast('❌ Erro: '+e.message);
   }finally{
@@ -2806,9 +2856,19 @@ REGRAS DE OURO PARA ESCREVER:
    → Coerência e coesão textual
    → Profundidade de reflexão académica
 
+8. PROIBIÇÕES ABSOLUTAS:
+   → NUNCA menciones "Inteligência Artificial", "IA", "AI", "ChatGPT", "Claude", "GPT" ou similar
+   → NUNCA uses símbolos markdown: #, ##, ###, **, __, *, _, ---, ***, >, [ ]
+   → NUNCA digas "este trabalho foi gerado por" ou "criado por IA"
+   → NUNCA incluas notas sobre como o trabalho foi produzido
+   → O trabalho deve parecer 100% escrito por um estudante humano
+   → NUNCA uses "══════" ou linhas decorativas similares
+
 ══════════════════════════════════════════════════════════════
 
-⚡ AGORA ESCREVE O TRABALHO DE LICENCIATURA COMPLETO SEGUINDO ESTRUTURA ACIMA COM MÁXIMO RIGOR E PROFISSIONALISMO!`
+⚡ AGORA ESCREVE O TRABALHO DE LICENCIATURA COMPLETO SEGUINDO ESTRUTURA ACIMA COM MÁXIMO RIGOR E PROFISSIONALISMO!
+⚡ IMPORTANTE: Escreve o texto LIMPO e FORMATADO, sem símbolos markdown (#, **, etc)!
+⚡ NUNCA menciones que és uma IA ou que o trabalho foi gerado automaticamente!`
 :`YOU ARE AN ELITE ACADEMIC WRITER SPECIALIZING IN UNDERGRADUATE THESIS WORKS IN MOZAMBIQUE WITH 25+ YEARS OF EXPERIENCE.
 
 CRITICAL TASK: Create a COMPLETE, EXTENSIVE, and EXTREMELY PROFESSIONAL UNDERGRADUATE THESIS that rivals the best works submitted at Mozambican universities.
@@ -3016,9 +3076,19 @@ GOLDEN RULES FOR WRITING:
    → Textual coherence and cohesion
    → Depth of academic reflection
 
+8. ABSOLUTE PROHIBITIONS:
+   → NEVER mention "Artificial Intelligence", "AI", "ChatGPT", "Claude", "GPT" or similar
+   → NEVER use markdown symbols: #, ##, ###, **, __, *, _, ---, ***, >, [ ]
+   → NEVER say "this work was generated by" or "created by AI"
+   → NEVER include notes about how the work was produced
+   → The work must appear 100% written by a human student
+   → NEVER use "══════" or similar decorative lines
+
 ══════════════════════════════════════════════════════════════
 
-⚡ NOW WRITE THE COMPLETE UNDERGRADUATE THESIS FOLLOWING THE ABOVE STRUCTURE WITH MAXIMUM RIGOR AND PROFESSIONALISM!`,
+⚡ NOW WRITE THE COMPLETE UNDERGRADUATE THESIS FOLLOWING THE ABOVE STRUCTURE WITH MAXIMUM RIGOR AND PROFESSIONALISM!
+⚡ IMPORTANT: Write CLEAN and FORMATTED text, without markdown symbols (#, **, etc)!
+⚡ NEVER mention that you are an AI or that the work was auto-generated!`,
 
 monografia:isPT?
 `ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
