@@ -694,20 +694,10 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px 16px;margin-bottom:14px">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="font-size:28px">🔑</div>
+            <div style="font-size:28px">🤖</div>
             <div>
               <div style="font-size:13px;font-weight:600;color:var(--gr8)">IA Configurada pelo Administrador</div>
-              <div style="font-size:11px;color:var(--gr4)">As chaves API são geridas no painel de administração</div>
-            </div>
-          </div>
-          <div style="margin-top:10px;display:flex;gap:10px">
-            <div style="flex:1;padding:8px;background:white;border-radius:var(--rsm);border:1px solid var(--gr1)">
-              <div style="font-size:11px;font-weight:600;color:var(--gr6)">⚡ IA Groq</div>
-              <div style="font-size:10px;color:var(--gr4)" id="groqStatus">A verificar...</div>
-            </div>
-            <div style="flex:1;padding:8px;background:white;border-radius:var(--rsm);border:1px solid var(--gr1)">
-              <div style="font-size:11px;font-weight:600;color:var(--gr6)">🧠 IA Claude</div>
-              <div style="font-size:10px;color:var(--gr4)" id="anthropicStatus">A verificar...</div>
+              <div style="font-size:11px;color:var(--gr4)" id="aiProviderStatus">A verificar...</div>
             </div>
           </div>
         </div>
@@ -805,8 +795,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
       <button class="admin-tab active" onclick="switchAdminTab('dashboard',this)">📊 Dashboard</button>
       <button class="admin-tab" onclick="switchAdminTab('pedidos',this)">🛒 Pedidos <span id="pedidosBadge" style="background:#f59e0b;color:white;font-size:10px;padding:1px 6px;border-radius:8px;display:none">0</span></button>
       <button class="admin-tab" onclick="switchAdminTab('ai-orders',this)">🤖 Pedidos IA <span id="aiOrdersBadge" style="background:#8b5cf6;color:white;font-size:10px;padding:1px 6px;border-radius:8px;display:none">0</span></button>
-      <button class="admin-tab" onclick="switchAdminTab('ai',this)">🤖 IA Gerador</button>
-      <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Config</button>
+      <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Configuração</button>
     </div>
     <div style="padding:20px;overflow-y:auto;flex:1;max-height:calc(85vh - 140px)" id="adminContent"></div>
     <div style="padding:12px 20px;border-top:1px solid var(--gr1);flex-shrink:0">
@@ -1057,7 +1046,6 @@ function switchAdminTab(tab,btn){
   if(tab==='dashboard')renderAdminDashboard();
   else if(tab==='pedidos')renderAdminPedidos();
   else if(tab==='ai-orders')renderAdminAIOrders();
-  else if(tab==='ai')renderAdminAI();
   else if(tab==='config')renderAdminConfig();
 }
 
@@ -1126,22 +1114,98 @@ function rejectOrder(id){
 
 function renderAdminConfig(){
   const phone=localStorage.getItem('pmz_admin_phone')||'258856810532';
-  const savedGroqKey=localStorage.getItem('pmz_groq_key')||'';
+  const groqKey=localStorage.getItem('pmz_groq_key')||'';
+  const anthropicKey=localStorage.getItem('pmz_anthropic_key')||'';
+  const hasGroq=groqKey.length>0;
+  const hasAnthropic=anthropicKey.length>0;
+  
   document.getElementById('adminContent').innerHTML=`
+    <div class="admin-card" style="border-left:3px solid var(--gold)">
+      <h4>🤖 Configuração de APIs de IA</h4>
+      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Configura as chaves API para o gerador de trabalhos. Os utilizadores usarão estas chaves automaticamente.</p>
+      
+      <div style="background:var(--gr0);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:8px">⚡ Groq API (Llama 3.3 70B - Gratuito)</div>
+        <label class="admin-label">Chave API Groq</label>
+        <input class="admin-input" id="cfgGroqKey" type="password" value="${groqKey}" placeholder="gsk_...">
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="admin-btn ok" onclick="saveGroqAdmin()">💾 Guardar</button>
+          ${hasGroq?'<button class="admin-btn" onclick="clearGroqAdmin()">🗑️ Remover</button>':''}
+        </div>
+        <div style="font-size:10px;color:var(--gr4);margin-top:4px">Status: ${hasGroq?'<span style="color:#10b981">✅ Configurada</span>':'<span style="color:#ef4444">❌ Não configurada</span>'} · <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">Obter chave grátis</a></div>
+      </div>
+      
+      <div style="background:var(--gr0);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:8px">🧠 Anthropic API (Claude 3.5 Sonnet - Opcional)</div>
+        <label class="admin-label">Chave API Anthropic</label>
+        <input class="admin-input" id="cfgAnthropicKey" type="password" value="${anthropicKey}" placeholder="sk-ant-...">
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="admin-btn ok" onclick="saveAnthropicAdmin()">💾 Guardar</button>
+          ${hasAnthropic?'<button class="admin-btn" onclick="clearAnthropicAdmin()">🗑️ Remover</button>':''}
+        </div>
+        <div style="font-size:10px;color:var(--gr4);margin-top:4px">Status: ${hasAnthropic?'<span style="color:#10b981">✅ Configurada</span>':'<span style="color:#ef4444">❌ Não configurada</span>'} · <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--g6)">Obter chave</a></div>
+      </div>
+      
+      <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:10px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--g8);margin-bottom:4px">ℹ️ Como funciona:</div>
+        <div style="font-size:10px;color:var(--g7);line-height:1.5">
+          • O admin configura as chaves API aqui<br>
+          • Os utilizadores usam a IA automaticamente sem ver as chaves<br>
+          • Se ambas estiverem configuradas, Claude é usado por padrão<br>
+          • As chaves ficam guardadas no navegador do admin
+        </div>
+      </div>
+    </div>
+    
     <div class="admin-card"><h4>💬 WhatsApp</h4>
       <label class="admin-label">Teu número (com 258)</label>
       <input class="admin-input" id="cfgWA" type="tel" value="${phone}" placeholder="258856810532">
       <button class="admin-btn ok" onclick="localStorage.setItem('pmz_admin_phone',document.getElementById('cfgWA').value);showToast('✅ Guardado!')">💾 Guardar</button>
     </div>
+    
     <div class="admin-card"><h4>🔐 Password</h4>
       <label class="admin-label">Nova password</label>
       <input class="admin-input" id="cfgPwd" type="password" placeholder="Mínimo 4 caracteres">
       <button class="admin-btn" onclick="const v=document.getElementById('cfgPwd').value;if(v.length>=4){alert('Password alterada para: '+v);showToast('✅ Alterada!');}else{showToast('⚠️ Mínimo 4 chars');}">Alterar</button>
     </div>
+    
     <div class="admin-card"><h4>🗄️ Dados</h4>
       <button class="admin-btn" onclick="const d=JSON.stringify({docs:ldocs('pmz_docs'),orders:lorders()});const b=new Blob([d],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup.json';a.click();showToast('✅ Exportado!')">📥 Exportar</button>
     </div>
   `;
+}
+
+// Funções para guardar chaves API no admin
+function saveGroqAdmin(){
+  const key=document.getElementById('cfgGroqKey').value.trim();
+  if(!key){showToast('⚠️ Introduz a chave API Groq.');return;}
+  if(!key.startsWith('gsk_')){showToast('⚠️ Chave Groq deve começar com gsk_');return;}
+  localStorage.setItem('pmz_groq_key',key);
+  showToast('✅ Chave Groq guardada com sucesso!');
+  renderAdminConfig();
+}
+
+function clearGroqAdmin(){
+  if(!confirm('Remover a chave Groq API?'))return;
+  localStorage.removeItem('pmz_groq_key');
+  showToast('🗑️ Chave Groq removida.');
+  renderAdminConfig();
+}
+
+function saveAnthropicAdmin(){
+  const key=document.getElementById('cfgAnthropicKey').value.trim();
+  if(!key){showToast('⚠️ Introduz a chave API Anthropic.');return;}
+  if(!key.startsWith('sk-ant-')){showToast('⚠️ Chave Anthropic deve começar com sk-ant-');return;}
+  localStorage.setItem('pmz_anthropic_key',key);
+  showToast('✅ Chave Anthropic guardada com sucesso!');
+  renderAdminConfig();
+}
+
+function clearAnthropicAdmin(){
+  if(!confirm('Remover a chave Anthropic API?'))return;
+  localStorage.removeItem('pmz_anthropic_key');
+  showToast('🗑️ Chave Anthropic removida.');
+  renderAdminConfig();
 }
 
 function renderAdminAIOrders(){
@@ -1216,39 +1280,30 @@ function approveAIOrder(id){
   order.approvedAt=new Date().toISOString();
   localStorage.setItem('pmz_ai_orders',JSON.stringify(orders));
   
-  // Detectar provider disponível
-  const useAnthropic=localStorage.getItem('pmz_use_anthropic')==='true';
-  const provider=useAnthropic?'anthropic':'groq';
-  const aiName=provider==='anthropic'?'Claude':'Llama';
+  // Detetar IA configurada pelo admin
+  const hasAnthropic=!!localStorage.getItem('pmz_anthropic_key');
+  const hasGroq=!!localStorage.getItem('pmz_groq_key');
+  let provider,aiName;
+  if(hasAnthropic){provider='anthropic';aiName='Claude';}
+  else if(hasGroq){provider='groq';aiName='Llama';}
+  else{showToast('⚠️ Nenhuma IA configurada.');renderAdminAIOrders();return;}
+  
   const isPT=order.idioma==='portugues';
   const prompt=getWorkPrompt(order.workType,order.tema,order.descricao,order.ref,order.pag,isPT);
   
   showToast(`⏳ A gerar trabalho com ${aiName}...`);
   
   callAI(prompt,provider).then(txt=>{
-    // Guardar trabalho gerado
     const works=JSON.parse(localStorage.getItem('pmz_ai_works')||'[]');
-    works.push({
-      id:order.id,
-      tema:order.tema,
-      workType:order.workType,
-      content:txt,
-      userName:order.userName,
-      userPhone:order.userPhone,
-      generatedAt:new Date().toISOString()
-    });
+    works.push({id:order.id,tema:order.tema,workType:order.workType,content:txt,userName:order.userName,userPhone:order.userPhone,generatedAt:new Date().toISOString()});
     localStorage.setItem('pmz_ai_works',JSON.stringify(works));
     
-    // Notificar usuário via WhatsApp
     const msg=`✅ *TRABALHO GERADO COM SUCESSO!*\n\n📋 Tema: ${order.tema}\n🤖 IA: ${aiName}\n\nO teu trabalho foi gerado e está pronto!\nPara receber o ficheiro, envia uma mensagem ao administrador.`;
-    const waURL=`https://wa.me/${order.userPhone}?text=${encodeURIComponent(msg)}`;
-    window.open(waURL,'_blank');
+    window.open(`https://wa.me/${order.userPhone}?text=${encodeURIComponent(msg)}`,'_blank');
     
     showToast(`✅ Trabalho gerado com ${aiName}!`);
     renderAdminAIOrders();
-  }).catch(e=>{
-    showToast('❌ Erro ao gerar trabalho: '+e.message);
-  });
+  }).catch(e=>{showToast('❌ Erro: '+e.message);});
 }
 
 function rejectAIOrder(id){
@@ -1928,29 +1983,33 @@ window.addEventListener('resize',function(){
 // AI GENERATOR
 // ═══════════════════════════════════════════
 function openAI(){
-  // Verificar status das chaves guardadas pelo admin
+  // Verificar qual IA está configurada pelo admin
   const hasGroq=!!localStorage.getItem('pmz_groq_key');
   const hasAnthropic=!!localStorage.getItem('pmz_anthropic_key');
+  const statusEl=document.getElementById('aiProviderStatus');
   
-  const groqStatus=document.getElementById('groqStatus');
-  const anthropicStatus=document.getElementById('anthropicStatus');
-  
-  if(groqStatus){
-    groqStatus.innerHTML=hasGroq?'<span style="color:#10b981">✅ Configurada</span>':'<span style="color:#ef4444">❌ Não configurada</span>';
-  }
-  if(anthropicStatus){
-    anthropicStatus.innerHTML=hasAnthropic?'<span style="color:#10b981">✅ Configurada</span>':'<span style="color:#ef4444">❌ Não configurada</span>';
+  if(statusEl){
+    if(hasAnthropic){
+      statusEl.innerHTML='<span style="color:#10b981">🧠 Claude 3.5 Sonnet ativo</span>';
+    }else if(hasGroq){
+      statusEl.innerHTML='<span style="color:#10b981">⚡ Llama 3.3 70B ativo</span>';
+    }else{
+      statusEl.innerHTML='<span style="color:#ef4444">❌ Nenhuma IA configurada - Contacta o admin</span>';
+    }
   }
   
   document.getElementById('aiModal').classList.add('open');
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
-  // Detetar provider e opções avançadas
-  const useAnthropic=localStorage.getItem('pmz_use_anthropic')==='true';
+  // Detetar automaticamente qual IA o admin configurou
+  const hasAnthropic=!!localStorage.getItem('pmz_anthropic_key');
+  const hasGroq=!!localStorage.getItem('pmz_groq_key');
+  
   let provider,aiName;
-  if(useAnthropic){provider='anthropic';aiName='Claude';}
-  else{provider='groq';aiName='Llama';}
+  if(hasAnthropic){provider='anthropic';aiName='Claude';}
+  else if(hasGroq){provider='groq';aiName='Llama';}
+  else{showToast('⚠️ Nenhuma IA configurada. Contacta o administrador.');return;}
   
   // Ler opções avançadas
   const optModular=document.getElementById('optModular')?.checked||true;
