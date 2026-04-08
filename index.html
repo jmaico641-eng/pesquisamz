@@ -204,6 +204,9 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 /* Work type labels */
 .work-type-label:hover{border-color:var(--g4)!important;background:var(--g0)!important}
 .work-type-label:has(input:checked){border-color:var(--g5)!important;background:var(--g0)!important}
+/* AI provider labels */
+.ai-provider-label:hover{border-color:var(--g4)!important}
+.ai-provider-label:has(input:checked){border-color:var(--g5)!important;background:var(--g0)!important}
 /* Spinner */
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -655,13 +658,29 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Groq AI</b> (Llama 3.3 70B)</div></div>
     <div class="ubody" style="overflow-y:auto;flex:1">
       <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
-        <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
-        <input class="finp" id="aiKey" type="password" placeholder="gsk_..." oninput="saveGroqKey()">
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <button class="bprev" onclick="saveGroqKey()" style="font-size:11px;padding:4px 10px">💾 Guardar chave</button>
-          <button class="bprev" onclick="clearGroqKey()" style="font-size:11px;padding:4px 10px">🗑️ Limpar</button>
+        <div class="flabel" style="color:#8B6914;margin-bottom:8px">🤖 Seleccionar IA</div>
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px;background:white;border-radius:var(--rmd);cursor:pointer;border:2px solid var(--g5)" class="ai-provider-label" id="groqLabel"><input type="radio" name="aiProvider" value="groq" checked onchange="switchAIProvider()" style="accent-color:var(--g6)"><div><div style="font-size:13px;font-weight:600">⚡ Groq (Llama 3.3)</div><div style="font-size:10px;color:var(--gr4)">Rápido e gratuito</div></div></label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px;background:white;border-radius:var(--rmd);cursor:pointer;border:2px solid transparent" class="ai-provider-label" id="anthropicLabel"><input type="radio" name="aiProvider" value="anthropic" onchange="switchAIProvider()" style="accent-color:var(--g6)"><div><div style="font-size:13px;font-weight:600">🧠 Anthropic (Claude)</div><div style="font-size:10px;color:var(--gr4)">Mais inteligente e detalhado</div></div></label>
         </div>
-        <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
+        <div id="groqKeySection">
+          <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
+          <input class="finp" id="aiKey" type="password" placeholder="gsk_..." oninput="saveGroqKey()">
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button class="bprev" onclick="saveGroqKey()" style="font-size:11px;padding:4px 10px">💾 Guardar</button>
+            <button class="bprev" onclick="clearGroqKey()" style="font-size:11px;padding:4px 10px">🗑️ Limpar</button>
+          </div>
+          <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
+        </div>
+        <div id="anthropicKeySection" style="display:none">
+          <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Anthropic API</div>
+          <input class="finp" id="anthropicKey" type="password" placeholder="sk-ant-..." oninput="saveAnthropicKey()">
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button class="bprev" onclick="saveAnthropicKey()" style="font-size:11px;padding:4px 10px">💾 Guardar</button>
+            <button class="bprev" onclick="clearAnthropicKey()" style="font-size:11px;padding:4px 10px">🗑️ Limpar</button>
+          </div>
+          <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém em <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--g6)">console.anthropic.com</a></div>
+        </div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Gerador de Trabalhos Académicos</div>
@@ -818,17 +837,85 @@ function saveGroqKey(){
 function clearGroqKey(){
   localStorage.removeItem('pmz_groq_key');
   document.getElementById('aiKey').value='';
-  showToast('🗑️ Chave removida.');
+  showToast('🗑️ Chave Groq removida.');
 }
 function getGroqKey(){
   return document.getElementById('aiKey').value.trim()||localStorage.getItem('pmz_groq_key')||'';
 }
 
+// Guardar/Carregar chave Anthropic
+function saveAnthropicKey(){
+  const key=document.getElementById('anthropicKey').value.trim();
+  if(key){
+    localStorage.setItem('pmz_anthropic_key',key);
+    showToast('✅ Chave Anthropic guardada!');
+  }
+}
+function clearAnthropicKey(){
+  localStorage.removeItem('pmz_anthropic_key');
+  document.getElementById('anthropicKey').value='';
+  showToast('🗑️ Chave Anthropic removida.');
+}
+function getAnthropicKey(){
+  return document.getElementById('anthropicKey').value.trim()||localStorage.getItem('pmz_anthropic_key')||'';
+}
+
+// Trocar provider de IA
+function switchAIProvider(){
+  const provider=document.querySelector('input[name="aiProvider"]:checked').value;
+  if(provider==='groq'){
+    document.getElementById('groqKeySection').style.display='';
+    document.getElementById('anthropicKeySection').style.display='none';
+    document.getElementById('groqLabel').style.borderColor='var(--g5)';
+    document.getElementById('anthropicLabel').style.borderColor='transparent';
+  }else{
+    document.getElementById('groqKeySection').style.display='none';
+    document.getElementById('anthropicKeySection').style.display='';
+    document.getElementById('groqLabel').style.borderColor='transparent';
+    document.getElementById('anthropicLabel').style.borderColor='var(--g5)';
+  }
+}
+
+// Chamar Groq API
 async function callGroq(prompt,key){
   const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:8192})});
   if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Groq');}
   const d=await r.json();
   return d.choices?.[0]?.message?.content||'Sem resposta.';
+}
+
+// Chamar Anthropic Claude API
+async function callAnthropic(prompt,key){
+  const ANTHROPIC_URL='https://api.anthropic.com/v1/messages';
+  const r=await fetch(ANTHROPIC_URL,{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01'
+    },
+    body:JSON.stringify({
+      model:'claude-3-5-sonnet-20241022',
+      max_tokens:8192,
+      temperature:0.7,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  if(!r.ok){
+    const e=await r.json();
+    throw new Error(e.error?.message||'Erro na API Anthropic');
+  }
+  const d=await r.json();
+  return d.content?.[0]?.text||'Sem resposta.';
+}
+
+// Função universal para gerar texto
+async function callAI(prompt,provider,key){
+  if(provider==='anthropic'){
+    return await callAnthropic(prompt,key);
+  }else{
+    return await callGroq(prompt,key);
+  }
 }
 const UNIS=[
   {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
@@ -1008,16 +1095,49 @@ function renderAdminConfig(){
 
 function renderAdminAI(){
   const savedGroqKey=localStorage.getItem('pmz_groq_key')||'';
+  const savedAnthropicKey=localStorage.getItem('pmz_anthropic_key')||'';
   document.getElementById('adminContent').innerHTML=`
     <div class="admin-card" style="border-left:3px solid var(--gold)">
       <h4>🤖 Gerador de Trabalhos com IA</h4>
-      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Gera trabalhos académicos completos com Groq AI (Llama 3.3 70B)</p>
+      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Gera trabalhos académicos completos com Groq AI ou Anthropic Claude</p>
       
-      <label class="admin-label">🔑 Chave Groq API</label>
-      <input class="admin-input" id="adminGroqKey" type="password" value="${savedGroqKey}" placeholder="gsk_..." oninput="saveAdminGroqKey()">
-      <div style="display:flex;gap:6px;margin-bottom:12px">
-        <button class="admin-btn ok" onclick="saveAdminGroqKey()">💾 Guardar Chave</button>
-        ${savedGroqKey?'<button class="admin-btn" onclick="clearAdminGroqKey()">🗑️ Limpar</button>':''}
+      <div style="background:var(--gr0);border:1px solid var(--gr1);border-radius:var(--rmd);padding:10px 14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:8px">🤖 Seleccionar IA</div>
+        <div style="display:flex;gap:8px">
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:2px solid var(--g5)" id="adminGroqLabel"><input type="radio" name="adminAIProvider" value="groq" checked style="accent-color:var(--g6)"><div><div style="font-size:12px;font-weight:600">⚡ Groq</div><div style="font-size:9px;color:var(--gr4)">Rápido</div></div></label>
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px;background:white;border-radius:var(--rsm);cursor:pointer;border:2px solid transparent" id="adminAnthropicLabel"><input type="radio" name="adminAIProvider" value="anthropic" style="accent-color:var(--g6)"><div><div style="font-size:12px;font-weight:600">🧠 Claude</div><div style="font-size:9px;color:var(--gr4)">Inteligente</div></div></label>
+        </div>
+      </div>
+      
+      <div id="adminGroqKeySection">
+        <label class="admin-label">🔑 Chave Groq API</label>
+        <input class="admin-input" id="adminGroqKey" type="password" value="${savedGroqKey}" placeholder="gsk_..." oninput="saveAdminGroqKey()">
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button class="admin-btn ok" onclick="saveAdminGroqKey()">💾 Guardar</button>
+          ${savedGroqKey?'<button class="admin-btn" onclick="clearAdminGroqKey()">🗑️ Limpar</button>':''}
+        </div>
+      </div>
+      <div id="adminAnthropicKeySection" style="display:none">
+        <label class="admin-label">🔑 Chave Anthropic API</label>
+        <input class="admin-input" id="adminAnthropicKey" type="password" value="${savedAnthropicKey}" placeholder="sk-ant-..." oninput="saveAdminAnthropicKey()">
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button class="admin-btn ok" onclick="saveAdminAnthropicKey()">💾 Guardar</button>
+          ${savedAnthropicKey?'<button class="admin-btn" onclick="clearAdminAnthropicKey()">🗑️ Limpar</button>':''}
+        </div>
+      </div>
+      
+      <div style="background:linear-gradient(135deg,var(--g0),var(--g1));border:1px solid var(--g2);border-radius:var(--rmd);padding:10px 14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;margin-bottom:6px">📚 Tipo de Trabalho</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="monografia" checked style="accent-color:var(--g6)"><span>📖 Monografia</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="tese" style="accent-color:var(--g6)"><span>🎓 Tese Doutoramento</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="dissertacao" style="accent-color:var(--g6)"><span>📝 Dissertação Mestrado</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="artigo" style="accent-color:var(--g6)"><span>📄 Artigo Científico</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="relatorio" style="accent-color:var(--g6)"><span>📊 Relatório Estágio</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="projeto" style="accent-color:var(--g6)"><span>🔬 Projecto Pesquisa</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="ensaio" style="accent-color:var(--g6)"><span>✍️ Ensaio Académico</span></label>
+          <label style="display:flex;align-items:center;gap:4px;padding:6px;background:white;border-radius:var(--rsm);cursor:pointer;font-size:11px" class="work-type-label"><input type="radio" name="adminWorkType" value="resenha" style="accent-color:var(--g6)"><span>📋 Resenha Crítica</span></label>
+        </div>
       </div>
       
       <label class="admin-label">📝 Tema do Trabalho *</label>
@@ -1084,35 +1204,73 @@ function clearAdminGroqKey(){
   localStorage.removeItem('pmz_groq_key');
   const el=document.getElementById('adminGroqKey');
   if(el)el.value='';
-  showToast('🗑️ Chave removida.');
+  showToast('🗑️ Chave Groq removida.');
   renderAdminAI();
 }
 
+function saveAdminAnthropicKey(){
+  const key=document.getElementById('adminAnthropicKey')?.value.trim();
+  if(key){
+    localStorage.setItem('pmz_anthropic_key',key);
+    showToast('✅ Chave Anthropic guardada!');
+  }
+}
+
+function clearAdminAnthropicKey(){
+  localStorage.removeItem('pmz_anthropic_key');
+  const el=document.getElementById('adminAnthropicKey');
+  if(el)el.value='';
+  showToast('🗑️ Chave Anthropic removida.');
+  renderAdminAI();
+}
+
+// Trocar provider no admin
+document.addEventListener('change',function(e){
+  if(e.target.name==='adminAIProvider'){
+    const provider=e.target.value;
+    const groqSection=document.getElementById('adminGroqKeySection');
+    const anthroSection=document.getElementById('adminAnthropicKeySection');
+    const groqLabel=document.getElementById('adminGroqLabel');
+    const anthroLabel=document.getElementById('adminAnthropicLabel');
+    if(provider==='groq'){
+      groqSection.style.display='';anthroSection.style.display='none';
+      groqLabel.style.borderColor='var(--g5)';anthroLabel.style.borderColor='transparent';
+    }else{
+      groqSection.style.display='none';anthroSection.style.display='';
+      groqLabel.style.borderColor='transparent';anthroLabel.style.borderColor='var(--g5)';
+    }
+  }
+});
+
 async function runAdminAI(){
-  const key=document.getElementById('adminGroqKey')?.value.trim()||localStorage.getItem('pmz_groq_key');
+  const provider=document.querySelector('input[name="adminAIProvider"]:checked')?.value||'groq';
+  const groqKey=document.getElementById('adminGroqKey')?.value.trim()||localStorage.getItem('pmz_groq_key');
+  const anthroKey=document.getElementById('adminAnthropicKey')?.value.trim()||localStorage.getItem('pmz_anthropic_key');
+  const key=provider==='anthropic'?anthroKey:groqKey;
   const workType=document.querySelector('input[name="adminWorkType"]:checked')?.value||'monografia';
   const tema=document.getElementById('adminTema')?.value.trim();
   const descricao=document.getElementById('adminDescricao')?.value.trim();
   const ref=document.getElementById('adminRef')?.value;
   const pag=document.getElementById('adminPag')?.value||60;
   const idioma=document.querySelector('input[name="adminIdioma"]:checked')?.value||'portugues';
-  
-  if(!key){showToast('⚠️ Introduz e guarda a chave Groq API primeiro.');return;}
+
+  if(!key){showToast(`⚠️ Introduz e guarda a chave ${provider==='anthropic'?'Anthropic':'Groq'} API primeiro.`);return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
-  
+
   const btn=document.getElementById('adminAIBtn');
   const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
-  btn.innerHTML=`<span class="spinner"></span> A gerar ${workTypeNames[workType]}...`;
+  const aiName=provider==='anthropic'?'Claude':'Llama';
+  btn.innerHTML=`<span class="spinner"></span> A gerar ${workTypeNames[workType]} com ${aiName}...`;
   btn.disabled=true;
-  
+
   try{
     const isPT=idioma==='portugues';
     const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
-    const txt=await callGroq(prompt,key);
+    const txt=await callAI(prompt,provider,key);
     document.getElementById('adminAIOutText').textContent=txt;
     document.getElementById('adminAIOut').style.display='';
-    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com sucesso!`:`✅ ${workTypeNames[workType]} generated!`);
+    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com ${aiName}!`:`✅ ${workTypeNames[workType]} generated with ${aiName}!`);
   }catch(e){
     showToast('❌ Erro: '+e.message);
   }finally{
@@ -1522,14 +1680,17 @@ window.addEventListener('resize',function(){
 // AI GENERATOR
 // ═══════════════════════════════════════════
 function openAI(){
-  // Carregar chave guardada
-  const savedKey=localStorage.getItem('pmz_groq_key');
-  if(savedKey)document.getElementById('aiKey').value=savedKey;
+  // Carregar chaves guardadas
+  const savedGroqKey=localStorage.getItem('pmz_groq_key');
+  const savedAnthropicKey=localStorage.getItem('pmz_anthropic_key');
+  if(savedGroqKey)document.getElementById('aiKey').value=savedGroqKey;
+  if(savedAnthropicKey)document.getElementById('anthropicKey').value=savedAnthropicKey;
   document.getElementById('aiModal').classList.add('open');
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
-  const key=getGroqKey();
+  const provider=document.querySelector('input[name="aiProvider"]:checked')?.value||'groq';
+  const key=provider==='anthropic'?getAnthropicKey():getGroqKey();
   const workType=document.querySelector('input[name="workType"]:checked')?.value||'monografia';
   const tema=document.getElementById('aiTema').value.trim();
   const descricao=document.getElementById('aiDescricao').value.trim();
@@ -1537,22 +1698,23 @@ async function runAI(){
   const pag=document.getElementById('aiPag').value||60;
   const idioma=document.querySelector('input[name="aiIdioma"]:checked')?.value||'portugues';
 
-  if(!key){showToast('⚠️ Introduz a tua chave Groq API ou guarda-a primeiro.');return;}
+  if(!key){showToast(`⚠️ Introduz a tua chave ${provider==='anthropic'?'Anthropic':'Groq'} API ou guarda-a primeiro.`);return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
 
   const btn=document.getElementById('aiBtn');
   const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
-  btn.innerHTML=`<span class="spinner"></span>A gerar ${workTypeNames[workType]}...`;
+  const aiName=provider==='anthropic'?'Claude':'Llama';
+  btn.innerHTML=`<span class="spinner"></span>A gerar ${workTypeNames[workType]} com ${aiName}...`;
   btn.disabled=true;
 
   try{
     const isPT=idioma==='portugues';
     const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
-    const txt=await callGroq(prompt,key);
+    const txt=await callAI(prompt,provider,key);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
-    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com sucesso!`:`✅ ${workTypeNames[workType]} generated successfully!`);
+    showToast(isPT?`✅ ${workTypeNames[workType]} gerada com ${aiName}!`:`✅ ${workTypeNames[workType]} generated with ${aiName}!`);
   }catch(e){
     showToast('❌ Erro: '+e.message);
   }finally{
