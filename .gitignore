@@ -10,5 +10,10 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Environment variables (NUNCA commitar chaves API!)
+.env
+.env.local
+.env.production
+
 # PDFs de teste (não commitar ficheiros grandes)
 *.pdf
