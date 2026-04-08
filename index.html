@@ -446,7 +446,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 <nav class="nav">
   <div class="logo-wrap">
     <div class="logo">Pesquisa<em>MZ</em></div>
-    <div class="logo-by">Desenvolvido por <b>Junir Maico Jorge</b></div>
+    <div class="logo-by">Desenvolvido por <b>Junior Maico Jorge</b></div>
   </div>
   <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
   <div class="nav-links" id="navLinks">
@@ -461,7 +461,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 
 <div class="hero">
   <div class="eyebrow">Repositório Académico Nacional</div>
-  <h1>Pesquisa académica<br><em>feita em Moçambique</em></h1>
+  <h1>Pesquisa académica<br><em>ao teu alcance</em></h1>
   <p class="hero-sub">Acede a teses, monografias e dissertações de todas as universidades e faculdades do país. Documento disponível logo após o pagamento.</p>
   <div class="sw">
     <input type="text" id="searchInput" placeholder="Pesquisar por título, autor, palavra-chave..." onkeydown="if(event.key==='Enter')doSearch()">
@@ -653,26 +653,28 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <div class="ubody" style="overflow-y:auto;flex:1">
       <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
         <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
-        <input class="finp" id="aiKey" type="password" placeholder="gsk_...">
+        <input class="finp" id="aiKey" type="password" placeholder="gsk_..." oninput="saveGroqKey()">
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button class="bprev" onclick="saveGroqKey()" style="font-size:11px;padding:4px 10px">💾 Guardar chave</button>
+          <button class="bprev" onclick="clearGroqKey()" style="font-size:11px;padding:4px 10px">🗑️ Limpar</button>
+        </div>
         <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Trabalho Académico</div>
         <div><div class="flabel">Tema do trabalho *</div><input class="finp" id="aiTema" type="text" placeholder="Ex: Impacto das microfinanças no desenvolvimento rural de Gaza"></div>
+        <div style="margin-top:10px"><div class="flabel">Descrição detalhada do trabalho *</div><textarea class="finp" id="aiDescricao" rows="4" placeholder="Descreve o objectivo, escopo, metodologia esperada, público-alvo e requisitos específicos do trabalho..."></textarea></div>
         <div class="frow" style="margin-top:10px">
-          <div><div class="flabel">Nível académico</div><select class="finp" id="aiNivel"><option>Licenciatura</option><option>Mestrado</option><option>Doutoramento</option><option>Monografia</option></select></div>
-          <div><div class="flabel">Nº de páginas</div><input class="finp" id="aiPag" type="number" value="60" min="20" max="300"></div>
+          <div><div class="flabel">Formato de referências</div><select class="finp" id="aiRef"><option value="ABNT">ABNT</option><option value="APA">APA</option></select></div>
+          <div><div class="flabel">Número de páginas</div><input class="finp" id="aiPag" type="number" value="60" min="10" max="300"></div>
         </div>
-        <div class="frow" style="margin-top:10px">
-          <div><div class="flabel">Área de estudo</div><input class="finp" id="aiArea" type="text" placeholder="Ex: Economia, Direito, Saúde..."></div>
-          <div><div class="flabel">Universidade</div><select class="finp" id="aiUni2"></select></div>
-        </div>
+        <div style="margin-top:10px"><div class="flabel">Idioma do trabalho</div><div style="display:flex;gap:12px;margin-top:6px"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="aiIdioma" value="portugues" checked style="accent-color:var(--g6)"><span style="font-size:13px">🇲🇿 Português</span></label><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="aiIdioma" value="ingles" style="accent-color:var(--g6)"><span style="font-size:13px">🇬🇧 Inglês</span></label></div></div>
         <div class="srow" style="margin-top:14px">
-          <button class="bpag" style="margin-bottom:0" onclick="runAI()" id="aiBtn">✨ Gerar Estrutura</button>
+          <button class="bpag" style="margin-bottom:0" onclick="runAI()" id="aiBtn">✨ Gerar Trabalho Completo</button>
           <button class="bcan" style="width:auto;padding:12px 18px" onclick="closeAI()">Fechar</button>
         </div>
         <div id="aiOut" style="display:none;margin-top:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div><button class="bprev" onclick="copyAI('aiOutText')">📋 Copiar</button></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div><div style="display:flex;gap:6px"><button class="bprev" onclick="copyAI('aiOutText')">📋 Copiar</button><button class="bprev" onclick="downloadAsPDF()">📄 PDF</button><button class="bprev" onclick="downloadAsWord()">📝 Word</button></div></div>
           <div id="aiOutText" class="ai-output"></div>
         </div>
       </div>
@@ -718,6 +720,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <div style="padding:16px 20px;border-bottom:1px solid var(--gr1);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
       <button class="admin-tab active" onclick="switchAdminTab('dashboard',this)">📊 Dashboard</button>
       <button class="admin-tab" onclick="switchAdminTab('pedidos',this)">🛒 Pedidos <span id="pedidosBadge" style="background:#f59e0b;color:white;font-size:10px;padding:1px 6px;border-radius:8px;display:none">0</span></button>
+      <button class="admin-tab" onclick="switchAdminTab('ai',this)">🤖 IA Gerador</button>
       <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Config</button>
     </div>
     <div style="padding:20px;overflow-y:auto;flex:1;max-height:calc(85vh - 140px)" id="adminContent"></div>
@@ -761,8 +764,26 @@ try{
 // ═══════════════════════════════════════════
 const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL='llama-3.3-70b-versatile';
+
+// Guardar/Carregar chave Groq
+function saveGroqKey(){
+  const key=document.getElementById('aiKey').value.trim();
+  if(key){
+    localStorage.setItem('pmz_groq_key',key);
+    showToast('✅ Chave Groq guardada!');
+  }
+}
+function clearGroqKey(){
+  localStorage.removeItem('pmz_groq_key');
+  document.getElementById('aiKey').value='';
+  showToast('🗑️ Chave removida.');
+}
+function getGroqKey(){
+  return document.getElementById('aiKey').value.trim()||localStorage.getItem('pmz_groq_key')||'';
+}
+
 async function callGroq(prompt,key){
-  const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:2048})});
+  const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:8192})});
   if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Groq');}
   const d=await r.json();
   return d.choices?.[0]?.message?.content||'Sem resposta.';
@@ -857,6 +878,7 @@ function switchAdminTab(tab,btn){
   if(tab==='dashboard')renderAdminDashboard();
   else if(tab==='pedidos')renderAdminPedidos();
   else if(tab==='config')renderAdminConfig();
+  else if(tab==='ai')renderAdminAI();
 }
 
 function renderAdminDashboard(){
@@ -924,6 +946,7 @@ function rejectOrder(id){
 
 function renderAdminConfig(){
   const phone=localStorage.getItem('pmz_admin_phone')||'258856810532';
+  const savedGroqKey=localStorage.getItem('pmz_groq_key')||'';
   document.getElementById('adminContent').innerHTML=`
     <div class="admin-card"><h4>💬 WhatsApp</h4>
       <label class="admin-label">Teu número (com 258)</label>
@@ -939,6 +962,331 @@ function renderAdminConfig(){
       <button class="admin-btn" onclick="const d=JSON.stringify({docs:ldocs('pmz_docs'),orders:lorders()});const b=new Blob([d],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup.json';a.click();showToast('✅ Exportado!')">📥 Exportar</button>
     </div>
   `;
+}
+
+function renderAdminAI(){
+  const savedGroqKey=localStorage.getItem('pmz_groq_key')||'';
+  document.getElementById('adminContent').innerHTML=`
+    <div class="admin-card" style="border-left:3px solid var(--gold)">
+      <h4>🤖 Gerador de Trabalhos com IA</h4>
+      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Gera trabalhos académicos completos com Groq AI (Llama 3.3 70B)</p>
+      
+      <label class="admin-label">🔑 Chave Groq API</label>
+      <input class="admin-input" id="adminGroqKey" type="password" value="${savedGroqKey}" placeholder="gsk_..." oninput="saveAdminGroqKey()">
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <button class="admin-btn ok" onclick="saveAdminGroqKey()">💾 Guardar Chave</button>
+        ${savedGroqKey?'<button class="admin-btn" onclick="clearAdminGroqKey()">🗑️ Limpar</button>':''}
+      </div>
+      
+      <label class="admin-label">📝 Tema do Trabalho *</label>
+      <input class="admin-input" id="adminTema" type="text" placeholder="Ex: Impacto das microfinanças no desenvolvimento rural de Gaza">
+      
+      <label class="admin-label" style="margin-top:10px">📋 Descrição Detalhada *</label>
+      <textarea class="admin-input" id="adminDescricao" rows="4" placeholder="Descreve o objectivo, escopo, metodologia esperada, público-alvo e requisitos específicos do trabalho..." style="resize:vertical;min-height:80px"></textarea>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <div>
+          <label class="admin-label">📚 Formato de Referências</label>
+          <select class="admin-input" id="adminRef">
+            <option value="ABNT">ABNT</option>
+            <option value="APA">APA</option>
+          </select>
+        </div>
+        <div>
+          <label class="admin-label">📄 Número de Páginas</label>
+          <input class="admin-input" id="adminPag" type="number" value="60" min="10" max="300">
+        </div>
+      </div>
+      
+      <div style="margin-top:10px">
+        <label class="admin-label">🌐 Idioma do Trabalho</label>
+        <div style="display:flex;gap:16px;margin-top:6px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="adminIdioma" value="portugues" checked style="accent-color:var(--g6)">
+            <span style="font-size:13px">🇲🇿 Português</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="radio" name="adminIdioma" value="ingles" style="accent-color:var(--g6)">
+            <span style="font-size:13px">🇬🇧 Inglês</span>
+          </label>
+        </div>
+      </div>
+      
+      <button class="admin-btn ok" onclick="runAdminAI()" id="adminAIBtn" style="width:100%;padding:10px;margin-top:12px;font-size:13px">✨ Gerar Trabalho Completo</button>
+      
+      <div id="adminAIOut" style="display:none;margin-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div>
+          <div style="display:flex;gap:6px">
+            <button class="admin-btn" onclick="copyAdminAI()">📋 Copiar</button>
+            <button class="admin-btn" onclick="downloadAdminAIPDF()">📄 PDF</button>
+            <button class="admin-btn" onclick="downloadAdminAIWord()">📝 Word</button>
+          </div>
+        </div>
+        <div id="adminAIOutText" class="ai-output" style="max-height:400px"></div>
+      </div>
+    </div>
+  `;
+}
+
+function saveAdminGroqKey(){
+  const key=document.getElementById('adminGroqKey')?.value.trim();
+  if(key){
+    localStorage.setItem('pmz_groq_key',key);
+    showToast('✅ Chave Groq guardada!');
+  }
+}
+
+function clearAdminGroqKey(){
+  localStorage.removeItem('pmz_groq_key');
+  const el=document.getElementById('adminGroqKey');
+  if(el)el.value='';
+  showToast('🗑️ Chave removida.');
+  renderAdminAI();
+}
+
+async function runAdminAI(){
+  const key=document.getElementById('adminGroqKey')?.value.trim()||localStorage.getItem('pmz_groq_key');
+  const tema=document.getElementById('adminTema')?.value.trim();
+  const descricao=document.getElementById('adminDescricao')?.value.trim();
+  const ref=document.getElementById('adminRef')?.value;
+  const pag=document.getElementById('adminPag')?.value||60;
+  const idioma=document.querySelector('input[name="adminIdioma"]:checked')?.value||'portugues';
+  
+  if(!key){showToast('⚠️ Introduz e guarda a chave Groq API primeiro.');return;}
+  if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
+  if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
+  
+  const btn=document.getElementById('adminAIBtn');
+  btn.innerHTML='<span class="spinner"></span> A gerar trabalho completo...';
+  btn.disabled=true;
+  
+  try{
+    const isPT=idioma==='portugues';
+    const prompt=isPT?
+`Actua como um escritor académico experiente em Moçambique. Cria um TRABALHO ACADÉMICO COMPLETO e não apenas uma estrutura.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES DO TRABALHO:
+- TEMA: "${tema}"
+- DESCRIÇÃO DETALHADA: ${descricao}
+- FORMATO DE REFERÊNCIAS: ${ref}
+- NÚMERO DE PÁGINAS: ${pag}
+- IDIOMA: Português
+
+══════════════════════════════════════════
+FORMATO DE SAÍDA (preenche TODO o conteúdo):
+
+# TÍTULO COMPLETO DO TRABALHO
+
+## FOLHA DE ROSTO
+- Título completo
+- Nome do autor (genérico)
+- Ano: 2026
+
+## RESUMO (150-250 palavras)
+[Escreve o resumo completo aqui]
+
+## PALAVRAS-CHAVE
+[Listar 5-7 palavras-chave]
+
+## AGRADECIMENTOS
+[Escreve um parágrafo de agradecimentos]
+
+## ÍNDICE
+1. INTRODUÇÃO
+   1.1. Contextualização
+   1.2. Problema de Pesquisa
+   1.3. Objectivos (Geral e Específicos)
+   1.4. Justificativa
+   1.5. Estrutura do Trabalho
+
+2. REVISÃO DA LITERATURA
+   2.1. Fundamentação Teórica
+   2.2. Estudos Anteriores
+   2.3. Conceitos-Chave
+
+3. METODOLOGIA
+   3.1. Tipo de Pesquisa
+   3.2. População e Amostra
+   3.3. Instrumentos de Recolha de Dados
+   3.4. Procedimentos de Análise
+
+4. RESULTADOS E DISCUSSÃO
+   4.1. Apresentação dos Resultados
+   4.2. Análise e Interpretação
+   4.3. Discussão com a Literatura
+
+5. CONCLUSÃO E RECOMENDAÇÕES
+   5.1. Conclusão
+   5.2. Recomendações
+   5.3. Limitações
+   5.4. Sugestões para Pesquisas Futuras
+
+REFERÊNCIAS BIBLIOGRÁFICAS
+[Lista de 10-15 referências em formato ${ref}]
+
+══════════════════════════════════════════
+
+INSTRUÇÕES:
+- Escreve TODO o conteúdo de cada secção em texto completo e académico
+- Sê detalhado e específico, como se fosse um trabalho real submetido
+- Usa Português de Moçambique
+- Inclui citações e referências relevantes
+- Mantém tom académico e formal
+- Cada secção deve ter pelo menos 2-3 parágrafos completos
+- Segue rigorosamente o formato de referências ${ref}
+- Baseia-te na descrição fornecida: ${descricao}
+
+Escreve o trabalho COMPLETO agora.`
+:
+`Act as an experienced academic writer. Create a COMPLETE ACADEMIC PAPER, not just an outline.
+
+══════════════════════════════════════════
+PAPER CONFIGURATIONS:
+- TOPIC: "${tema}"
+- DETAILED DESCRIPTION: ${descricao}
+- REFERENCE FORMAT: ${ref}
+- NUMBER OF PAGES: ${pag}
+- LANGUAGE: English
+
+══════════════════════════════════════════
+OUTPUT FORMAT (fill ALL content):
+
+# COMPLETE PAPER TITLE
+
+## TITLE PAGE
+- Full title
+- Author name (generic)
+- Year: 2026
+
+## ABSTRACT (150-250 words)
+[Write complete abstract here]
+
+## KEYWORDS
+[List 5-7 keywords]
+
+## ACKNOWLEDGMENTS
+[Write a paragraph of acknowledgments]
+
+## TABLE OF CONTENTS
+1. INTRODUCTION
+   1.1. Background
+   1.2. Research Problem
+   1.3. Objectives (General and Specific)
+   1.4. Justification
+   1.5. Paper Structure
+
+2. LITERATURE REVIEW
+   2.1. Theoretical Framework
+   2.2. Previous Studies
+   2.3. Key Concepts
+
+3. METHODOLOGY
+   3.1. Research Type
+   3.2. Population and Sample
+   3.3. Data Collection Instruments
+   3.4. Analysis Procedures
+
+4. RESULTS AND DISCUSSION
+   4.1. Results Presentation
+   4.2. Analysis and Interpretation
+   4.3. Discussion with Literature
+
+5. CONCLUSION AND RECOMMENDATIONS
+   5.1. Conclusion
+   5.2. Recommendations
+   5.3. Limitations
+   5.4. Suggestions for Future Research
+
+REFERENCES
+[List 10-15 references in ${ref} format]
+
+══════════════════════════════════════════
+
+INSTRUCTIONS:
+- Write ALL content of each section in complete academic text
+- Be detailed and specific, as if it were a real submitted paper
+- Use academic English
+- Include relevant citations and references
+- Maintain formal academic tone
+- Each section should have at least 2-3 complete paragraphs
+- Strictly follow ${ref} reference format
+- Base on the description provided: ${descricao}
+
+Write the COMPLETE paper now.`;
+    
+    const txt=await callGroq(prompt,key);
+    document.getElementById('adminAIOutText').textContent=txt;
+    document.getElementById('adminAIOut').style.display='';
+    showToast(isPT?'✅ Trabalho completo gerado com sucesso!':'✅ Complete paper generated successfully!');
+  }catch(e){
+    showToast('❌ Erro: '+e.message);
+  }finally{
+    btn.innerHTML='✨ Gerar Trabalho Completo';
+    btn.disabled=false;
+  }
+}
+
+function copyAdminAI(){
+  const txt=document.getElementById('adminAIOutText')?.textContent;
+  if(txt){
+    navigator.clipboard.writeText(txt).then(()=>showToast('✅ Copiado!')).catch(()=>showToast('Erro ao copiar.'));
+  }
+}
+
+function downloadAdminAIPDF(){
+  const text=document.getElementById('adminAIOutText')?.textContent;
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  const content=text.split('\n').map(line=>{
+    if(line.startsWith('# '))return `<h1 style="color:#04342C;margin:20px 0 10px;font-size:24px">${line.substring(2)}</h1>`;
+    if(line.startsWith('## '))return `<h2 style="color:#085041;margin:18px 0 8px;font-size:18px">${line.substring(3)}</h2>`;
+    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;margin:14px 0 6px;font-size:15px">${line.substring(4)}</h3>`;
+    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
+    if(line.trim()==='')return '<br>';
+    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
+  }).join('');
+  
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Trabalho Académico</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;color:#333}h1,h2,h3{font-family:Georgia,serif}p{margin:8px 0}</style></head><body>${content}</body></html>`;
+  
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='trabalho_academico.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Download PDF iniciado! Abre e imprime como PDF.');
+}
+
+function downloadAdminAIWord(){
+  const text=document.getElementById('adminAIOutText')?.textContent;
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  const content=text.split('\n').map(line=>{
+    if(line.startsWith('# '))return `<h1 style="color:#04342C;font-size:24px;margin:20px 0 10px">${line.substring(2)}</h1>`;
+    if(line.startsWith('## '))return `<h2 style="color:#085041;font-size:18px;margin:18px 0 8px">${line.substring(3)}</h2>`;
+    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;font-size:15px;margin:14px 0 6px">${line.substring(4)}</h3>`;
+    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
+    if(line.trim()==='')return '<br>';
+    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
+  }).join('');
+  
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.6;color:#000}h1,h2,h3{font-family:Georgia,serif}p{margin:6px 0}</style></head><body>${content}</body></html>`;
+  
+  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='trabalho_academico.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Download Word iniciado!');
 }
 
 // Backdrop admin
@@ -1286,34 +1634,191 @@ window.addEventListener('resize',function(){
 // AI GENERATOR
 // ═══════════════════════════════════════════
 function openAI(){
-  if(!document.getElementById('aiUni2').options.length){
-    document.getElementById('aiUni2').innerHTML=UNIS.map(u=>`<option value="${u.a}">${u.a} — ${u.n.slice(0,28)}</option>`).join('');
-  }
+  // Carregar chave guardada
+  const savedKey=localStorage.getItem('pmz_groq_key');
+  if(savedKey)document.getElementById('aiKey').value=savedKey;
   document.getElementById('aiModal').classList.add('open');
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
-  const key=document.getElementById('aiKey').value.trim();
+  const key=getGroqKey();
   const tema=document.getElementById('aiTema').value.trim();
-  const nivel=document.getElementById('aiNivel').value;
+  const descricao=document.getElementById('aiDescricao').value.trim();
+  const ref=document.getElementById('aiRef').value;
   const pag=document.getElementById('aiPag').value||60;
-  const area=document.getElementById('aiArea').value.trim()||'Geral';
-  const uni=document.getElementById('aiUni2').value;
-  if(!key){showToast('⚠️ Introduz a tua chave Groq API.');return;}
+  const idioma=document.querySelector('input[name="aiIdioma"]:checked')?.value||'portugues';
+  
+  if(!key){showToast('⚠️ Introduz a tua chave Groq API ou guarda-a primeiro.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
+  if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
+  
   const btn=document.getElementById('aiBtn');
-  btn.innerHTML='<span class="spinner"></span>A gerar...';
+  btn.innerHTML='<span class="spinner"></span>A gerar trabalho completo...';
   btn.disabled=true;
+  
   try{
-    const prompt=`Actua como orientador académico moçambicano. Cria uma estrutura completa para um trabalho de ${nivel} sobre "${tema}" na área de ${area} para a ${uni}. O trabalho deve ter aproximadamente ${pag} páginas.\n\nInclui:\n1. TÍTULO OFICIAL\n2. RESUMO (150 palavras)\n3. PALAVRAS-CHAVE (5-7)\n4. ÍNDICE COMPLETO com capítulos e subcapítulos numerados\n5. INTRODUÇÃO (esboço)\n6. METODOLOGIA sugerida\n7. BIBLIOGRAFIA base (5 referências)\n\nEscreve em Português de Moçambique. Sê específico e académico.`;
+    const isPT=idioma==='portugues';
+    const prompt=isPT?
+`Actua como um escritor académico experiente em Moçambique. Cria um TRABALHO ACADÉMICO COMPLETO e não apenas uma estrutura.
+
+══════════════════════════════════════════
+CONFIGURAÇÕES DO TRABALHO:
+- TEMA: "${tema}"
+- DESCRIÇÃO DETALHADA: ${descricao}
+- FORMATO DE REFERÊNCIAS: ${ref}
+- NÚMERO DE PÁGINAS: ${pag}
+- IDIOMA: Português
+
+══════════════════════════════════════════
+FORMATO DE SAÍDA (preenche TODO o conteúdo):
+
+# TÍTULO COMPLETO DO TRABALHO
+
+## FOLHA DE ROSTO
+- Título completo
+- Nome do autor (genérico)
+- Ano: 2026
+
+## RESUMO (150-250 palavras)
+[Escreve o resumo completo aqui]
+
+## PALAVRAS-CHAVE
+[Listar 5-7 palavras-chave]
+
+## AGRADECIMENTOS
+[Escreve um parágrafo de agradecimentos]
+
+## ÍNDICE
+1. INTRODUÇÃO
+   1.1. Contextualização
+   1.2. Problema de Pesquisa
+   1.3. Objectivos (Geral e Específicos)
+   1.4. Justificativa
+   1.5. Estrutura do Trabalho
+
+2. REVISÃO DA LITERATURA
+   2.1. Fundamentação Teórica
+   2.2. Estudos Anteriores
+   2.3. Conceitos-Chave
+
+3. METODOLOGIA
+   3.1. Tipo de Pesquisa
+   3.2. População e Amostra
+   3.3. Instrumentos de Recolha de Dados
+   3.4. Procedimentos de Análise
+
+4. RESULTADOS E DISCUSSÃO
+   4.1. Apresentação dos Resultados
+   4.2. Análise e Interpretação
+   4.3. Discussão com a Literatura
+
+5. CONCLUSÃO E RECOMENDAÇÕES
+   5.1. Conclusão
+   5.2. Recomendações
+   5.3. Limitações
+   5.4. Sugestões para Pesquisas Futuras
+
+REFERÊNCIAS BIBLIOGRÁFICAS
+[Lista de 10-15 referências em formato ${ref}]
+
+══════════════════════════════════════════
+
+INSTRUÇÕES:
+- Escreve TODO o conteúdo de cada secção em texto completo e académico
+- Sê detalhado e específico, como se fosse um trabalho real submetido
+- Usa Português de Moçambique
+- Inclui citações e referências relevantes
+- Mantém tom académico e formal
+- Cada secção deve ter pelo menos 2-3 parágrafos completos
+- Segue rigorosamente o formato de referências ${ref}
+- Baseia-te na descrição fornecida: ${descricao}
+
+Escreve o trabalho COMPLETO agora.`
+:
+`Act as an experienced academic writer. Create a COMPLETE ACADEMIC PAPER, not just an outline.
+
+══════════════════════════════════════════
+PAPER CONFIGURATIONS:
+- TOPIC: "${tema}"
+- DETAILED DESCRIPTION: ${descricao}
+- REFERENCE FORMAT: ${ref}
+- NUMBER OF PAGES: ${pag}
+- LANGUAGE: English
+
+══════════════════════════════════════════
+OUTPUT FORMAT (fill ALL content):
+
+# COMPLETE PAPER TITLE
+
+## TITLE PAGE
+- Full title
+- Author name (generic)
+- Year: 2026
+
+## ABSTRACT (150-250 words)
+[Write complete abstract here]
+
+## KEYWORDS
+[List 5-7 keywords]
+
+## ACKNOWLEDGMENTS
+[Write a paragraph of acknowledgments]
+
+## TABLE OF CONTENTS
+1. INTRODUCTION
+   1.1. Background
+   1.2. Research Problem
+   1.3. Objectives (General and Specific)
+   1.4. Justification
+   1.5. Paper Structure
+
+2. LITERATURE REVIEW
+   2.1. Theoretical Framework
+   2.2. Previous Studies
+   2.3. Key Concepts
+
+3. METHODOLOGY
+   3.1. Research Type
+   3.2. Population and Sample
+   3.3. Data Collection Instruments
+   3.4. Analysis Procedures
+
+4. RESULTS AND DISCUSSION
+   4.1. Results Presentation
+   4.2. Analysis and Interpretation
+   4.3. Discussion with Literature
+
+5. CONCLUSION AND RECOMMENDATIONS
+   5.1. Conclusion
+   5.2. Recommendations
+   5.3. Limitations
+   5.4. Suggestions for Future Research
+
+REFERENCES
+[List 10-15 references in ${ref} format]
+
+══════════════════════════════════════════
+
+INSTRUCTIONS:
+- Write ALL content of each section in complete academic text
+- Be detailed and specific, as if it were a real submitted paper
+- Use academic English
+- Include relevant citations and references
+- Maintain formal academic tone
+- Each section should have at least 2-3 complete paragraphs
+- Strictly follow ${ref} reference format
+- Base on the description provided: ${descricao}
+
+Write the COMPLETE paper now.`;
+    
     const txt=await callGroq(prompt,key);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
-    showToast('✅ Estrutura gerada com sucesso!');
+    showToast(isPT?'✅ Trabalho completo gerado com sucesso! Podes descarregar em PDF ou Word.':'✅ Complete paper generated successfully! You can download in PDF or Word.');
   }catch(e){
     showToast('❌ Erro: '+e.message);
   }finally{
-    btn.innerHTML='✨ Gerar Estrutura';
+    btn.innerHTML='✨ Gerar Trabalho Completo';
     btn.disabled=false;
   }
 }
@@ -1343,6 +1848,64 @@ async function runCursoAI(){
 function copyAI(id){
   const txt=document.getElementById(id).textContent;
   navigator.clipboard.writeText(txt).then(()=>showToast('✅ Copiado para a área de transferência!')).catch(()=>showToast('Erro ao copiar.'));
+}
+
+// Download como PDF
+function downloadAsPDF(){
+  const text=document.getElementById('aiOutText').textContent;
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  // Criar conteúdo para PDF
+  const content=text.split('\n').map(line=>{
+    if(line.startsWith('# '))return `<h1 style="color:#04342C;margin:20px 0 10px;font-size:24px">${line.substring(2)}</h1>`;
+    if(line.startsWith('## '))return `<h2 style="color:#085041;margin:18px 0 8px;font-size:18px">${line.substring(3)}</h2>`;
+    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;margin:14px 0 6px;font-size:15px">${line.substring(4)}</h3>`;
+    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
+    if(line.trim()==='')return '<br>';
+    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
+  }).join('');
+  
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Trabalho Académico</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;color:#333}h1,h2,h3{font-family:Georgia,serif}p{margin:8px 0}</style></head><body>${content}</body></html>`;
+  
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='trabalho_academico.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Download iniciado! Abre o ficheiro e imprime como PDF.');
+}
+
+// Download como Word (.docx simplificado como .doc)
+function downloadAsWord(){
+  const text=document.getElementById('aiOutText').textContent;
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  // Criar conteúdo formatado para Word
+  const content=text.split('\n').map(line=>{
+    if(line.startsWith('# '))return `<h1 style="color:#04342C;font-size:24px;margin:20px 0 10px">${line.substring(2)}</h1>`;
+    if(line.startsWith('## '))return `<h2 style="color:#085041;font-size:18px;margin:18px 0 8px">${line.substring(3)}</h2>`;
+    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;font-size:15px;margin:14px 0 6px">${line.substring(4)}</h3>`;
+    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
+    if(line.trim()==='')return '<br>';
+    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
+  }).join('');
+  
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.6;color:#000}h1,h2,h3{font-family:Georgia,serif}p{margin:6px 0}</style></head><body>${content}</body></html>`;
+  
+  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='trabalho_academico.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ Download Word iniciado!');
 }
 
 // ═══════════════════════════════════════════
