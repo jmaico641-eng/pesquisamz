@@ -1,69 +1,81 @@
 // Serverless Function - Proxy para Groq API
-// Esta função esconde a chave API do cliente e contorna problemas de CORS
+// Retorna JSON válido sempre
 
-export default async function handler(req, res) {
-  // Apenas permitir métodos POST
+module.exports = async (req, res) => {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Responder OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).json({ ok: true });
+    return;
+  }
+
+  // Apenas POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: 'Method not allowed. Use POST.' });
+    return;
   }
 
-  // Verificar se há uma secret key básica (opcional, para proteção extra)
-  const clientSecret = req.headers.authorization;
-  const expectedSecret = process.env.API_SECRET;
+  // Obter chave API do corpo da requisição ou do ambiente
+  let apiKey = req.body?.apiKey || process.env.GROQ_API_KEY;
   
-  if (expectedSecret && clientSecret !== `Bearer ${expectedSecret}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  // Obter chave API do ambiente
-  const groqApiKey = process.env.GROQ_API_KEY;
-  if (!groqApiKey) {
-    return res.status(500).json({ error: 'Groq API key not configured' });
+  if (!apiKey) {
+    res.status(500).json({ error: 'Groq API key not provided. Admin must configure it in ⚙️ Admin → Configuração.' });
+    return;
   }
 
   try {
-    const { prompt, ...bodyParams } = req.body;
-
+    const { prompt } = req.body;
     if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required' });
+      res.status(400).json({ error: 'Prompt is required' });
+      return;
     }
 
-    // Fazer chamada para Groq API
+    // Timeout de 60 segundos
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${groqApiKey}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: bodyParams.model || 'llama-3.3-70b-versatile',
+        model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'user', content: prompt }],
-        temperature: bodyParams.temperature || 0.7,
-        max_tokens: bodyParams.max_tokens || 8192
-      })
+        temperature: 0.7,
+        max_tokens: 8192
+      }),
+      signal: controller.signal
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      const error = await response.json();
-      return res.status(response.status).json({ 
-        error: error.error?.message || 'Groq API error' 
-      });
+      const error = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
+      res.status(response.status).json({ error: error.error?.message || 'Groq API error' });
+      return;
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
 
     if (!content) {
-      return res.status(500).json({ error: 'No content returned from Groq' });
+      res.status(500).json({ error: 'No content returned from Groq API' });
+      return;
     }
 
-    // Retornar apenas o conteúdo
-    return res.status(200).json({ content });
+    res.status(200).json({ content, provider: 'groq', model: 'llama-3.3-70b-versatile' });
 
   } catch (error) {
-    console.error('Groq proxy error:', error);
-    return res.status(500).json({ 
-      error: error.message || 'Internal server error' 
-    });
+    if (error.name === 'AbortError') {
+      res.status(504).json({ error: 'Request timeout. Tente novamente.' });
+    } else {
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
   }
-}
+};

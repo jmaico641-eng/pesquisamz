@@ -1,140 +1,89 @@
-// Serverless Function - Configuração Persistente
-// Armazena e recupera configurações do servidor (APIs, Firebase, etc.)
+// Serverless Function - Configuração do Sistema
+// Usa variáveis de ambiente do Vercel (persistem para sempre)
 
-const fs = require('fs');
-const path = require('path');
-
-// Caminho para o arquivo de configurações (no diretório /tmp na Vercel)
-const CONFIG_PATH = '/tmp/pesquisamz-config.json';
-
-// Configurações padrão
-const DEFAULT_CONFIG = {
-  groq: { apiKey: '', enabled: false },
-  anthropic: { apiKey: '', enabled: false },
-  firebase: {
-    apiKey: '',
-    authDomain: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: '',
-    enabled: false
-  },
-  whatsapp: { adminPhone: '258856810532' },
-  lastUpdated: null
-};
-
-// Carregar configurações
-function loadConfig() {
-  try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-    }
-  } catch (e) {
-    console.error('Erro ao carregar config:', e.message);
-  }
-  return DEFAULT_CONFIG;
-}
-
-// Guardar configurações
-function saveConfig(config) {
-  try {
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
-    return true;
-  } catch (e) {
-    console.error('Erro ao guardar config:', e.message);
-    return false;
-  }
-}
-
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // Responder OPTIONS preflight
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).json({ ok: true });
+    return;
   }
 
-  // GET - Recuperar configurações
+  // GET - Retornar status das configurações
   if (req.method === 'GET') {
-    const config = loadConfig();
-    // Retornar sem expor chaves completas (segurança)
-    const safeConfig = {
-      groq: { enabled: config.groq.enabled, hasKey: !!config.groq.apiKey },
-      anthropic: { enabled: config.anthropic.enabled, hasKey: !!config.anthropic.apiKey },
-      firebase: { 
-        enabled: config.firebase.enabled, 
-        hasKey: !!config.firebase.apiKey,
-        projectId: config.firebase.projectId
+    const groqKey = process.env.GROQ_API_KEY;
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    const fbApiKey = process.env.FIREBASE_API_KEY;
+    const fbProjectId = process.env.FIREBASE_PROJECT_ID;
+    
+    res.status(200).json({
+      success: true,
+      config: {
+        groq: { 
+          enabled: !!groqKey && groqKey.startsWith('gsk_'), 
+          hasKey: !!groqKey,
+          model: 'llama-3.3-70b-versatile'
+        },
+        anthropic: { 
+          enabled: !!anthropicKey && anthropicKey.startsWith('sk-ant-'), 
+          hasKey: !!anthropicKey,
+          model: 'claude-3-5-sonnet-20241022'
+        },
+        firebase: { 
+          enabled: !!fbApiKey && fbApiKey !== 'SUA_API_KEY', 
+          hasKey: !!fbApiKey,
+          projectId: fbProjectId || ''
+        },
+        whatsapp: {
+          adminPhone: process.env.ADMIN_WHATSAPP || '258856810532'
+        },
+        lastUpdated: new Date().toISOString()
       },
-      whatsapp: config.whatsapp,
-      lastUpdated: config.lastUpdated
-    };
-    return res.status(200).json({ success: true, config: safeConfig });
+      message: 'Configurações carregadas com sucesso'
+    });
+    return;
   }
 
-  // POST - Guardar configurações (requer senha admin)
+  // POST - Atualizar variáveis de ambiente (requer senha admin)
   if (req.method === 'POST') {
-    const { adminPwd, groqKey, anthropicKey, firebase, whatsapp } = req.body;
+    const { adminPwd } = req.body;
     
-    // Verificar senha admin (padrão: admin2024)
-    if (adminPwd !== 'admin2024') {
-      return res.status(401).json({ success: false, error: 'Senha admin inválida' });
+    // Verificar senha admin
+    const expectedPwd = process.env.ADMIN_PASSWORD || 'admin2024';
+    if (adminPwd !== expectedPwd) {
+      res.status(401).json({ 
+        success: false, 
+        error: 'Senha admin inválida' 
+      });
+      return;
     }
 
-    const config = loadConfig();
-
-    // Atualizar Groq
-    if (groqKey !== undefined) {
-      config.groq.apiKey = groqKey;
-      config.groq.enabled = groqKey.length > 0 && groqKey.startsWith('gsk_');
-    }
-
-    // Atualizar Anthropic
-    if (anthropicKey !== undefined) {
-      config.anthropic.apiKey = anthropicKey;
-      config.anthropic.enabled = anthropicKey.length > 0 && anthropicKey.startsWith('sk-ant-');
-    }
-
-    // Atualizar Firebase
-    if (firebase !== undefined) {
-      config.firebase = {
-        ...config.firebase,
-        ...firebase,
-        enabled: !!(firebase.apiKey && firebase.apiKey !== 'SUA_API_KEY')
-      };
-    }
-
-    // Atualizar WhatsApp
-    if (whatsapp !== undefined) {
-      config.whatsapp = { ...config.whatsapp, ...whatsapp };
-    }
-
-    config.lastUpdated = new Date().toISOString();
-
-    const saved = saveConfig(config);
-    if (!saved) {
-      return res.status(500).json({ success: false, error: 'Erro ao guardar configurações' });
-    }
-
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Configurações guardadas com sucesso!',
-      config: {
-        groq: { enabled: config.groq.enabled, hasKey: !!config.groq.apiKey },
-        anthropic: { enabled: config.anthropic.enabled, hasKey: !!config.anthropic.apiKey },
-        firebase: { 
-          enabled: config.firebase.enabled, 
-          hasKey: !!config.firebase.apiKey,
-          projectId: config.firebase.projectId
-        },
-        whatsapp: config.whatsapp,
-        lastUpdated: config.lastUpdated
+    // Nota: As variáveis de ambiente no Vercel só podem ser alteradas via:
+    // 1. Dashboard da Vercel
+    // 2. Vercel CLI
+    // 3. API da Vercel
+    // 
+    // Para simplicidade, as configs são guardadas no localStorage do admin
+    // e o frontend envia as chaves diretamente para as funções proxy.
+    //
+    // Este endpoint serve apenas para verificar o status das configs.
+    
+    res.status(200).json({
+      success: true,
+      message: 'Para configurar APIs, usa o painel Admin → Configuração. As chaves são guardadas localmente e enviadas diretamente para os endpoints.',
+      instructions: {
+        groq: 'Obter em https://console.groq.com/keys',
+        anthropic: 'Obter em https://console.anthropic.com/settings/keys',
+        firebase: 'Obter em https://console.firebase.google.com'
       }
     });
+    return;
   }
 
-  return res.status(405).json({ success: false, error: 'Método não permitido' });
-}
+  // Método não permitido
+  res.status(405).json({ success: false, error: 'Use GET ou POST' });
+};

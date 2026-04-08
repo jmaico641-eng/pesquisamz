@@ -990,45 +990,69 @@ function switchAIProvider(){
 }
 
 // Chamar Groq API via Serverless Proxy
-async function callGroq(prompt,key){
-  // Usar proxy serverless para esconder chave API e contornar CORS
-  const r=await fetch('/api/groq',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt})
+async function callGroq(prompt, key) {
+  // Obter chave do localStorage ou usar a fornecida
+  const apiKey = key || localStorage.getItem('pmz_groq_key') || '';
+  
+  const r = await fetch('/api/groq', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, apiKey })
   });
-  if(!r.ok){
-    const e=await r.json();
-    throw new Error(e.error||'Erro no servidor Groq');
+  
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({ error: 'Erro desconhecido' }));
+    throw new Error(e.error || 'Erro no servidor Groq');
   }
-  const d=await r.json();
-  return d.content||'Sem resposta.';
+  
+  const d = await r.json();
+  return d.content || 'Sem resposta.';
 }
 
 // Chamar Anthropic Claude API via Serverless Proxy
-async function callAnthropic(prompt,key){
-  // Usar proxy serverless para esconder chave API e contornar CORS
-  const r=await fetch('/api/anthropic',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt})
+async function callAnthropic(prompt, key) {
+  // Obter chave do localStorage ou usar a fornecida
+  const apiKey = key || localStorage.getItem('pmz_anthropic_key') || '';
+  
+  const r = await fetch('/api/anthropic', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, apiKey })
   });
-  if(!r.ok){
-    const e=await r.json();
-    throw new Error(e.error||'Erro no servidor Anthropic');
+  
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({ error: 'Erro desconhecido' }));
+    throw new Error(e.error || 'Erro no servidor Anthropic');
   }
-  const d=await r.json();
-  return d.content||'Sem resposta.';
+  
+  const d = await r.json();
+  return d.content || 'Sem resposta.';
 }
 
 // Função universal para gerar texto
-async function callAI(prompt,provider,key){
-  // Agora não precisa de key - as chaves estão no servidor
-  if(provider==='anthropic'){
-    return await callAnthropic(prompt);
-  }else{
-    return await callGroq(prompt);
+async function callAI(prompt, provider, key) {
+  if (provider === 'anthropic') {
+    return await callAnthropic(prompt, key);
+  } else {
+    return await callGroq(prompt, key);
   }
+}
+
+// Carregar configurações do servidor
+async function loadServerConfig() {
+  try {
+    const r = await fetch('/api/config');
+    if (r.ok) {
+      const data = await r.json();
+      if (data.success) {
+        console.log('✅ Configurações carregadas do servidor:', data.config);
+        return data.config;
+      }
+    }
+  } catch (e) {
+    console.warn('Erro ao carregar config do servidor:', e.message);
+  }
+  return null;
 }
 const UNIS=[
   {a:"UEM",n:"Universidade Eduardo Mondlane",f:[
