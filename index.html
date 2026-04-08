@@ -460,6 +460,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
     <a class="nav-a" href="#" onclick="closeMenu();showWallet();return false;">Minha carteira</a>
     <a class="nav-a" href="#" onclick="closeMenu();openCourses();return false;">📚 Cursos</a>
     <a class="nav-a" href="#" onclick="closeMenu();openAI();return false;">🤖 IA</a>
+    <a class="nav-a" href="#" id="navAccount" onclick="closeMenu();openAccount();return false;">👤 Conta</a>
     <a class="nav-a" href="#" onclick="closeMenu();openAdmin();return false;" style="color:var(--gold)">⚙️ Admin</a>
     <button class="btn-sub" onclick="closeMenu();openUpload()">+ Submeter trabalho</button>
   </div>
@@ -840,6 +841,52 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
   </div>
 </div>
 
+<!-- ACCOUNT MODAL -->
+<div class="ovl" id="accountModal">
+  <div class="modal" style="max-width:480px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mtop" style="flex-shrink:0"><h2>👤 Minha Conta</h2><div class="msub">Cria conta ou faz login para aceder aos teus trabalhos</div></div>
+    <div class="ubody" style="overflow-y:auto;flex:1">
+      <!-- LOGIN / REGISTRO -->
+      <div id="authSection">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:36px;margin-bottom:8px">📱</div>
+          <div style="font-size:14px;font-weight:600;color:var(--gr8)">Entrar ou Criar Conta</div>
+          <div style="font-size:12px;color:var(--gr4)">Usa o teu número de telefone</div>
+        </div>
+        <div><div class="flabel">Nome completo</div><input class="finp" id="accName" type="text" placeholder="O teu nome"></div>
+        <div style="margin-top:10px"><div class="flabel">Número de telefone *</div><input class="finp" id="accPhone" type="tel" placeholder="25884XXXXXX"></div>
+        <div style="margin-top:6px;font-size:10px;color:var(--gr4)">💡 Se já tens conta, entra com o mesmo número. Se é primeira vez, criamos conta automaticamente.</div>
+        <button class="bpag" style="margin-top:14px" onclick="handleAuth()">🚀 Entrar / Criar Conta</button>
+      </div>
+      
+      <!-- DASHBOARD DA CONTA -->
+      <div id="dashboardSection" style="display:none">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:36px;margin-bottom:4px">👤</div>
+          <div style="font-size:16px;font-weight:600" id="dashName">—</div>
+          <div style="font-size:12px;color:var(--gr4)" id="dashPhone">—</div>
+        </div>
+        
+        <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px">📚 Meus Trabalhos</div>
+          <div id="myWorksList" style="max-height:200px;overflow-y:auto">
+            <div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum trabalho adquirido ainda.</div>
+          </div>
+        </div>
+        
+        <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px">📋 Meus Pedidos de IA</div>
+          <div id="myAIOrdersList" style="max-height:150px;overflow-y:auto">
+            <div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum pedido de IA ainda.</div>
+          </div>
+        </div>
+        
+        <button class="bcan" onclick="logoutAccount()" style="width:100%">🚪 Terminar Sessão</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════
 // FIREBASE CONFIG — lido do localStorage (admin configura)
@@ -1065,6 +1112,116 @@ function openAdmin(){
   renderAdminDashboard();
 }
 function closeAdmin(){document.getElementById('adminModal').classList.remove('open');}
+
+// ═══════════════════════════════════════════
+// SISTEMA DE CONTA DO USUÁRIO
+// ═══════════════════════════════════════════
+function openAccount(){
+  const user=JSON.parse(localStorage.getItem('pmz_user')||'null');
+  if(user){
+    showAccountDashboard(user);
+  }else{
+    document.getElementById('authSection').style.display='';
+    document.getElementById('dashboardSection').style.display='none';
+    document.getElementById('accName').value='';
+    document.getElementById('accPhone').value='';
+  }
+  document.getElementById('accountModal').classList.add('open');
+}
+
+function closeAccount(){document.getElementById('accountModal').classList.remove('open');}
+
+function handleAuth(){
+  const name=document.getElementById('accName').value.trim();
+  const phone=document.getElementById('accPhone').value.trim();
+  
+  if(!phone){showToast('⚠️ Introduz o teu número de telefone.');return;}
+  if(!phone.startsWith('258')||phone.length<12){showToast('⚠️ Número inválido. Deve começar com 258.');return;}
+  
+  const nameToUse=name||'Usuário '+phone.slice(-4);
+  
+  // Criar ou obter conta
+  const user={name:nameToUse,phone:phone,createdAt:new Date().toISOString()};
+  localStorage.setItem('pmz_user',JSON.stringify(user));
+  
+  showToast(`✅ Bem-vindo, ${nameToUse}!`);
+  showAccountDashboard(user);
+  updateAccountNav();
+}
+
+function showAccountDashboard(user){
+  document.getElementById('authSection').style.display='none';
+  document.getElementById('dashboardSection').style.display='';
+  document.getElementById('dashName').textContent=user.name;
+  document.getElementById('dashPhone').textContent=user.phone;
+  
+  // Carregar trabalhos comprados
+  const boughtDocs=JSON.parse(localStorage.getItem('pmz_bought')||'[]');
+  const allDocs=JSON.parse(localStorage.getItem('pmz_docs')||'[]');
+  const worksList=document.getElementById('myWorksList');
+  
+  if(boughtDocs.length===0){
+    worksList.innerHTML='<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum trabalho adquirido ainda.</div>';
+  }else{
+    const myWorks=allDocs.filter(d=>boughtDocs.includes(d.id));
+    worksList.innerHTML=myWorks.map(d=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:white;border-radius:var(--rsm);margin-bottom:6px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(d.title)}</div>
+          <div style="font-size:9px;color:var(--gr4)">${d.uni} · ${d.nivel}</div>
+        </div>
+        <button class="bprev" onclick="openPv(${allDocs.indexOf(d)})" style="font-size:10px;padding:4px 8px">👁 Ver</button>
+      </div>
+    `).join('')||'<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Trabalhos não encontrados.</div>';
+  }
+  
+  // Carregar pedidos de IA
+  const aiOrders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
+  const myAIOrders=aiOrders.filter(o=>o.userPhone===user.phone);
+  const aiOrdersList=document.getElementById('myAIOrdersList');
+  
+  if(myAIOrders.length===0){
+    aiOrdersList.innerHTML='<div style="font-size:11px;color:var(--gr4);text-align:center;padding:20px">Nenhum pedido de IA ainda.</div>';
+  }else{
+    const workTypeNames={monografia:'Monografia',tese:'Tese Doutoramento',dissertacao:'Dissertação Mestrado',artigo:'Artigo Científico',relatorio:'Relatório Estágio',projeto:'Projecto Pesquisa',ensaio:'Ensaio',resenha:'Resenha'};
+    aiOrdersList.innerHTML=myAIOrders.slice(-10).reverse().map(o=>{
+      const statusColors={pending:'background:#fef3c7;color:#92400e',approved:'background:#d1fae5;color:#065f46',rejected:'background:#fee2e2;color:#991b1b'};
+      const statusLabels={pending:'⏳ Pendente',approved:'✅ Aprovado',rejected:'❌ Rejeitado'};
+      return `
+        <div style="padding:8px;background:white;border-radius:var(--rsm);margin-bottom:6px">
+          <div style="font-size:11px;font-weight:600">${workTypeNames[o.workType]||o.workType}</div>
+          <div style="font-size:10px;color:var(--gr6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.tema}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+            <span style="font-size:9px;padding:2px 6px;border-radius:4px;${statusColors[o.status]}">${statusLabels[o.status]}</span>
+            <span style="font-size:9px;color:var(--gr4)">${new Date(o.createdAt).toLocaleDateString('pt-MZ')}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function logoutAccount(){
+  if(!confirm('Terminar sessão?'))return;
+  localStorage.removeItem('pmz_user');
+  showToast('👋 Sessão terminada.');
+  closeAccount();
+  updateAccountNav();
+}
+
+function updateAccountNav(){
+  const user=JSON.parse(localStorage.getItem('pmz_user')||'null');
+  const navAccount=document.getElementById('navAccount');
+  if(navAccount){
+    navAccount.textContent=user?`👤 ${user.name.split(' ')[0]}`:'👤 Conta';
+  }
+}
+
+// Backdrop account
+document.getElementById('accountModal').addEventListener('click',function(e){if(e.target===this)closeAccount();});
+
+// Verificar conta ao carregar
+document.addEventListener('DOMContentLoaded',()=>{updateAccountNav();});
 
 function switchAdminTab(tab,btn){
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
@@ -1855,11 +2012,12 @@ function selAIPay(el){
 }
 
 function confirmAIPay(){
-  const name=document.getElementById('aiPayName').value.trim();
-  const phone=document.getElementById('aiPayPhone').value.trim();
+  const user=JSON.parse(localStorage.getItem('pmz_user')||'null');
+  const name=user?user.name:document.getElementById('aiPayName').value.trim();
+  const phone=user?user.phone:document.getElementById('aiPayPhone').value.trim();
   
-  if(!name){showToast('⚠️ Introduz o teu nome.');return;}
-  if(!phone){showToast('⚠️ Introduz o teu número de telefone.');return;}
+  if(!name){showToast('⚠️ Introduz o teu nome ou cria uma conta primeiro.');return;}
+  if(!phone){showToast('⚠️ Introduz o teu número de telefone ou cria uma conta.');return;}
   
   // Guardar pedido de pagamento
   const orders=JSON.parse(localStorage.getItem('pmz_ai_orders')||'[]');
@@ -1880,6 +2038,12 @@ function confirmAIPay(){
   };
   orders.push(order);
   localStorage.setItem('pmz_ai_orders',JSON.stringify(orders));
+  
+  // Se usuário não tem conta, criar automaticamente
+  if(!user){
+    localStorage.setItem('pmz_user',JSON.stringify({name:name,phone:phone,createdAt:new Date().toISOString()}));
+    updateAccountNav();
+  }
   
   // Enviar para WhatsApp do admin
   const adminPhone=localStorage.getItem('pmz_admin_phone')||'258856810532';
