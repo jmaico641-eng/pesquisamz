@@ -737,6 +737,19 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
           <button class="bpag" style="margin-bottom:0" onclick="runAI()" id="aiBtn">✨ Gerar Trabalho Completo</button>
           <button class="bcan" style="width:auto;padding:12px 18px" onclick="closeAI()">Fechar</button>
         </div>
+        <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px 16px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px">⚙️ Opções Avançadas do Trabalho</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <label style="display:flex;align-items:start;gap:8px;padding:8px 10px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s;font-size:11px" class="work-type-label"><input type="checkbox" id="optModular" checked style="accent-color:var(--g6);margin-top:2px"><div><div style="font-weight:600">📐 Estrutura Modular</div><div style="font-size:9px;color:var(--gr4)">Capítulos organizados em módulos</div></div></label>
+            <label style="display:flex;align-items:start;gap:8px;padding:8px 10px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s;font-size:11px" class="work-type-label"><input type="checkbox" id="optAcademico" checked style="accent-color:var(--g6);margin-top:2px"><div><div style="font-weight:600">🎓 Tom Académico</div><div style="font-size:9px;color:var(--gr4)">Linguagem formal e técnica</div></div></label>
+            <label style="display:flex;align-items:start;gap:8px;padding:8px 10px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s;font-size:11px" class="work-type-label"><input type="checkbox" id="optCitacoes" checked style="accent-color:var(--g6);margin-top:2px"><div><div style="font-weight:600">📚 Gestão de Citações</div><div style="font-size:9px;color:var(--gr4)">Citações diretas e indiretas</div></div></label>
+            <label style="display:flex;align-items:start;gap:8px;padding:8px 10px;background:white;border-radius:var(--rsm);cursor:pointer;border:1.5px solid transparent;transition:all .15s;font-size:11px" class="work-type-label"><input type="checkbox" id="optEtica" checked style="accent-color:var(--g6);margin-top:2px"><div><div style="font-weight:600">⚖️ Ética e Integridade</div><div style="font-size:9px;color:var(--gr4)">Normas éticas e anti-plágio</div></div></label>
+          </div>
+        </div>
+        <div class="srow" style="margin-top:14px">
+          <button class="bpag" style="margin-bottom:0" onclick="runAI()" id="aiBtn">✨ Gerar Trabalho Completo</button>
+          <button class="bcan" style="width:auto;padding:12px 18px" onclick="closeAI()">Fechar</button>
+        </div>
         <div id="aiOut" style="display:none;margin-top:14px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div><div style="display:flex;gap:6px"><button class="bprev" onclick="copyAI('aiOutText')">📋 Copiar</button><button class="bprev" onclick="openWorkViewer()" style="background:var(--g6);color:white">👁 Visualizar</button><button class="bprev" onclick="downloadAsPDF()">📄 PDF</button><button class="bprev" onclick="downloadAsWord()">📝 Word</button></div></div>
           <div id="aiOutText" class="ai-output"></div>
@@ -1933,16 +1946,17 @@ function openAI(){
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
-  // Detectar automaticamente qual IA usar (prioridade: Claude > Groq)
-  // Agora verificamos no servidor via localStorage flags
+  // Detetar provider e opções avançadas
   const useAnthropic=localStorage.getItem('pmz_use_anthropic')==='true';
-  
   let provider,aiName;
-  if(useAnthropic){
-    provider='anthropic';aiName='Claude';
-  }else{
-    provider='groq';aiName='Llama';
-  }
+  if(useAnthropic){provider='anthropic';aiName='Claude';}
+  else{provider='groq';aiName='Llama';}
+  
+  // Ler opções avançadas
+  const optModular=document.getElementById('optModular')?.checked||true;
+  const optAcademico=document.getElementById('optAcademico')?.checked||true;
+  const optCitacoes=document.getElementById('optCitacoes')?.checked||true;
+  const optEtica=document.getElementById('optEtica')?.checked||true;
   
   const workType=document.querySelector('input[name="workType"]:checked')?.value||'monografia';
   const tema=document.getElementById('aiTema').value.trim();
@@ -1961,7 +1975,7 @@ async function runAI(){
 
   try{
     const isPT=idioma==='portugues';
-    const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
+    const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT,optModular,optAcademico,optCitacoes,optEtica);
     const txt=await callAI(prompt,provider);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
@@ -1977,7 +1991,23 @@ async function runAI(){
 // ═══════════════════════════════════════════
 // PROMPTS ESPECÍFICOS POR TIPO DE TRABALHO
 // ═══════════════════════════════════════════
-function getWorkPrompt(workType,tema,descricao,ref,pag,isPT){
+function getWorkPrompt(workType,tema,descricao,ref,pag,isPT,optModular=true,optAcademico=true,optCitacoes=true,optEtica=true){
+
+// Instruções avançadas baseadas nas opções selecionadas
+let advancedInstructions='';
+if(optModular){
+  advancedInstructions+=`\n📐 ESTRUTURA MODULAR:\n- Organiza o trabalho em módulos bem definidos e independentes\n- Cada capítulo deve ter introdução e conclusão próprias\n- Usa subtítulos numerados de forma hierárquica (1., 1.1., 1.1.1.)\n- Garante coerência entre módulos com transições suaves\n- Cada módulo deve ser autocontido mas conectado ao todo`;
+}
+if(optAcademico){
+  advancedInstructions+=`\n🎓 TOM ACADÉMICO:\n- Usa linguagem formal, técnica e impessoal\n- Evita primeira pessoa; usa voz passiva ou "o autor", "esta investigação"\n- Mantém objetividade e rigor científico em todas as secções\n- Usa terminologia específica da área de estudo\n- Evita coloquialismos, regionalismos ou linguagem informal\n- Frases complexas mas claras, com conectores lógicos adequados`;
+}
+if(optCitacoes){
+  advancedInstructions+=`\n📚 GESTÃO DE CITAÇÕES:\n- Inclui citações DIRETAS curtas (até 3 linhas) entre aspas com (Autor, Ano, p. X)\n- Inclui citações DIRETAS longas (mais de 3 linhas) em bloco destacado, recuado, fonte menor\n- Usa citações INDIRETAS frequentes com paráfrase (Autor, Ano)\n- Faz citações de APENAS autores reais e reconhecidos na área\n- Diversifica fontes: livros, artigos científicos, documentos oficiais\n- Mínimo 15-20 citações ao longo do trabalho\n- Todas as citações no texto devem ter correspondência nas Referências Bibliográfáficas`;
+}
+if(optEtica){
+  advancedInstructions+=`\n⚖️ ÉTICA E INTEGRIDADE ACADÉMICA:\n- NÃO plagies conteúdo; todo o texto deve ser original\n- Atribui corretamente todas as ideias a autores específicos\n- Inclui secção sobre Considerações Éticas na Metodologia\n- Menciona respeito à Declaração de Helsínquia/Comitê de Ética se aplicável\n- Garante que dados e estatísticas são verídicos e verificáveis\n- Evita fabricação de resultados, dados ou referências\n- Inclui declaração de integridade académica nos agradecimentos ou nota prévia\n- Cita fontes primárias sempre que possível, não secundárias`;
+}
+
 const prompts={
 monografia:isPT?
 `ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
@@ -2060,6 +2090,8 @@ REFERÊNCIAS BIBLIOGRÁFICAS (formato ${ref})
 → Análise crítica e reflexiva
 → Conecta com realidade moçambicana
 
+${advancedInstructions}
+
 ⚡ ESCREVE A MONOGRAFIA COMPLETA AGORA!`
 :`You are an EXPERT ACADEMIC WRITER with 20+ years of experience.
 TASK: Create a COMPLETE UNDERGRADUATE MONOGRAPH.
@@ -2098,6 +2130,8 @@ REFERENCES (${ref} format, 15-20 references)
 → Include citations (Author, Year)
 → Critical and reflective analysis
 → Connect with Mozambican context
+
+${advancedInstructions}
 
 ⚡ WRITE THE COMPLETE MONOGRAPH NOW!`,
 
@@ -2192,6 +2226,8 @@ ANEXOS E APÊNDICES
 → Demonstração de domínio total do tema
 → Originalidade e contribuição para ciência
 → Rigor metodológico absoluto
+
+${advancedInstructions}
 
 ⚡ ESCREVE A TESE COMPLETA AGORA!`
 :`You are an ELITE ACADEMIC WRITER specializing in PhD DISSERTATIONS.
