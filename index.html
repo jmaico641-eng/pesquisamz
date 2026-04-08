@@ -657,31 +657,26 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
   <div class="modal" style="max-width:640px;max-height:92vh;display:flex;flex-direction:column">
     <div class="mtop" style="flex-shrink:0"><h2>🤖 Gerador com IA</h2><div class="msub">Cria estruturas de trabalhos académicos e planos de cursos com <b style="color:var(--gold)">Groq AI</b> (Llama 3.3 70B)</div></div>
     <div class="ubody" style="overflow-y:auto;flex:1">
-      <div style="background:rgba(232,168,56,.1);border:1px solid rgba(232,168,56,.4);border-radius:var(--rmd);padding:12px 16px">
-        <div class="flabel" style="color:#8B6914;margin-bottom:8px">🤖 Seleccionar IA</div>
-        <div style="display:flex;gap:10px;margin-bottom:10px">
-          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px;background:white;border-radius:var(--rmd);cursor:pointer;border:2px solid var(--g5)" class="ai-provider-label" id="groqLabel"><input type="radio" name="aiProvider" value="groq" checked onchange="switchAIProvider()" style="accent-color:var(--g6)"><div><div style="font-size:13px;font-weight:600">⚡ Groq (Llama 3.3)</div><div style="font-size:10px;color:var(--gr4)">Rápido e gratuito</div></div></label>
-          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px;background:white;border-radius:var(--rmd);cursor:pointer;border:2px solid transparent" class="ai-provider-label" id="anthropicLabel"><input type="radio" name="aiProvider" value="anthropic" onchange="switchAIProvider()" style="accent-color:var(--g6)"><div><div style="font-size:13px;font-weight:600">🧠 Anthropic (Claude)</div><div style="font-size:10px;color:var(--gr4)">Mais inteligente e detalhado</div></div></label>
-        </div>
-        <div id="groqKeySection">
-          <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Groq API</div>
-          <input class="finp" id="aiKey" type="password" placeholder="gsk_..." oninput="saveGroqKey()">
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button class="bprev" onclick="saveGroqKey()" style="font-size:11px;padding:4px 10px">💾 Guardar</button>
-            <button class="bprev" onclick="clearGroqKey()" style="font-size:11px;padding:4px 10px">🗑️ Limpar</button>
+      <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
+        <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:12px 16px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:28px">🔑</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--gr8)">IA Configurada pelo Administrador</div>
+              <div style="font-size:11px;color:var(--gr4)">As chaves API são geridas no painel de administração</div>
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém grátis em <a href="https://console.groq.com/keys" target="_blank" style="color:var(--g6)">console.groq.com/keys</a></div>
-        </div>
-        <div id="anthropicKeySection" style="display:none">
-          <div class="flabel" style="color:#8B6914;margin-bottom:5px">🔑 Chave Anthropic API</div>
-          <input class="finp" id="anthropicKey" type="password" placeholder="sk-ant-..." oninput="saveAnthropicKey()">
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button class="bprev" onclick="saveAnthropicKey()" style="font-size:11px;padding:4px 10px">💾 Guardar</button>
-            <button class="bprev" onclick="clearAnthropicKey()" style="font-size:11px;padding:4px 10px">🗑️ Limpar</button>
+          <div style="margin-top:10px;display:flex;gap:10px">
+            <div style="flex:1;padding:8px;background:white;border-radius:var(--rsm);border:1px solid var(--gr1)">
+              <div style="font-size:11px;font-weight:600;color:var(--gr6)">⚡ IA Groq</div>
+              <div style="font-size:10px;color:var(--gr4)" id="groqStatus">A verificar...</div>
+            </div>
+            <div style="flex:1;padding:8px;background:white;border-radius:var(--rsm);border:1px solid var(--gr1)">
+              <div style="font-size:11px;font-weight:600;color:var(--gr6)">🧠 IA Claude</div>
+              <div style="font-size:10px;color:var(--gr4)" id="anthropicStatus">A verificar...</div>
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--gr4);margin-top:4px">Obtém em <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--g6)">console.anthropic.com</a></div>
         </div>
-      </div>
       <div style="border-top:2px solid var(--g0);margin-top:18px;padding-top:16px">
         <div style="font-size:14px;font-weight:700;color:var(--g7);margin-bottom:12px">📄 Gerador de Trabalhos Académicos</div>
         <div style="background:linear-gradient(135deg,var(--g0),var(--g1));border:1px solid var(--g2);border-radius:var(--rmd);padding:12px 16px;margin-bottom:14px">
@@ -1680,17 +1675,38 @@ window.addEventListener('resize',function(){
 // AI GENERATOR
 // ═══════════════════════════════════════════
 function openAI(){
-  // Carregar chaves guardadas
-  const savedGroqKey=localStorage.getItem('pmz_groq_key');
-  const savedAnthropicKey=localStorage.getItem('pmz_anthropic_key');
-  if(savedGroqKey)document.getElementById('aiKey').value=savedGroqKey;
-  if(savedAnthropicKey)document.getElementById('anthropicKey').value=savedAnthropicKey;
+  // Verificar status das chaves guardadas pelo admin
+  const hasGroq=!!localStorage.getItem('pmz_groq_key');
+  const hasAnthropic=!!localStorage.getItem('pmz_anthropic_key');
+  
+  const groqStatus=document.getElementById('groqStatus');
+  const anthropicStatus=document.getElementById('anthropicStatus');
+  
+  if(groqStatus){
+    groqStatus.innerHTML=hasGroq?'<span style="color:#10b981">✅ Configurada</span>':'<span style="color:#ef4444">❌ Não configurada</span>';
+  }
+  if(anthropicStatus){
+    anthropicStatus.innerHTML=hasAnthropic?'<span style="color:#10b981">✅ Configurada</span>':'<span style="color:#ef4444">❌ Não configurada</span>';
+  }
+  
   document.getElementById('aiModal').classList.add('open');
 }
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
-  const provider=document.querySelector('input[name="aiProvider"]:checked')?.value||'groq';
-  const key=provider==='anthropic'?getAnthropicKey():getGroqKey();
+  // Detectar automaticamente qual IA usar (prioridade: Claude > Groq)
+  const anthropicKey=localStorage.getItem('pmz_anthropic_key');
+  const groqKey=localStorage.getItem('pmz_groq_key');
+  
+  let provider,key,aiName;
+  if(anthropicKey){
+    provider='anthropic';key=anthropicKey;aiName='Claude';
+  }else if(groqKey){
+    provider='groq';key=groqKey;aiName='Llama';
+  }else{
+    showToast('⚠️ Nenhuma IA configurada. Contacta o administrador.');
+    return;
+  }
+  
   const workType=document.querySelector('input[name="workType"]:checked')?.value||'monografia';
   const tema=document.getElementById('aiTema').value.trim();
   const descricao=document.getElementById('aiDescricao').value.trim();
@@ -1698,13 +1714,11 @@ async function runAI(){
   const pag=document.getElementById('aiPag').value||60;
   const idioma=document.querySelector('input[name="aiIdioma"]:checked')?.value||'portugues';
 
-  if(!key){showToast(`⚠️ Introduz a tua chave ${provider==='anthropic'?'Anthropic':'Groq'} API ou guarda-a primeiro.`);return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
 
   const btn=document.getElementById('aiBtn');
   const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
-  const aiName=provider==='anthropic'?'Claude':'Llama';
   btn.innerHTML=`<span class="spinner"></span>A gerar ${workTypeNames[workType]} com ${aiName}...`;
   btn.disabled=true;
 
