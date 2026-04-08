@@ -759,7 +759,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
                 <div style="font-size:14px;font-weight:700;color:var(--g8)" id="dashWorkTitle">Trabalho Gerado</div>
                 <div style="font-size:11px;color:var(--gr4)" id="dashWorkMeta">Gerado com IA • Agora mesmo</div>
               </div>
-              <div style="background:#10b981;color:white;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600">✅ CONCLUÍDO</div>
+              <div style="background:#10b981;color:white;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600">✅ GRÁTIS</div>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:12px">
               <div style="background:white;border-radius:var(--rsm);padding:10px;text-align:center;border:1px solid var(--gr1)">
@@ -784,19 +784,11 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
               <button class="bprev" onclick="downloadAsPDF()" style="flex:1;min-width:80px">📄 PDF</button>
               <button class="bprev" onclick="downloadAsWord()" style="flex:1;min-width:80px">📝 Word</button>
               <button class="bprev" onclick="copyAI('aiOutText')" style="flex:1;min-width:80px">📋 Copiar</button>
-              <button class="bprev" onclick="openAIPayModal()" style="flex:1;min-width:80px;background:linear-gradient(135deg,var(--gold),#F5BE60);color:var(--g9);font-weight:700;border:none">💰 Pagar 30 MZN</button>
             </div>
           </div>
           <!-- CONTEÚDO DO TRABALHO -->
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Conteúdo Completo</div><div style="display:flex;gap:6px"><button class="bprev" onclick="openWorkViewer()" style="background:var(--g6);color:white">👁 Abrir Dashboard</button></div></div>
           <div id="aiOutText" class="ai-output"></div>
-        </div>
-        <div style="margin-top:16px;padding-top:14px;border-top:2px solid var(--g0)">
-          <div style="background:linear-gradient(135deg,var(--gold),#F5BE60);border-radius:var(--rmd);padding:12px 16px;text-align:center">
-            <div style="font-size:18px;font-family:var(--fd);color:var(--g9);margin-bottom:4px">💰 Preço: 30 MZN</div>
-            <div style="font-size:11px;color:var(--g8)">Pagamento via M-Pesa, e-Mola ou mKesh</div>
-            <button class="bpag" style="margin-top:10px;margin-bottom:0;background:var(--g6)" onclick="openAIPayModal()">📱 Pagar e Gerar Trabalho</button>
-          </div>
         </div>
       </div>
       <div style="border-top:2px solid var(--g0);margin-top:20px;padding-top:16px">
@@ -2552,109 +2544,481 @@ if(optEtica){
 
 const prompts={
 licenciatura:isPT?
-`ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM TRABALHOS DE LICENCIATURA EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
-TAREFA: Cria um TRABALHO DE LICENCIATURA COMPLETO, DENSO e DETALHADO.
+`ÉS UM ESCRITOR ACADÉMICO DE ELITE ESPECIALIZADO EM TRABALHOS DE LICENCIATURA EM MOÇAMBIQUE COM 25+ ANOS DE EXPERIÊNCIA.
 
-══════════════════════════════════════════
-CONFIGURAÇÕES:
-- TIPO: Trabalho de Licenciatura
-- TEMA: "${tema}"
-- DESCRIÇÃO: ${descricao}
-- REFERÊNCIAS: ${ref}
-- PÁGINAS: ${pag}
-- IDIOMA: Português Moçambicano
+TAREFA CRÍTICA: Cria um TRABALHO DE LICENCIATURA COMPLETO, EXTENSIVO e EXTREMAMENTE PROFISSIONAL que rivaliza com os melhores trabalhos submetidos nas universidades moçambicanas.
 
-══════════════════════════════════════════
-ESTRUTURA DO TRABALHO DE LICENCIATURA - PREENCHE TUDO:
+══════════════════════════════════════════════════════════════
+METADADOS DO TRABALHO:
+- TIPO: Trabalho Científico de Licenciatura
+- TEMA CENTRAL: "${tema}"
+- DESCRIÇÃO DETALHADA: ${descricao}
+- FORMATO DE CITAÇÃO: ${ref}
+- EXTENSÃO APROXIMADA: ${pag} páginas
+- IDIOMA: Português de Moçambique
+══════════════════════════════════════════════════════════════
 
-# TÍTULO DO TRABALHO DE LICENCIATURA
+══════════════════════════════════════════════════════════════
+ESTRUTURA COMPLETA E OBRIGATÓRIA:
 
-## FOLHA DE ROSTO
-Título Completo
-Autor: Autor Genérico da Silva
-${tema}
-Trabalho de Licenciatura apresentado à Universidade para obtenção do grau de Licenciado
-Ano: 2026
+══════════════════════════════════════════════════════════════
+# CAPA
+[NOME DA UNIVERSIDADE]
+[NOME DA FACULDADE]
+[NOME DO CURSO]
 
-## RESUMO (200-300 palavras)
-## PALAVRAS-CHAVE
-## AGRADECIMENTOS
-## LISTA DE ABREVIATURAS E SIGLAS
+TÍTULO COMPLETO E PROFISSIONAL DO TRABALHO
 
-## ÍNDICE GERAL
-1. INTRODUÇÃO
-   1.1 Contextualização do Tema
-   1.2 Problema de Pesquisa
-   1.3 Objectivos (Geral e Específicos)
-   1.4 Justificativa
-   1.5 Estrutura do Trabalho
+SUBTÍTULO (se aplicável)
 
-2. FUNDAMENTAÇÃO TEÓRICA
-   2.1 Conceitos e Definições
-   2.2 Teorias Relacionadas
-   2.3 Estudos Anteriores
+Autor: [Nome Completo Genérico]
 
-3. METODOLOGIA
-   3.1 Tipo de Pesquisa
-   3.2 População e Amostra
-   3.3 Instrumentos
-   3.4 Procedimentos de Análise
+Trabalho Científico apresentado à [Universidade] como requisito parcial para obtenção do grau de Licenciado em [Curso]
 
-4. RESULTADOS E DISCUSSÃO
-   4.1 Apresentação dos Dados
-   4.2 Análise
-   4.3 Discussão com a Literatura
+Orientador: Prof. [Nome Genérico], PhD
 
-5. CONCLUSÃO
-   5.1 Síntese dos Achados
-   5.2 Recomendações
-   5.3 Limitações
+[CIDADE]
+[ANO ATUAL]
 
-REFERÊNCIAS BIBLIOGRÁFICAS (formato ${ref})
+══════════════════════════════════════════════════════════════
+# FOLHA DE ROSTO
 
-⚠️ INSTRUÇÕES:
-→ Nível de Licenciatura - adequado ao grau
-→ MÍNIMO 3-5 parágrafos por secção
-→ Linguagem académica acessível
-→ Citações com (Autor, Ano)
-→ Foco na aplicação prática do conhecimento
-→ Conecta com realidade moçambicana
+[NOME DO AUTOR]
 
-${advancedInstructions}
+[TÍTULO COMPLETO DO TRABALHO]
 
-⚡ ESCREVE O TRABALHO DE LICENCIATURA COMPLETO AGORA!`
-:`You are an EXPERT ACADEMIC WRITER specializing in UNDERGRADUATE DEGREES in Mozambique.
-TASK: Create a COMPLETE UNDERGRADUATE DEGREE WORK.
+Trabalho Científico de Licenciatura apresentado ao Curso de [Curso], da Faculdade de [Faculdade], da [Universidade], como requisito parcial para a obtenção do título de Licenciado em [Área].
 
-══════════════════════════════════════════
-CONFIGURATIONS:
-- TYPE: Undergraduate Degree Work
-- TOPIC: "${tema}"
-- DESCRIPTION: ${descricao}
-- REFERENCES: ${ref}
-- PAGES: ${pag}
+Área de Concentração: [Área Específica]
+Orientador: Prof. [Nome], [Titulação]
+Co-Orientador: Prof. [Nome], [Titulação] (se aplicável)
+
+[CIDADE]
+[ANO]
+
+══════════════════════════════════════════════════════════════
+# FOLHA DE APROVAÇÃO
+
+[NOME DO AUTOR]
+
+[TÍTULO DO TRABALHO]
+
+Trabalho Científico aprovado e aprovado em ___/___/______, pela banca examinadora constituída pelos seguintes membros:
+
+_______________________________________
+Prof. [Nome], PhD - Orientador(a)
+Universidade
+
+_______________________________________
+Prof. [Nome], PhD - Examinador(a) Interno(a)
+Universidade
+
+_______________________________________
+Prof. [Nome], PhD - Examinador(a) Externo(a)
+Instituição Externa
+
+══════════════════════════════════════════════════════════════
+# DEDICATÓRIA
+
+[Dedicatória breve e emotiva - 2 a 3 linhas]
+
+══════════════════════════════════════════════════════════════
+# AGRADECIMENTOS
+
+[Parágrafo completo de agradecimentos - 8 a 10 linhas]
+- Agradecer a Deus/Entidade Superior
+- Agradecer ao orientador
+- Agradecer à família
+- Agradecer aos colegas e amigos
+- Agradecer à instituição
+
+══════════════════════════════════════════════════════════════
+# EPÍGRAFE
+
+"Citação inspiradora relevante ao tema"
+— Autor da citação
+
+══════════════════════════════════════════════════════════════
+# RESUMO
+
+[Resumo acadêmico completo e autônomo de 250-350 palavras]
+- Contextualização do tema (2-3 linhas)
+- Objetivo do trabalho (2-3 linhas)
+- Metodologia utilizada (2-3 linhas)
+- Principais resultados encontrados (3-4 linhas)
+- Conclusões principais (2-3 linhas)
+- Palavras-chave: 5 a 7 termos técnicos
+
+══════════════════════════════════════════════════════════════
+# ABSTRACT
+
+[English translation of the Resumo - 250-350 words]
+- Background
+- Objectives
+- Methodology
+- Key findings
+- Conclusions
+- Keywords: 5-7 terms
+
+══════════════════════════════════════════════════════════════
+# LISTA DE ILUSTRAÇÕES
+Figura 1 - [Descrição]
+Figura 2 - [Descrição]
+...
+
+══════════════════════════════════════════════════════════════
+# LISTA DE TABELAS
+Tabela 1 - [Descrição]
+Tabela 2 - [Descrição]
+...
+
+══════════════════════════════════════════════════════════════
+# LISTA DE ABREVIATURAS E SIGLAS
+[Lista completa com 15-25 entradas]
+ABNT - Associação Brasileira de Normas Técnicas
+APA - American Psychological Association
+[Continuar com siglas relevantes ao tema]
+
+══════════════════════════════════════════════════════════════
+# SUMÁRIO
+
+1 INTRODUÇÃO ........................................... 8
+   1.1 Contextualização e Enquadramento do Tema ........ 9
+   1.2 Formulação do Problema de Pesquisa .............. 11
+   1.3 Objectivos da Investigação ...................... 13
+       1.3.1 Objectivo Geral ........................... 13
+       1.3.2 Objectivos Específicos .................... 14
+   1.4 Hipóteses de Investigação (se aplicável) ........ 15
+   1.5 Justificativa e Relevância do Estudo ............ 16
+   1.6 Delimitação do Tema ............................ 18
+   1.7 Estrutura do Trabalho .......................... 19
+
+2 FUNDAMENTAÇÃO TEÓRICA E REVISÃO DA LITERATURA ........ 20
+   2.1 Bases Conceituais e Definições Fundamentais ..... 21
+   2.2 Fundamentação Teórica .......................... 25
+       2.2.1 Teoria [Nome da Teoria Principal] ......... 25
+       2.2.2 Teoria [Nome da Teoria Secundária] ........ 28
+   2.3 Revisão Sistemática da Literatura .............. 32
+       2.3.1 Estudos Internacionais .................... 33
+       2.3.2 Estudos Africanos ......................... 36
+       2.3.3 Estudos Moçambicanos ..................... 39
+   2.4 Marco Conceptual ............................... 42
+   2.5 Definição de Termos-Chave ...................... 45
+
+3 METODOLOGIA DA INVESTIGAÇÃO ........................ 48
+   3.1 Paradigma de Investigação ...................... 49
+   3.2 Tipo e Desenho da Investigação ................. 51
+   3.3 Abordagem Metodológica ......................... 53
+   3.4 Contexto e Local do Estudo ..................... 55
+   3.5 População e Universo da Investigação ........... 57
+   3.6 Amostra e Critérios de Selecção ................ 59
+       3.6.1 Dimensionamento da Amostra ............... 59
+       3.6.2 Técnica de Amostragem .................... 60
+       3.6.3 Critérios de Inclusão e Exclusão .......... 61
+   3.7 Instrumentos de Recolha de Dados ............... 63
+       3.7.1 Questionário/Entrevista .................. 63
+       3.7.2 Observação ............................... 65
+       3.7.3 Análise Documental ....................... 66
+   3.8 Procedimentos de Recolha de Dados .............. 68
+   3.9 Técnicas de Análise de Dados ................... 70
+   3.10 Validação e Fiabilidade dos Instrumentos ....... 72
+   3.11 Considerações Éticas .......................... 74
+
+4 APRESENTAÇÃO, ANÁLISE E DISCUSSÃO DOS RESULTADOS ... 76
+   4.1 Caracterização do Contexto e da Amostra ......... 77
+   4.2 Apresentação dos Resultados .................... 80
+       4.2.1 Resultados Relativos ao Objectivo Específico 1 ... 80
+       4.2.2 Resultados Relativos ao Objectivo Específico 2 ... 85
+       4.2.3 Resultados Relativos ao Objectivo Específico 3 ... 90
+   4.3 Análise Crítica e Interpretação dos Dados ....... 95
+   4.4 Discussão dos Resultados com a Literatura ....... 100
+   4.5 Síntese dos Principais Achados ................. 108
+
+5 CONCLUSÕES E RECOMENDAÇÕES ........................ 110
+   5.1 Síntese do Percurso Investigativo .............. 111
+   5.2 Conclusões Principais .......................... 113
+   5.3 Contribuições do Estudo ....................... 116
+   5.4 Limitações Encontradas ........................ 118
+   5.5 Recomendações ................................. 120
+       5.5.1 Recomendações para Políticas e Práticas .. 120
+       5.5.2 Recomendações para Investigações Futuras . 122
+   5.6 Reflexão Final ................................. 124
+
+REFERÊNCIAS BIBLIOGRÁFICAS .......................... 125
+
+APÊNDICES ........................................... 135
+Anexo A - [Instrumento de Recolha de Dados]
+Anexo B - [Termo de Consentimento]
+Anexo C - [Dados Complementares]
+
+══════════════════════════════════════════════════════════════
+
+REGRAS DE OURO PARA ESCREVER:
+
+1. PROFUNDIDADE ACADÉMICA MÁXIMA:
+   → CADA subsecção deve ter MÍNIMO 4-6 parágrafos COMPLETOS
+   → CADA parágrafo deve ter 6-10 linhas de conteúdo denso
+   → Introdução: MÍNIMO 15-18 parágrafos
+   → Fundamentação Teórica: MÍNIMO 30-40 parágrafos
+   → Metodologia: MÍNIMO 20-25 parágrafos
+   → Resultados: MÍNIMO 25-35 parágrafos
+   → Conclusões: MÍNIMO 12-15 parágrafos
+
+2. CITAÇÕES OBRIGATÓRIAS:
+   → MÍNIMO 25-35 citações ao longo do trabalho
+   → Citações DIRETAS curtas (até 3 linhas): entre aspas + (Autor, Ano, p. X)
+   → Citações DIRETAS longas (+3 linhas): bloco recuado 4cm, fonte 10pt, espaçamento simples
+   → Citações INDIRETAS: paráfrase com (Autor, Ano)
+   → Usar APENAS autores REAIS e reconhecidos na área
+   → Diversificar fontes: livros, artigos, teses, documentos oficiais, relatórios
+
+3. LINGUAGEM ACADÉMICA PROFISSIONAL:
+   → Formal, técnica, impessoal e objectiva
+   → Evitar primeira pessoa; usar voz passiva ou "o presente estudo", "esta investigação"
+   → Conectores lógicos sofisticados: "Neste sentido", "Destarte", "Outrossim", "Em que pese", "Consoante"
+   → Terminologia específica da área
+   → Frases complexas mas claras
+
+4. CONTEXTUALIZAÇÃO MOÇAMBICANA:
+   → Dados estatísticos reais de Moçambique (INE, BM, FMI)
+   → Legislação moçambicana aplicável
+   → Realidade socioeconómica moçambicana
+   → Exemplos concretos de Moçambique
+   → Referências a autores moçambicanos
+
+5. RIGOR METODOLÓGICO:
+   → Justificar CADA escolha metodológica
+   → Descrever instrumentos com precisão técnica
+   → Apresentar dados de forma organizada
+   → Cruzar resultados com literatura existente
+
+6. INTEGRIDADE ACADÉMICA:
+   → Conteúdo 100% original
+   → Citações corretamente atribuídas
+   → Dados verídicos e verificáveis
+   → Declaração de ética na metodologia
+   → Referências correspondem a citações no texto
+
+7. QUALIDADE DE ESCRITA:
+   → Análise CRÍTICA, não apenas descritiva
+   → Argumentação lógica e bem estruturada
+   → Transições suaves entre secções
+   → Coerência e coesão textual
+   → Profundidade de reflexão académica
+
+══════════════════════════════════════════════════════════════
+
+⚡ AGORA ESCREVE O TRABALHO DE LICENCIATURA COMPLETO SEGUINDO ESTRUTURA ACIMA COM MÁXIMO RIGOR E PROFISSIONALISMO!`
+:`YOU ARE AN ELITE ACADEMIC WRITER SPECIALIZING IN UNDERGRADUATE THESIS WORKS IN MOZAMBIQUE WITH 25+ YEARS OF EXPERIENCE.
+
+CRITICAL TASK: Create a COMPLETE, EXTENSIVE, and EXTREMELY PROFESSIONAL UNDERGRADUATE THESIS that rivals the best works submitted at Mozambican universities.
+
+══════════════════════════════════════════════════════════════
+WORK METADATA:
+- TYPE: Undergraduate Scientific Thesis
+- CENTRAL TOPIC: "${tema}"
+- DETAILED DESCRIPTION: ${descricao}
+- CITATION FORMAT: ${ref}
+- APPROXIMATE LENGTH: ${pag} pages
 - LANGUAGE: Academic English
+══════════════════════════════════════════════════════════════
 
-══════════════════════════════════════════
-STRUCTURE:
-1. INTRODUCTION (8-10 paragraphs)
-2. THEORETICAL FRAMEWORK (15-20 paragraphs)
-3. METHODOLOGY (10-12 paragraphs)
-4. RESULTS AND DISCUSSION (12-15 paragraphs)
-5. CONCLUSION (6-8 paragraphs)
+══════════════════════════════════════════════════════════════
+COMPLETE MANDATORY STRUCTURE:
 
-REFERENCES (${ref} format, 15-20 references)
+# COVER PAGE
+[UNIVERSITY NAME]
+[FACULTY NAME]
+[DEPARTMENT NAME]
 
-⚠️ INSTRUCTIONS:
-→ Undergraduate level - accessible academic language
-→ MINIMUM 3-5 paragraphs per section
-→ Include citations (Author, Year)
-→ Focus on practical application of knowledge
-→ Connect with Mozambican context
+COMPLETE PROFESSIONAL TITLE
 
-${advancedInstructions}
+SUBTITLE (if applicable)
 
-⚡ WRITE THE COMPLETE UNDERGRADUATE WORK NOW!`,
+Author: [Full Generic Name]
+
+Undergraduate Thesis submitted to [University] as partial requirement for the degree of Bachelor in [Field]
+
+Supervisor: Prof. [Generic Name], PhD
+
+[CITY]
+[YEAR]
+
+══════════════════════════════════════════════════════════════
+# APPROVAL PAGE
+
+[Author Name]
+
+[Complete Title]
+
+Undergraduate Thesis approved on ___/___/______ by the examining committee:
+
+_______________________________________
+Prof. [Name], PhD - Supervisor
+University
+
+_______________________________________
+Prof. [Name], PhD - Internal Examiner
+University
+
+_______________________________________
+Prof. [Name], PhD - External Examiner
+External Institution
+
+══════════════════════════════════════════════════════════════
+# DEDICATION
+
+[Brief emotional dedication - 2 to 3 lines]
+
+══════════════════════════════════════════════════════════════
+# ACKNOWLEDGMENTS
+
+[Complete paragraph - 8 to 10 lines]
+- Thank God/Higher Entity
+- Thank the supervisor
+- Thank family
+- Thank colleagues and friends
+- Thank the institution
+
+══════════════════════════════════════════════════════════════
+# EPIGRAPH
+
+"Inspirational quote relevant to the topic"
+— Quote Author
+
+══════════════════════════════════════════════════════════════
+# ABSTRACT
+
+[Complete, standalone academic abstract of 250-350 words]
+- Background and context (2-3 lines)
+- Research objectives (2-3 lines)
+- Methodology (2-3 lines)
+- Key findings (3-4 lines)
+- Main conclusions (2-3 lines)
+- Keywords: 5-7 technical terms
+
+══════════════════════════════════════════════════════════════
+# TABLE OF CONTENTS
+
+1 INTRODUCTION ......................................... 8
+   1.1 Background and Context .......................... 9
+   1.2 Research Problem Statement ..................... 11
+   1.3 Research Objectives ............................ 13
+       1.3.1 General Objective ......................... 13
+       1.3.2 Specific Objectives ....................... 14
+   1.4 Research Hypotheses (if applicable) ............ 15
+   1.5 Justification and Relevance .................... 16
+   1.6 Scope Delimitation ............................ 18
+   1.7 Thesis Structure .............................. 19
+
+2 THEORETICAL FRAMEWORK AND LITERATURE REVIEW ......... 20
+   2.1 Conceptual Foundations ......................... 21
+   2.2 Theoretical Framework .......................... 25
+       2.2.1 [Main Theory Name] ....................... 25
+       2.2.2 [Secondary Theory Name] .................. 28
+   2.3 Systematic Literature Review ................... 32
+       2.3.1 International Studies .................... 33
+       2.3.2 African Studies .......................... 36
+       2.3.3 Mozambican Studies ....................... 39
+   2.4 Conceptual Framework ........................... 42
+   2.5 Key Terms Definition ........................... 45
+
+3 RESEARCH METHODOLOGY ............................... 48
+   3.1 Research Paradigm .............................. 49
+   3.2 Research Design ................................ 51
+   3.3 Methodological Approach ........................ 53
+   3.4 Study Context and Setting ...................... 55
+   3.5 Population and Universe ........................ 57
+   3.6 Sample and Selection Criteria .................. 59
+   3.7 Data Collection Instruments .................... 63
+   3.8 Data Collection Procedures ..................... 68
+   3.9 Data Analysis Techniques ....................... 70
+   3.10 Validity and Reliability ...................... 72
+   3.11 Ethical Considerations ........................ 74
+
+4 RESULTS AND DISCUSSION ............................. 76
+   4.1 Sample Characterization ........................ 77
+   4.2 Results Presentation ........................... 80
+       4.2.1 Results for Specific Objective 1 ......... 80
+       4.2.2 Results for Specific Objective 2 ......... 85
+       4.2.3 Results for Specific Objective 3 ......... 90
+   4.3 Critical Analysis and Interpretation ........... 95
+   4.4 Discussion with Literature ..................... 100
+   4.5 Summary of Main Findings ....................... 108
+
+5 CONCLUSIONS AND RECOMMENDATIONS ................... 110
+   5.1 Research Journey Summary ....................... 111
+   5.2 Main Conclusions ............................... 113
+   5.3 Study Contributions ........................... 116
+   5.4 Limitations ................................... 118
+   5.5 Recommendations ............................... 120
+   5.6 Final Reflection .............................. 124
+
+REFERENCES .......................................... 125
+
+APPENDICES .......................................... 135
+Appendix A - [Data Collection Instrument]
+Appendix B - [Informed Consent]
+Appendix C - [Supplementary Data]
+
+══════════════════════════════════════════════════════════════
+
+GOLDEN RULES FOR WRITING:
+
+1. MAXIMUM ACADEMIC DEPTH:
+   → EACH subsection must have MINIMUM 4-6 COMPLETE paragraphs
+   → EACH paragraph must have 6-10 lines of dense content
+   → Introduction: MINIMUM 15-18 paragraphs
+   → Theoretical Framework: MINIMUM 30-40 paragraphs
+   → Methodology: MINIMUM 20-25 paragraphs
+   → Results: MINIMUM 25-35 paragraphs
+   → Conclusions: MINIMUM 12-15 paragraphs
+
+2. MANDATORY CITATIONS:
+   → MINIMUM 25-35 citations throughout the work
+   → DIRECT short quotes (up to 3 lines): in quotes + (Author, Year, p. X)
+   → DIRECT long quotes (+3 lines): indented block 4cm, 10pt font, single spacing
+   → INDIRECT citations: paraphrase with (Author, Year)
+   → Use ONLY REAL and recognized authors in the field
+   → Diversify sources: books, articles, theses, official documents, reports
+
+3. PROFESSIONAL ACADEMIC LANGUAGE:
+   → Formal, technical, impersonal and objective
+   → Avoid first person; use passive voice or "this study", "this research"
+   → Sophisticated logical connectors: "Therefore", "Furthermore", "Consequently", "In light of"
+   → Area-specific terminology
+   → Complex but clear sentences
+
+4. MOZAMBICAN CONTEXT:
+   → Real statistical data from Mozambique (INE, BM, IMF)
+   → Applicable Mozambican legislation
+   → Mozambican socioeconomic reality
+   → Concrete examples from Mozambique
+   → References to Mozambican authors
+
+5. METHODOLOGICAL RIGOR:
+   → Justify EVERY methodological choice
+   → Describe instruments with technical precision
+   → Present data in organized manner
+   → Cross-reference results with existing literature
+
+6. ACADEMIC INTEGRITY:
+   → 100% original content
+   → Correctly attributed citations
+   → Verifiable and truthful data
+   → Ethics statement in methodology
+   → References correspond to in-text citations
+
+7. WRITING QUALITY:
+   → CRITICAL analysis, not just descriptive
+   → Logical and well-structured argumentation
+   → Smooth transitions between sections
+   → Textual coherence and cohesion
+   → Depth of academic reflection
+
+══════════════════════════════════════════════════════════════
+
+⚡ NOW WRITE THE COMPLETE UNDERGRADUATE THESIS FOLLOWING THE ABOVE STRUCTURE WITH MAXIMUM RIGOR AND PROFESSIONALISM!`,
 
 monografia:isPT?
 `ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
