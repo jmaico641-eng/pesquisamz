@@ -913,45 +913,45 @@ function switchAIProvider(){
   }
 }
 
-// Chamar Groq API
+// Chamar Groq API via Serverless Proxy
 async function callGroq(prompt,key){
-  const r=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:8192})});
-  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'Erro na API Groq');}
-  const d=await r.json();
-  return d.choices?.[0]?.message?.content||'Sem resposta.';
-}
-
-// Chamar Anthropic Claude API
-async function callAnthropic(prompt,key){
-  const ANTHROPIC_URL='https://api.anthropic.com/v1/messages';
-  const r=await fetch(ANTHROPIC_URL,{
+  // Usar proxy serverless para esconder chave API e contornar CORS
+  const r=await fetch('/api/groq',{
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':key,
-      'anthropic-version':'2023-06-01'
-    },
-    body:JSON.stringify({
-      model:'claude-3-5-sonnet-20241022',
-      max_tokens:8192,
-      temperature:0.7,
-      messages:[{role:'user',content:prompt}]
-    })
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt})
   });
   if(!r.ok){
     const e=await r.json();
-    throw new Error(e.error?.message||'Erro na API Anthropic');
+    throw new Error(e.error||'Erro no servidor Groq');
   }
   const d=await r.json();
-  return d.content?.[0]?.text||'Sem resposta.';
+  return d.content||'Sem resposta.';
+}
+
+// Chamar Anthropic Claude API via Serverless Proxy
+async function callAnthropic(prompt,key){
+  // Usar proxy serverless para esconder chave API e contornar CORS
+  const r=await fetch('/api/anthropic',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt})
+  });
+  if(!r.ok){
+    const e=await r.json();
+    throw new Error(e.error||'Erro no servidor Anthropic');
+  }
+  const d=await r.json();
+  return d.content||'Sem resposta.';
 }
 
 // Função universal para gerar texto
 async function callAI(prompt,provider,key){
+  // Agora não precisa de key - as chaves estão no servidor
   if(provider==='anthropic'){
-    return await callAnthropic(prompt,key);
+    return await callAnthropic(prompt);
   }else{
-    return await callGroq(prompt,key);
+    return await callGroq(prompt);
   }
 }
 const UNIS=[
@@ -1203,25 +1203,16 @@ function approveAIOrder(id){
   order.approvedAt=new Date().toISOString();
   localStorage.setItem('pmz_ai_orders',JSON.stringify(orders));
   
-  // Gerar trabalho automaticamente
-  const anthropicKey=localStorage.getItem('pmz_anthropic_key');
-  const groqKey=localStorage.getItem('pmz_groq_key');
-  
-  if(!anthropicKey&&!groqKey){
-    showToast('⚠️ Nenhuma IA configurada. Configura no painel IA Gerador.');
-    renderAdminAIOrders();
-    return;
-  }
-  
-  const provider=anthropicKey?'anthropic':'groq';
-  const key=anthropicKey||groqKey;
+  // Detectar provider disponível
+  const useAnthropic=localStorage.getItem('pmz_use_anthropic')==='true';
+  const provider=useAnthropic?'anthropic':'groq';
   const aiName=provider==='anthropic'?'Claude':'Llama';
   const isPT=order.idioma==='portugues';
   const prompt=getWorkPrompt(order.workType,order.tema,order.descricao,order.ref,order.pag,isPT);
   
   showToast(`⏳ A gerar trabalho com ${aiName}...`);
   
-  callAI(prompt,provider,key).then(txt=>{
+  callAI(prompt,provider).then(txt=>{
     // Guardar trabalho gerado
     const works=JSON.parse(localStorage.getItem('pmz_ai_works')||'[]');
     works.push({
@@ -1414,31 +1405,28 @@ document.addEventListener('change',function(e){
 });
 
 async function runAdminAI(){
+  // Usar provider seleccionado no admin
   const provider=document.querySelector('input[name="adminAIProvider"]:checked')?.value||'groq';
-  const groqKey=document.getElementById('adminGroqKey')?.value.trim()||localStorage.getItem('pmz_groq_key');
-  const anthroKey=document.getElementById('adminAnthropicKey')?.value.trim()||localStorage.getItem('pmz_anthropic_key');
-  const key=provider==='anthropic'?anthroKey:groqKey;
   const workType=document.querySelector('input[name="adminWorkType"]:checked')?.value||'monografia';
   const tema=document.getElementById('adminTema')?.value.trim();
   const descricao=document.getElementById('adminDescricao')?.value.trim();
   const ref=document.getElementById('adminRef')?.value;
   const pag=document.getElementById('adminPag')?.value||60;
   const idioma=document.querySelector('input[name="adminIdioma"]:checked')?.value||'portugues';
-
-  if(!key){showToast(`⚠️ Introduz e guarda a chave ${provider==='anthropic'?'Anthropic':'Groq'} API primeiro.`);return;}
+  
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
-
+  
   const btn=document.getElementById('adminAIBtn');
   const workTypeNames={monografia:'Monografia',tese:'Tese de Doutoramento',dissertacao:'Dissertação de Mestrado',artigo:'Artigo Científico',relatorio:'Relatório de Estágio',projeto:'Projecto de Pesquisa',ensaio:'Ensaio Académico',resenha:'Resenha Crítica'};
   const aiName=provider==='anthropic'?'Claude':'Llama';
   btn.innerHTML=`<span class="spinner"></span> A gerar ${workTypeNames[workType]} com ${aiName}...`;
   btn.disabled=true;
-
+  
   try{
     const isPT=idioma==='portugues';
     const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
-    const txt=await callAI(prompt,provider,key);
+    const txt=await callAI(prompt,provider);
     document.getElementById('adminAIOutText').textContent=txt;
     document.getElementById('adminAIOut').style.display='';
     showToast(isPT?`✅ ${workTypeNames[workType]} gerada com ${aiName}!`:`✅ ${workTypeNames[workType]} generated with ${aiName}!`);
@@ -1946,17 +1934,14 @@ function openAI(){
 function closeAI(){document.getElementById('aiModal').classList.remove('open');}
 async function runAI(){
   // Detectar automaticamente qual IA usar (prioridade: Claude > Groq)
-  const anthropicKey=localStorage.getItem('pmz_anthropic_key');
-  const groqKey=localStorage.getItem('pmz_groq_key');
+  // Agora verificamos no servidor via localStorage flags
+  const useAnthropic=localStorage.getItem('pmz_use_anthropic')==='true';
   
-  let provider,key,aiName;
-  if(anthropicKey){
-    provider='anthropic';key=anthropicKey;aiName='Claude';
-  }else if(groqKey){
-    provider='groq';key=groqKey;aiName='Llama';
+  let provider,aiName;
+  if(useAnthropic){
+    provider='anthropic';aiName='Claude';
   }else{
-    showToast('⚠️ Nenhuma IA configurada. Contacta o administrador.');
-    return;
+    provider='groq';aiName='Llama';
   }
   
   const workType=document.querySelector('input[name="workType"]:checked')?.value||'monografia';
@@ -1977,7 +1962,7 @@ async function runAI(){
   try{
     const isPT=idioma==='portugues';
     const prompt=getWorkPrompt(workType,tema,descricao,ref,pag,isPT);
-    const txt=await callAI(prompt,provider,key);
+    const txt=await callAI(prompt,provider);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
     showToast(isPT?`✅ ${workTypeNames[workType]} gerada com ${aiName}!`:`✅ ${workTypeNames[workType]} generated with ${aiName}!`);
