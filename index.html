@@ -834,30 +834,48 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 
 <script>
 // ═══════════════════════════════════════════
-// FIREBASE CONFIG — substitui com os teus valores
+// FIREBASE CONFIG — lido do localStorage (admin configura)
 // ═══════════════════════════════════════════
-const FB_CONFIG={
-  apiKey:"SUA_API_KEY",
-  authDomain:"SEU_PROJECT.firebaseapp.com",
-  projectId:"SEU_PROJECT_ID",
-  storageBucket:"SEU_PROJECT.appspot.com",
-  messagingSenderId:"SEU_SENDER_ID",
-  appId:"SEU_APP_ID"
-};
+function getFirebaseConfig(){
+  return {
+    apiKey:localStorage.getItem('pmz_fb_apiKey')||'SUA_API_KEY',
+    authDomain:localStorage.getItem('pmz_fb_authDomain')||'SEU_PROJECT.firebaseapp.com',
+    projectId:localStorage.getItem('pmz_fb_projectId')||'SEU_PROJECT_ID',
+    storageBucket:localStorage.getItem('pmz_fb_storageBucket')||'SEU_PROJECT.appspot.com',
+    messagingSenderId:localStorage.getItem('pmz_fb_messagingSenderId')||'SEU_SENDER_ID',
+    appId:localStorage.getItem('pmz_fb_appId')||'SEU_APP_ID'
+  };
+}
+
 let db=null,fbStorage=null,FB_OK=false;
-try{
-  if(FB_CONFIG.apiKey&&FB_CONFIG.apiKey!=='SUA_API_KEY'){
-    firebase.initializeApp(FB_CONFIG);
-    db=firebase.firestore();
-    fbStorage=firebase.storage();
-    FB_OK=true;
-    document.addEventListener('DOMContentLoaded',()=>{
-      const b=document.createElement('div');b.className='fb-badge';
-      b.innerHTML='<div class="fb-dot"></div>Firebase Online';
-      document.body.appendChild(b);
-    });
+
+function initFirebase(){
+  const FB_CONFIG=getFirebaseConfig();
+  try{
+    if(FB_CONFIG.apiKey&&FB_CONFIG.apiKey!=='SUA_API_KEY'){
+      firebase.initializeApp(FB_CONFIG);
+      db=firebase.firestore();
+      fbStorage=firebase.storage();
+      FB_OK=true;
+      // Mostrar badge
+      if(!document.querySelector('.fb-badge')){
+        const b=document.createElement('div');b.className='fb-badge';
+        b.innerHTML='<div class="fb-dot"></div>Firebase Online';
+        document.body.appendChild(b);
+      }
+      console.log('✅ Firebase inicializado com sucesso!');
+    }else{
+      FB_OK=false;
+      console.log('⚠️ Firebase não configurado ainda. Admin deve configurar em ⚙️ Configuração.');
+    }
+  }catch(e){
+    console.warn('Erro ao inicializar Firebase:',e.message);
+    FB_OK=false;
   }
-}catch(e){console.warn('Firebase não configurado:',e.message);}
+}
+
+// Inicializar ao carregar a página
+document.addEventListener('DOMContentLoaded',()=>{initFirebase();});
 
 // ═══════════════════════════════════════════
 // GROQ AI — chave inserida pelo utilizador
@@ -1119,10 +1137,64 @@ function renderAdminConfig(){
   const hasGroq=groqKey.length>0;
   const hasAnthropic=anthropicKey.length>0;
   
+  // Firebase config
+  const fbApiKey=localStorage.getItem('pmz_fb_apiKey')||'';
+  const fbAuthDomain=localStorage.getItem('pmz_fb_authDomain')||'';
+  const fbProjectId=localStorage.getItem('pmz_fb_projectId')||'';
+  const fbStorageBucket=localStorage.getItem('pmz_fb_storageBucket')||'';
+  const fbSenderId=localStorage.getItem('pmz_fb_messagingSenderId')||'';
+  const fbAppId=localStorage.getItem('pmz_fb_appId')||'';
+  const hasFb=!!fbApiKey&&fbApiKey!=='SUA_API_KEY';
+  
   document.getElementById('adminContent').innerHTML=`
     <div class="admin-card" style="border-left:3px solid var(--gold)">
+      <h4>🔥 Configuração do Firebase</h4>
+      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Configura o Firebase para storage de PDFs, database e sincronização em cloud.</p>
+      
+      <div style="background:${hasFb?'var(--g0)':'var(--gr0)'};border-radius:var(--rmd);padding:12px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:8px">📋 Credenciais do Firebase Project</div>
+        <div style="font-size:10px;color:var(--gr4);margin-bottom:8px">Obtém em: <a href="https://console.firebase.google.com" target="_blank" style="color:var(--g6)">console.firebase.google.com</a> → Project Settings → General → Your apps → Web app</div>
+        
+        <label class="admin-label">API Key</label>
+        <input class="admin-input" id="cfgFbApiKey" type="password" value="${fbApiKey}" placeholder="AIzaSy...">
+        
+        <label class="admin-label" style="margin-top:6px">Auth Domain</label>
+        <input class="admin-input" id="cfgFbAuthDomain" type="text" value="${fbAuthDomain}" placeholder="seu-projeto.firebaseapp.com">
+        
+        <label class="admin-label" style="margin-top:6px">Project ID</label>
+        <input class="admin-input" id="cfgFbProjectId" type="text" value="${fbProjectId}" placeholder="seu-projeto">
+        
+        <label class="admin-label" style="margin-top:6px">Storage Bucket</label>
+        <input class="admin-input" id="cfgFbStorageBucket" type="text" value="${fbStorageBucket}" placeholder="seu-projeto.appspot.com">
+        
+        <label class="admin-label" style="margin-top:6px">Messaging Sender ID</label>
+        <input class="admin-input" id="cfgFbSenderId" type="text" value="${fbSenderId}" placeholder="123456789">
+        
+        <label class="admin-label" style="margin-top:6px">App ID</label>
+        <input class="admin-input" id="cfgFbAppId" type="text" value="${fbAppId}" placeholder="1:123456789:web:abc123">
+        
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="admin-btn ok" onclick="saveFirebaseAdmin()">💾 Guardar Firebase</button>
+          ${hasFb?'<button class="admin-btn" onclick="clearFirebaseAdmin()">🗑️ Remover</button>':''}
+        </div>
+        <div style="font-size:10px;color:var(--gr4);margin-top:6px">Status: ${hasFb?'<span style="color:#10b981">✅ Firebase Configurado</span>':'<span style="color:#ef4444">❌ Não configurado</span>'}</div>
+      </div>
+      
+      <div style="background:var(--g0);border:1px solid var(--g1);border-radius:var(--rmd);padding:10px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--g8);margin-bottom:4px">ℹ️ Como configurar o Firebase:</div>
+        <div style="font-size:10px;color:var(--g7);line-height:1.5">
+          1. Cria projeto em console.firebase.google.com<br>
+          2. Ativa Firestore Database e Storage<br>
+          3. Vai a Project Settings → General → Your apps → Web app<br>
+          4. Copia as credenciais do firebaseConfig<br>
+          5. Cola aqui e guarda
+        </div>
+      </div>
+    </div>
+    
+    <div class="admin-card" style="border-left:3px solid var(--gold)">
       <h4>🤖 Configuração de APIs de IA</h4>
-      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Configura as chaves API para o gerador de trabalhos. Os utilizadores usarão estas chaves automaticamente.</p>
+      <p style="font-size:11px;color:var(--gr4);margin-bottom:12px">Configura as chaves API para o gerador de trabalhos.</p>
       
       <div style="background:var(--gr0);border-radius:var(--rmd);padding:12px;margin-bottom:12px">
         <div style="font-size:12px;font-weight:600;margin-bottom:8px">⚡ Groq API (Llama 3.3 70B - Gratuito)</div>
@@ -1173,6 +1245,42 @@ function renderAdminConfig(){
       <button class="admin-btn" onclick="const d=JSON.stringify({docs:ldocs('pmz_docs'),orders:lorders()});const b=new Blob([d],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup.json';a.click();showToast('✅ Exportado!')">📥 Exportar</button>
     </div>
   `;
+}
+
+// Funções para guardar Firebase no admin
+function saveFirebaseAdmin(){
+  const config={
+    apiKey:document.getElementById('cfgFbApiKey').value.trim(),
+    authDomain:document.getElementById('cfgFbAuthDomain').value.trim(),
+    projectId:document.getElementById('cfgFbProjectId').value.trim(),
+    storageBucket:document.getElementById('cfgFbStorageBucket').value.trim(),
+    messagingSenderId:document.getElementById('cfgFbSenderId').value.trim(),
+    appId:document.getElementById('cfgFbAppId').value.trim()
+  };
+  
+  if(!config.apiKey){showToast('⚠️ API Key é obrigatória.');return;}
+  
+  // Guardar cada campo
+  localStorage.setItem('pmz_fb_apiKey',config.apiKey);
+  localStorage.setItem('pmz_fb_authDomain',config.authDomain);
+  localStorage.setItem('pmz_fb_projectId',config.projectId);
+  localStorage.setItem('pmz_fb_storageBucket',config.storageBucket);
+  localStorage.setItem('pmz_fb_messagingSenderId',config.messagingSenderId);
+  localStorage.setItem('pmz_fb_appId',config.appId);
+  
+  // Reinicializar Firebase
+  initFirebase();
+  
+  showToast('✅ Firebase configurado com sucesso!');
+  renderAdminConfig();
+}
+
+function clearFirebaseAdmin(){
+  if(!confirm('Remover configuração do Firebase?'))return;
+  ['pmz_fb_apiKey','pmz_fb_authDomain','pmz_fb_projectId','pmz_fb_storageBucket','pmz_fb_messagingSenderId','pmz_fb_appId'].forEach(k=>localStorage.removeItem(k));
+  showToast('🗑️ Firebase removido.');
+  initFirebase();
+  renderAdminConfig();
 }
 
 // Funções para guardar chaves API no admin
