@@ -674,7 +674,7 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
           <button class="bcan" style="width:auto;padding:12px 18px" onclick="closeAI()">Fechar</button>
         </div>
         <div id="aiOut" style="display:none;margin-top:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div><div style="display:flex;gap:6px"><button class="bprev" onclick="copyAI('aiOutText')">📋 Copiar</button><button class="bprev" onclick="downloadAsPDF()">📄 PDF</button><button class="bprev" onclick="downloadAsWord()">📝 Word</button></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div><div style="display:flex;gap:6px"><button class="bprev" onclick="copyAI('aiOutText')">📋 Copiar</button><button class="bprev" onclick="openWorkViewer()" style="background:var(--g6);color:white">👁 Visualizar</button><button class="bprev" onclick="downloadAsPDF()">📄 PDF</button><button class="bprev" onclick="downloadAsWord()">📝 Word</button></div></div>
           <div id="aiOutText" class="ai-output"></div>
         </div>
       </div>
@@ -731,6 +731,32 @@ body{font-family:var(--fb);background:var(--gr0);color:var(--gr9);min-height:100
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- WORK VIEWER MODAL - Visualizador Profissional de Trabalhos -->
+<div class="ovl" id="workViewerModal">
+  <div style="width:95vw;max-width:1200px;height:92vh;display:flex;flex-direction:column;background:white;border-radius:var(--rlg);box-shadow:var(--sl);overflow:hidden">
+    <div style="background:var(--g8);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:12px;height:12px;border-radius:50%;background:#ef4444"></div>
+        <div style="width:12px;height:12px;border-radius:50%;background:#f59e0b"></div>
+        <div style="width:12px;height:12px;border-radius:50%;background:#10b981"></div>
+        <h3 style="font-family:var(--fd);font-size:16px;color:white;margin-left:12px">📖 Visualizador de Trabalho Académico</h3>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button onclick="zoomIn()" style="background:rgba(255,255,255,.15);border:none;color:white;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:16px">+</button>
+        <span id="zoomLevel" style="color:var(--g2);font-size:13px;min-width:45px;text-align:center">100%</span>
+        <button onclick="zoomOut()" style="background:rgba(255,255,255,.15);border:none;color:white;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:16px">−</button>
+        <button onclick="printWork()" style="background:var(--gold);color:var(--g9);border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;margin-left:8px">🖨️ Imprimir</button>
+        <button onclick="closeWorkViewer()" style="background:rgba(255,255,255,.15);border:none;color:white;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:18px;margin-left:8px">×</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow:auto;background:#f5f5f5;padding:30px;display:flex;justify-content:center">
+      <div id="workViewerContent" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.15);border-radius:4px;max-width:800px;width:100%;padding:60px 70px;font-family:'Times New Roman',Times,serif;line-height:1.8;color:#000;transform-origin:top center;transition:transform .2s">
+        <!-- Conteúdo será inserido aqui -->
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════
@@ -1019,6 +1045,7 @@ function renderAdminAI(){
           <div style="font-size:13px;font-weight:600;color:var(--gr6)">📄 Resultado</div>
           <div style="display:flex;gap:6px">
             <button class="admin-btn" onclick="copyAdminAI()">📋 Copiar</button>
+            <button class="admin-btn" onclick="openAdminWorkViewer()" style="background:var(--g6);color:white">👁 Visualizar</button>
             <button class="admin-btn" onclick="downloadAdminAIPDF()">📄 PDF</button>
             <button class="admin-btn" onclick="downloadAdminAIWord()">📝 Word</button>
           </div>
@@ -1235,22 +1262,25 @@ function copyAdminAI(){
   }
 }
 
+function openAdminWorkViewer(){
+  const text=document.getElementById('adminAIOutText')?.textContent;
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  const html=convertToAcademicHTML(text);
+  document.getElementById('workViewerContent').innerHTML=html;
+  document.getElementById('workViewerModal').classList.add('open');
+  currentZoom=100;
+  updateZoom();
+}
+
 function downloadAdminAIPDF(){
   const text=document.getElementById('adminAIOutText')?.textContent;
   if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
   
-  const content=text.split('\n').map(line=>{
-    if(line.startsWith('# '))return `<h1 style="color:#04342C;margin:20px 0 10px;font-size:24px">${line.substring(2)}</h1>`;
-    if(line.startsWith('## '))return `<h2 style="color:#085041;margin:18px 0 8px;font-size:18px">${line.substring(3)}</h2>`;
-    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;margin:14px 0 6px;font-size:15px">${line.substring(4)}</h3>`;
-    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
-    if(line.trim()==='')return '<br>';
-    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
-  }).join('');
+  const html=convertToAcademicHTML(text);
+  const fullHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Trabalho Académico</title><style>@page{margin:2.5cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt;line-height:1.8;max-width:17cm;margin:0 auto;color:#000}h1{font-size:16pt;text-align:center;margin:40px 0 30px;text-transform:uppercase;letter-spacing:2px}h2{font-size:14pt;margin:30px 0 15px;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px;color:#333}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}.reference{padding-left:2cm;text-indent:-2cm;margin:8px 0}</style></head><body>${html}</body></html>`;
   
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Trabalho Académico</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;color:#333}h1,h2,h3{font-family:Georgia,serif}p{margin:8px 0}</style></head><body>${content}</body></html>`;
-  
-  const blob=new Blob([html],{type:'text/html'});
+  const blob=new Blob([fullHTML],{type:'text/html'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
@@ -1259,25 +1289,17 @@ function downloadAdminAIPDF(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('✅ Download PDF iniciado! Abre e imprime como PDF.');
+  showToast('✅ HTML descarregado! Abre no navegador e imprime como PDF (Ctrl+P).');
 }
 
 function downloadAdminAIWord(){
   const text=document.getElementById('adminAIOutText')?.textContent;
   if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
   
-  const content=text.split('\n').map(line=>{
-    if(line.startsWith('# '))return `<h1 style="color:#04342C;font-size:24px;margin:20px 0 10px">${line.substring(2)}</h1>`;
-    if(line.startsWith('## '))return `<h2 style="color:#085041;font-size:18px;margin:18px 0 8px">${line.substring(3)}</h2>`;
-    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;font-size:15px;margin:14px 0 6px">${line.substring(4)}</h3>`;
-    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
-    if(line.trim()==='')return '<br>';
-    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
-  }).join('');
+  const html=convertToAcademicHTML(text);
+  const wordHTML=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.5cm}body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.8;color:#000}h1{font-size:16pt;text-align:center;margin:40px 0 30px}h2{font-size:14pt;margin:30px 0 15px;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}</style></head><body>${html}</body></html>`;
   
-  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.6;color:#000}h1,h2,h3{font-family:Georgia,serif}p{margin:6px 0}</style></head><body>${content}</body></html>`;
-  
-  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const blob=new Blob(['\ufeff',wordHTML],{type:'application/msword'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
@@ -1647,174 +1669,293 @@ async function runAI(){
   const ref=document.getElementById('aiRef').value;
   const pag=document.getElementById('aiPag').value||60;
   const idioma=document.querySelector('input[name="aiIdioma"]:checked')?.value||'portugues';
-  
+
   if(!key){showToast('⚠️ Introduz a tua chave Groq API ou guarda-a primeiro.');return;}
   if(!tema){showToast('⚠️ Introduz o tema do trabalho.');return;}
   if(!descricao){showToast('⚠️ Introduz a descrição detalhada do trabalho.');return;}
-  
+
   const btn=document.getElementById('aiBtn');
   btn.innerHTML='<span class="spinner"></span>A gerar trabalho completo...';
   btn.disabled=true;
-  
+
   try{
     const isPT=idioma==='portugues';
     const prompt=isPT?
-`Actua como um escritor académico experiente em Moçambique. Cria um TRABALHO ACADÉMICO COMPLETO e não apenas uma estrutura.
+`ÉS UM ESCRITOR ACADÉMICO ESPECIALIZADO EM MOÇAMBIQUE COM 20+ ANOS DE EXPERIÊNCIA.
+
+TAREFA: Cria um TRABALHO ACADÉMICO COMPLETO, DENSO e DETALHADO. Não é um esboço - é o trabalho FINAL completo.
 
 ══════════════════════════════════════════
-CONFIGURAÇÕES DO TRABALHO:
+CONFIGURAÇÕES:
 - TEMA: "${tema}"
-- DESCRIÇÃO DETALHADA: ${descricao}
-- FORMATO DE REFERÊNCIAS: ${ref}
-- NÚMERO DE PÁGINAS: ${pag}
-- IDIOMA: Português
+- DESCRIÇÃO: ${descricao}
+- REFERÊNCIAS: ${ref}
+- PÁGINAS: ${pag}
+- IDIOMA: Português Moçambicano
 
 ══════════════════════════════════════════
-FORMATO DE SAÍDA (preenche TODO o conteúdo):
+ESCRITO COMPLETO - PREENCHE TUDO:
 
-# TÍTULO COMPLETO DO TRABALHO
+# TÍTULO DO TRABALHO (cria um título académico profissional)
 
 ## FOLHA DE ROSTO
-- Título completo
-- Nome do autor (genérico)
-- Ano: 2026
+Título Completo Completo Completo
 
-## RESUMO (150-250 palavras)
-[Escreve o resumo completo aqui]
+Nome: Autor Genérico da Silva
+
+${tema}
+
+Trabalho apresentado à Universidade para obtenção do grau académico
+
+Ano: 2026
+
+---
+
+## RESUMO
+
+Escreve aqui um resumo COMPLETO e DETALHADO com 200-300 palavras. Este resumo deve cobrir todos os aspectos principais do trabalho: objectivos, metodologia, resultados principais e conclusões. Deve ser autocontido e permitir ao leitor compreender a essência completa do trabalho sem ler o resto do documento. Inclui contexto, problemática, abordagem metodológica, achados principais e implicações.
+
+---
 
 ## PALAVRAS-CHAVE
-[Listar 5-7 palavras-chave]
+
+Palavra-chave 1; Palavra-chave 2; Palavra-chave 3; Palavra-chave 4; Palavra-chave 5; Palavra-chave 6
+
+---
 
 ## AGRADECIMENTOS
-[Escreve um parágrafo de agradecimentos]
 
-## ÍNDICE
-1. INTRODUÇÃO
-   1.1. Contextualização
-   1.2. Problema de Pesquisa
-   1.3. Objectivos (Geral e Específicos)
-   1.4. Justificativa
-   1.5. Estrutura do Trabalho
+Escreve aqui um parágrafo completo e bem elaborado de agradecimentos, mencionando orientadores, instituição, família e todos que contribuíram para a realização deste trabalho académico.
 
-2. REVISÃO DA LITERATURA
-   2.1. Fundamentação Teórica
-   2.2. Estudos Anteriores
-   2.3. Conceitos-Chave
+---
 
-3. METODOLOGIA
-   3.1. Tipo de Pesquisa
-   3.2. População e Amostra
-   3.3. Instrumentos de Recolha de Dados
-   3.4. Procedimentos de Análise
+## LISTA DE ABREVIATURAS E SIGLAS
 
-4. RESULTADOS E DISCUSSÃO
-   4.1. Apresentação dos Resultados
-   4.2. Análise e Interpretação
-   4.3. Discussão com a Literatura
+APA - American Psychological Association
+ABNT - Associação Brasileira de Normas Técnicas
+UEM - Universidade Eduardo Mondlane
+INE - Instituto Nacional de Estatística
+BM - Banco de Moçambique
 
-5. CONCLUSÃO E RECOMENDAÇÕES
-   5.1. Conclusão
-   5.2. Recomendações
-   5.3. Limitações
-   5.4. Sugestões para Pesquisas Futuras
+---
 
-REFERÊNCIAS BIBLIOGRÁFICAS
-[Lista de 10-15 referências em formato ${ref}]
+## ÍNDICE GERAL
+
+1. INTRODUÇÃO GERAL
+   1.1 Contextualização e Enquadramento do Problema
+   1.2 Formulação do Problema de Pesquisa
+   1.3 Objectivo Geral do Estudo
+   1.4 Objectivos Específicos
+   1.5 Perguntas de Investigação
+   1.6 Justificativa e Relevância do Estudo
+   1.7 Delimitação do Tema
+   1.8 Estrutura Organizativa do Trabalho
+
+2. FUNDAMENTAÇÃO TEÓRICA E REVISÃO DA LITERATURA
+   2.1 Bases Teóricas e Conceptuais
+   2.2 Revisão Sistemática da Literatura
+   2.3 Estudos Empíricos Anteriores
+   2.4 Definição de Conceitos e Termos-Chave
+   2.5 Framework Conceptual do Estudo
+
+3. METODOLOGIA DA INVESTIGAÇÃO
+   3.1 Paradigma e Abordagem de Investigação
+   3.2 Desenho da Investigação
+   3.3 Contexto e Local do Estudo
+   3.4 População e Caracterização
+   3.5 Amostragem e Critérios de Selecção
+   3.6 Instrumentos de Recolha de Dados
+   3.7 Procedimentos de Recolha de Dados
+   3.8 Técnicas de Análise de Dados
+   3.9 Considerações Éticas e Deontológicas
+
+4. APRESENTAÇÃO, ANÁLISE E DISCUSSÃO DOS RESULTADOS
+   4.1 Caracterização da Amostra
+   4.2 Apresentação dos Resultados - Objectivo 1
+   4.3 Apresentação dos Resultados - Objectivo 2
+   4.4 Apresentação dos Resultados - Objectivo 3
+   4.5 Análise Crítica e Interpretação dos Dados
+   4.6 Triangulação com a Literatura
+   4.7 Síntese dos Principais Achados
+
+5. CONCLUSÕES, RECOMENDAÇÕES E CONTRIBUIÇÕES
+   5.1 Síntese do Estudo e Conclusões Principais
+   5.2 Contribuições Teóricas e Práticas
+   5.3 Recomendações para Políticas e Práticas
+   5.4 Limitações do Estudo
+   5.5 Sugestões para Investigação Futura
+   5.6 Considerações Finais
+
+REFERÊNCIAS BIBLIOGRÁFICAS (formato ${ref})
+
+ANEXOS E APÊNDICES (se aplicável)
 
 ══════════════════════════════════════════
 
-INSTRUÇÕES:
-- Escreve TODO o conteúdo de cada secção em texto completo e académico
-- Sê detalhado e específico, como se fosse um trabalho real submetido
-- Usa Português de Moçambique
-- Inclui citações e referências relevantes
-- Mantém tom académico e formal
-- Cada secção deve ter pelo menos 2-3 parágrafos completos
-- Segue rigorosamente o formato de referências ${ref}
-- Baseia-te na descrição fornecida: ${descricao}
+⚠️ INSTRUÇÕES CRÍTICAS - SEGUE RIGOROSAMENTE:
 
-Escreve o trabalho COMPLETO agora.`
+PARA CADA SECÇÃO E SUBSECÇÃO ACIMA:
+→ Escreve MÍNIMO 3-5 parágrafos COMPLETOS e BEM DESENVOLVIDOS
+→ Cada parágrafo deve ter 5-8 linhas de conteúdo académico denso
+→ Usa linguagem formal, técnica e académica
+→ Inclui citações directas e indirectas com (Autor, Ano)
+→ Faz análise crítica e reflexiva, não apenas descritiva
+→ Conecta os temas com a realidade moçambicana
+→ Usa exemplos concretos e dados empíricos
+→ Demonstra profundidade de análise e pensamento crítico
+
+INTRODUÇÃO: Deve contextualizar amplamente o tema, mostrar a relevância em Moçambique, delimitar claramente o problema, apresentar objectivos de forma estruturada.
+
+REVISÃO DA LITERATURA: Deve ser EXTENSA e PROFUNDA. Discute múltiplos autores, compara perspectivas, identifica lacunas na literatura, estabelece diálogos teóricos. MÍNIMO 15-20 parágrafos.
+
+METODOLOGIA: Deve ser DETALHADA e RIGOROSA. Explica cada escolha metodológica, justifica abordagens, descreve instrumentos com precisão. MÍNIMO 12-15 parágrafos.
+
+RESULTADOS: Deve ser RICO em ANÁLISE. Apresenta dados, interpreta, discute com literatura, mostra padrões e tendências. MÍNIMO 15-20 parágrafos.
+
+CONCLUSÃO: Deve ser ABRANGENTE. Sintetiza achados, mostra contribuições, reconhece limitações, aponta caminhos futuros. MÍNIMO 8-10 parágrafos.
+
+REFERÊNCIAS: Lista 15-20 referências académicas REAIS e RELEVANTES em formato ${ref} rigoroso.
+
+⚡ AGORA ESCREVE O TRABALHO COMPLETO COM TODO O CONTEÚDO PREENCHIDO!`
 :
-`Act as an experienced academic writer. Create a COMPLETE ACADEMIC PAPER, not just an outline.
+`YOU ARE AN EXPERT ACADEMIC WRITER WITH 20+ YEARS OF EXPERIENCE.
+
+TASK: Create a COMPLETE, DENSE, and DETAILED ACADEMIC PAPER. This is NOT an outline - it is the FINAL complete paper.
 
 ══════════════════════════════════════════
-PAPER CONFIGURATIONS:
+CONFIGURATIONS:
 - TOPIC: "${tema}"
-- DETAILED DESCRIPTION: ${descricao}
-- REFERENCE FORMAT: ${ref}
-- NUMBER OF PAGES: ${pag}
-- LANGUAGE: English
+- DESCRIPTION: ${descricao}
+- REFERENCES: ${ref}
+- PAGES: ${pag}
+- LANGUAGE: Academic English
 
 ══════════════════════════════════════════
-OUTPUT FORMAT (fill ALL content):
+COMPLETE WRITING - FILL EVERYTHING:
 
-# COMPLETE PAPER TITLE
+# PAPER TITLE (create a professional academic title)
 
 ## TITLE PAGE
-- Full title
-- Author name (generic)
-- Year: 2026
+Complete Complete Complete Title
 
-## ABSTRACT (150-250 words)
-[Write complete abstract here]
+Author: Generic Author da Silva
+
+${tema}
+
+A paper submitted to the University in partial fulfillment of the requirements for the degree
+
+Year: 2026
+
+---
+
+## ABSTRACT
+
+Write here a COMPLETE and DETAILED abstract with 200-300 words. This abstract must cover all main aspects: objectives, methodology, main results, and conclusions. Must be self-contained.
+
+---
 
 ## KEYWORDS
-[List 5-7 keywords]
+
+Keyword 1; Keyword 2; Keyword 3; Keyword 4; Keyword 5; Keyword 6
+
+---
 
 ## ACKNOWLEDGMENTS
-[Write a paragraph of acknowledgments]
+
+Write a complete and well-crafted paragraph of acknowledgments.
+
+---
+
+## LIST OF ABBREVIATIONS
+
+APA - American Psychological Association
+ABNT - Associação Brasileira de Normas Técnicas
+
+---
 
 ## TABLE OF CONTENTS
-1. INTRODUCTION
-   1.1. Background
-   1.2. Research Problem
-   1.3. Objectives (General and Specific)
-   1.4. Justification
-   1.5. Paper Structure
 
-2. LITERATURE REVIEW
-   2.1. Theoretical Framework
-   2.2. Previous Studies
-   2.3. Key Concepts
+1. GENERAL INTRODUCTION
+   1.1 Contextualization and Problem Framing
+   1.2 Research Problem Statement
+   1.3 General Objective
+   1.4 Specific Objectives
+   1.5 Research Questions
+   1.6 Justification and Relevance
+   1.7 Scope Delimitation
+   1.8 Paper Organization
 
-3. METHODOLOGY
-   3.1. Research Type
-   3.2. Population and Sample
-   3.3. Data Collection Instruments
-   3.4. Analysis Procedures
+2. THEORETICAL FRAMEWORK AND LITERATURE REVIEW
+   2.1 Theoretical and Conceptual Foundations
+   2.2 Systematic Literature Review
+   2.3 Previous Empirical Studies
+   2.4 Definition of Key Concepts and Terms
+   2.5 Conceptual Framework
 
-4. RESULTS AND DISCUSSION
-   4.1. Results Presentation
-   4.2. Analysis and Interpretation
-   4.3. Discussion with Literature
+3. RESEARCH METHODOLOGY
+   3.1 Research Paradigm and Approach
+   3.2 Research Design
+   3.3 Study Context and Setting
+   3.4 Population and Characterization
+   3.5 Sampling and Selection Criteria
+   3.6 Data Collection Instruments
+   3.7 Data Collection Procedures
+   3.8 Data Analysis Techniques
+   3.9 Ethical Considerations
 
-5. CONCLUSION AND RECOMMENDATIONS
-   5.1. Conclusion
-   5.2. Recommendations
-   5.3. Limitations
-   5.4. Suggestions for Future Research
+4. RESULTS, ANALYSIS AND DISCUSSION
+   4.1 Sample Characterization
+   4.2 Results - Objective 1
+   4.3 Results - Objective 2
+   4.4 Results - Objective 3
+   4.5 Critical Analysis and Data Interpretation
+   4.6 Triangulation with Literature
+   4.7 Summary of Main Findings
 
-REFERENCES
-[List 10-15 references in ${ref} format]
+5. CONCLUSIONS, RECOMMENDATIONS AND CONTRIBUTIONS
+   5.1 Study Syn and Main Conclusions
+   5.2 Theoretical and Practical Contributions
+   5.3 Recommendations for Policy and Practice
+   5.4 Study Limitations
+   5.5 Suggestions for Future Research
+   5.6 Final Remarks
+
+REFERENCES (${ref} format)
+
+APPENDICES AND ANNEXES (if applicable)
 
 ══════════════════════════════════════════
 
-INSTRUCTIONS:
-- Write ALL content of each section in complete academic text
-- Be detailed and specific, as if it were a real submitted paper
-- Use academic English
-- Include relevant citations and references
-- Maintain formal academic tone
-- Each section should have at least 2-3 complete paragraphs
-- Strictly follow ${ref} reference format
-- Base on the description provided: ${descricao}
+⚠️ CRITICAL INSTRUCTIONS - FOLLOW STRICTLY:
 
-Write the COMPLETE paper now.`;
-    
+FOR EACH SECTION AND SUBSECTION ABOVE:
+→ Write MINIMUM 3-5 COMPLETE and WELL-DEVELOPED paragraphs
+→ Each paragraph must have 5-8 lines of dense academic content
+→ Use formal, technical, and academic language
+→ Include direct and indirect citations with (Author, Year)
+→ Provide critical and reflective analysis, not just descriptive
+→ Connect themes with Mozambican context where relevant
+→ Use concrete examples and empirical data
+→ Demonstrate depth of analysis and critical thinking
+
+INTRODUCTION: Must broadly contextualize the topic, show relevance, clearly delimit the problem, present structured objectives.
+
+LITERATURE REVIEW: Must be EXTENSIVE and DEEP. Discusses multiple authors, compares perspectives, identifies gaps, establishes theoretical dialogues. MINIMUM 15-20 paragraphs.
+
+METHODOLOGY: Must be DETAILED and RIGOROUS. Explains each methodological choice, justifies approaches, describes instruments precisely. MINIMUM 12-15 paragraphs.
+
+RESULTS: Must be RICH in ANALYSIS. Presents data, interprets, discusses with literature, shows patterns and trends. MINIMUM 15-20 paragraphs.
+
+CONCLUSION: Must be COMPREHENSIVE. Synthesizes findings, shows contributions, acknowledges limitations, points future directions. MINIMUM 8-10 paragraphs.
+
+REFERENCES: List 15-20 REAL and RELEVANT academic references in strict ${ref} format.
+
+⚡ NOW WRITE THE COMPLETE PAPER WITH ALL CONTENT FILLED IN!`;
+
     const txt=await callGroq(prompt,key);
     document.getElementById('aiOutText').textContent=txt;
     document.getElementById('aiOut').style.display='';
-    showToast(isPT?'✅ Trabalho completo gerado com sucesso! Podes descarregar em PDF ou Word.':'✅ Complete paper generated successfully! You can download in PDF or Word.');
+    showToast(isPT?'✅ Trabalho completo gerado com sucesso! Usa "👁 Visualizar" para ver formatado.':'✅ Complete paper generated! Use "👁 Visualizar" for formatted view.');
   }catch(e){
     showToast('❌ Erro: '+e.message);
   }finally{
@@ -1822,6 +1963,7 @@ Write the COMPLETE paper now.`;
     btn.disabled=false;
   }
 }
+
 async function runCursoAI(){
   const key=document.getElementById('aiKey').value.trim();
   const tema=document.getElementById('aiCursoTema').value.trim();
@@ -1850,24 +1992,125 @@ function copyAI(id){
   navigator.clipboard.writeText(txt).then(()=>showToast('✅ Copiado para a área de transferência!')).catch(()=>showToast('Erro ao copiar.'));
 }
 
-// Download como PDF
+// ═══════════════════════════════════════════
+// VISUALIZADOR PROFISSIONAL DE TRABALHOS
+// ═══════════════════════════════════════════
+let currentZoom=100;
+
+function openWorkViewer(){
+  const text=document.getElementById('aiOutText').textContent;
+  if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
+  
+  const html=convertToAcademicHTML(text);
+  document.getElementById('workViewerContent').innerHTML=html;
+  document.getElementById('workViewerModal').classList.add('open');
+  currentZoom=100;
+  updateZoom();
+}
+
+function closeWorkViewer(){
+  document.getElementById('workViewerModal').classList.remove('open');
+}
+
+function zoomIn(){
+  if(currentZoom<150){currentZoom+=10;updateZoom();}
+}
+
+function zoomOut(){
+  if(currentZoom>60){currentZoom-=10;updateZoom();}
+}
+
+function updateZoom(){
+  document.getElementById('zoomLevel').textContent=currentZoom+'%';
+  document.getElementById('workViewerContent').style.transform='scale('+(currentZoom/100)+')';
+}
+
+function printWork(){
+  const content=document.getElementById('workViewerContent').innerHTML;
+  const win=window.open('','','width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><title>Imprimir Trabalho</title><style>@page{margin:2.5cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt;line-height:1.8;max-width:17cm;margin:0 auto}h1{font-size:16pt;text-align:center;margin:30px 0 20px;color:#000;text-transform:uppercase}h2{font-size:14pt;margin:25px 0 15px;color:#000;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px;color:#333}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}.page-break{page-break-after:always}.center{text-align:center;text-indent:0}.no-indent{text-indent:0}.reference{padding-left:2cm;text-indent:-2cm;margin:8px 0}</style></head><body>${content}</body></html>`);
+  win.document.close();
+  setTimeout(()=>{win.print();},500);
+}
+
+function convertToAcademicHTML(text){
+  const lines=text.split('\n');
+  let html='';
+  let inList=false;
+  
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    const trimmed=line.trim();
+    
+    if(trimmed===''){
+      if(inList){html+='</ul>';inList=false;}
+      continue;
+    }
+    
+    if(trimmed.startsWith('════')||trimmed.startsWith('────')){
+      if(inList){html+='</ul>';inList=false;}
+      html+='<hr style="border:none;border-top:2px solid #04342C;margin:30px 0">';
+      continue;
+    }
+    
+    if(trimmed.startsWith('# ')&&!trimmed.startsWith('## ')){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<h1 style="font-size:18pt;text-align:center;margin:40px 0 30px;text-transform:uppercase;letter-spacing:2px;color:#000">${trimmed.substring(2)}</h1>`;
+      continue;
+    }
+    
+    if(trimmed.startsWith('## ')&&!trimmed.startsWith('### ')){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<h2 style="font-size:14pt;margin:30px 0 15px;color:#000;border-bottom:1px solid #000;padding-bottom:5px">${trimmed.substring(3)}</h2>`;
+      continue;
+    }
+    
+    if(trimmed.startsWith('### ')){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<h3 style="font-size:13pt;margin:20px 0 10px;color:#333">${trimmed.substring(4)}</h3>`;
+      continue;
+    }
+    
+    if(trimmed.startsWith('- ')||trimmed.startsWith('• ')){
+      if(!inList){html+='<ul style="margin:10px 0 10px 2cm">';inList=true;}
+      html+=`<li style="margin:5px 0">${trimmed.substring(2)}</li>`;
+      continue;
+    }else if(inList){
+      html+='</ul>';inList=false;
+    }
+    
+    if(/^[0-9]+\./.test(trimmed)&&trimmed.length<100){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<p style="font-weight:bold;margin:12px 0 8px;text-indent:0">${trimmed}</p>`;
+      continue;
+    }
+    
+    if(trimmed.match(/^[A-ZÁ-Ú][\w\s]+:$/)&&trimmed.length<80){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<p style="font-weight:bold;margin:12px 0 8px;text-indent:0">${trimmed}</p>`;
+      continue;
+    }
+    
+    if(inList){html+='</ul>';inList=false;}
+    
+    if(trimmed.length>0){
+      html+=`<p style="text-align:justify;margin:10px 0;text-indent:3cm">${trimmed}</p>`;
+    }
+  }
+  
+  if(inList)html+='</ul>';
+  return html;
+}
+
+// Download como HTML (para converter em PDF)
 function downloadAsPDF(){
   const text=document.getElementById('aiOutText').textContent;
   if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
   
-  // Criar conteúdo para PDF
-  const content=text.split('\n').map(line=>{
-    if(line.startsWith('# '))return `<h1 style="color:#04342C;margin:20px 0 10px;font-size:24px">${line.substring(2)}</h1>`;
-    if(line.startsWith('## '))return `<h2 style="color:#085041;margin:18px 0 8px;font-size:18px">${line.substring(3)}</h2>`;
-    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;margin:14px 0 6px;font-size:15px">${line.substring(4)}</h3>`;
-    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
-    if(line.trim()==='')return '<br>';
-    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
-  }).join('');
+  const html=convertToAcademicHTML(text);
+  const fullHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Trabalho Académico</title><style>@page{margin:2.5cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt;line-height:1.8;max-width:17cm;margin:0 auto;color:#000}h1{font-size:16pt;text-align:center;margin:40px 0 30px;text-transform:uppercase;letter-spacing:2px}h2{font-size:14pt;margin:30px 0 15px;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px;color:#333}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}.reference{padding-left:2cm;text-indent:-2cm;margin:8px 0}</style></head><body>${html}</body></html>`;
   
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Trabalho Académico</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.6;color:#333}h1,h2,h3{font-family:Georgia,serif}p{margin:8px 0}</style></head><body>${content}</body></html>`;
-  
-  const blob=new Blob([html],{type:'text/html'});
+  const blob=new Blob([fullHTML],{type:'text/html'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
@@ -1876,27 +2119,18 @@ function downloadAsPDF(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('✅ Download iniciado! Abre o ficheiro e imprime como PDF.');
+  showToast('✅ HTML descarregado! Abre no navegador e imprime como PDF (Ctrl+P).');
 }
 
-// Download como Word (.docx simplificado como .doc)
+// Download como Word (.doc)
 function downloadAsWord(){
   const text=document.getElementById('aiOutText').textContent;
   if(!text){showToast('⚠️ Gera um trabalho primeiro.');return;}
   
-  // Criar conteúdo formatado para Word
-  const content=text.split('\n').map(line=>{
-    if(line.startsWith('# '))return `<h1 style="color:#04342C;font-size:24px;margin:20px 0 10px">${line.substring(2)}</h1>`;
-    if(line.startsWith('## '))return `<h2 style="color:#085041;font-size:18px;margin:18px 0 8px">${line.substring(3)}</h2>`;
-    if(line.startsWith('### '))return `<h3 style="color:#0F6E56;font-size:15px;margin:14px 0 6px">${line.substring(4)}</h3>`;
-    if(line.startsWith('════')||line.startsWith('────'))return '<hr style="margin:15px 0;border:none;border-top:2px solid #04342C">';
-    if(line.trim()==='')return '<br>';
-    return `<p style="margin:6px 0;line-height:1.6">${line}</p>`;
-  }).join('');
+  const html=convertToAcademicHTML(text);
+  const wordHTML=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>@page{margin:2.5cm}body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.8;color:#000}h1{font-size:16pt;text-align:center;margin:40px 0 30px}h2{font-size:14pt;margin:30px 0 15px;border-bottom:1px solid #000;padding-bottom:5px}h3{font-size:13pt;margin:20px 0 10px}p{text-align:justify;margin:10px 0;text-indent:3cm}ul,ol{margin:10px 0 10px 2cm}li{margin:5px 0}</style></head><body>${html}</body></html>`;
   
-  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:12pt;line-height:1.6;color:#000}h1,h2,h3{font-family:Georgia,serif}p{margin:6px 0}</style></head><body>${content}</body></html>`;
-  
-  const blob=new Blob(['\ufeff',html],{type:'application/msword'});
+  const blob=new Blob(['\ufeff',wordHTML],{type:'application/msword'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
@@ -1956,15 +2190,16 @@ function enrollCourse(id,title,preco){
 }
 
 // Backdrop close for new modals
-['aiModal','coursesModal'].forEach(id=>{
+['aiModal','coursesModal','workViewerModal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){
-    if(e.target===this){if(id==='aiModal')closeAI();else closeCourses();}
+    if(e.target===this){if(id==='aiModal')closeAI();else if(id==='coursesModal')closeCourses();else closeWorkViewer();}
   });
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     if(document.getElementById('aiModal').classList.contains('open'))closeAI();
     else if(document.getElementById('coursesModal').classList.contains('open'))closeCourses();
+    else if(document.getElementById('workViewerModal').classList.contains('open'))closeWorkViewer();
   }
 },true);
 </script>
